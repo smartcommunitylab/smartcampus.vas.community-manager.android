@@ -20,38 +20,45 @@ import java.util.Collection;
 import java.util.List;
 
 import android.app.Activity;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
+import com.actionbarsherlock.app.SherlockFragment;
+
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.UsersMinimalProfileAdapter;
 import eu.trentorise.smartcampus.cm.custom.UsersMinimalProfileAdapter.UserOptionsHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.fragments.AbstractTabbedFragment;
-import eu.trentorise.smartcampus.cm.fragments.ActionBarHelper;
 import eu.trentorise.smartcampus.cm.model.Group;
 import eu.trentorise.smartcampus.cm.model.MinimalProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
-public class CampusFragmentPeople extends AbstractTabbedFragment {
+public class CampusFragmentPeople extends SherlockFragment {
 
 	ArrayAdapter<MinimalProfile> usersListAdapter;
 	List<MinimalProfile> usersList = new ArrayList<MinimalProfile>();
 
 	@Override
-	protected int getLayoutId() {
-		return R.layout.people;
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		return inflater.inflate(R.layout.people, container, false);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		ActionBarHelper.populateCampusActionBar(this);
+		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
+		getSherlockActivity().getSupportActionBar().setTitle(R.string.campus_title);
 
 		ImageButton search = (ImageButton) getView().findViewById(R.id.people_search_img);
 		search.setOnClickListener(new View.OnClickListener() {
@@ -131,9 +138,7 @@ public class CampusFragmentPeople extends AbstractTabbedFragment {
 				usersListAdapter.notifyDataSetChanged();
 			}
 		}
-		
 	}
-
 	
 	private class RemoveFromKnown extends AbstractAsyncTaskProcessor<MinimalProfile, MinimalProfile> {
 

@@ -24,7 +24,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
@@ -55,10 +54,7 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
-import eu.trentorise.smartcampus.storage.StorageConfigurationException;
 import eu.trentorise.smartcampus.storage.remote.RemoteStorage;
-import eu.trentorise.smartcampus.storage.sync.SyncManager;
-import eu.trentorise.smartcampus.storage.sync.SyncStorageConfiguration;
 
 public class CMHelper {
 
@@ -66,9 +62,7 @@ public class CMHelper {
 
 	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
 
-	private SyncManager mSyncManager;
 	private Context mContext;
-	private SyncStorageConfiguration config = null;
 
 	private static RemoteStorage remoteStorage = null;
 
@@ -78,6 +72,8 @@ public class CMHelper {
 	private static List<Group> savedGroups;
 	private static Map<Long, MinimalProfile> knownUsers = new HashMap<Long, MinimalProfile>();
 
+	private Community scCommunity = null;
+	
 	public static void init(Context mContext) {
 		instance = new CMHelper(mContext);
 	}
@@ -111,27 +107,12 @@ public class CMHelper {
 	protected CMHelper(Context mContext) {
 		super();
 		this.mContext = mContext;
-		this.mSyncManager = new SyncManager(mContext);
-		this.config = null;// new SyncStorageConfiguration(sc, GlobalConfig.getAppUrl(getInstance().mContext),
-							// Constants.SYNC_SERVICE, Constants.SYNC_INTERVAL);
 		this.mProtocolCarrier = new ProtocolCarrier(mContext,
 				Constants.APP_TOKEN);
 	}
 
-	public static void start() throws RemoteException, DataException,
-			StorageConfigurationException {
-		getInstance().mSyncManager.start(getAuthToken(), Constants.APP_TOKEN,
-				getInstance().config);
-	}
-
-	public static void synchronize() throws RemoteException, DataException,
-			StorageConfigurationException {
-		getInstance().mSyncManager.synchronize(getAuthToken(),
-				Constants.APP_TOKEN);
-	}
 
 	public static void destroy() throws DataException {
-		getInstance().mSyncManager.disconnect();
 	}
 
 	private static RemoteStorage getRemote(Context mContext, String token) throws ProtocolException, DataException {
@@ -156,6 +137,7 @@ public class CMHelper {
 			return null;
 		}
 		setGroups(readGroups());
+		getSCCommunity();
 		return Utils.convertJSONToObject(body, Profile.class);
 	}
 
@@ -526,6 +508,23 @@ public class CMHelper {
 		request.setMethod(Method.POST);
 		request.setBody(Utils.convertToJSON(op));
 		getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+	}
+
+	public static Community getSCCommunity() {
+		try {
+			if (getInstance().scCommunity != null) return getInstance().scCommunity;
+			if (getProfile().getCommunities() != null && getProfile().getCommunities().size() > 0) {
+				getInstance().scCommunity = getProfile().getCommunities().get(0);
+				return getInstance().scCommunity;
+			}
+			
+			Collection<Community> list = getCommunities();
+			if (list != null && ! list.isEmpty()) getInstance().scCommunity = list.iterator().next();
+			return getInstance().scCommunity;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
