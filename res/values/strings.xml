@@ -37,6 +37,7 @@
     <string name="user_mp_more_new">+</string>
     <string name="mygroups_add">Add group</string>
     <string name="mygroups_add_title">Add new group</string>
+    <string name="mygroups_add_person_title">Add new person</string>
     <string name="mygroups_add_hint">New group</string>
     <string name="mygroups_delete">Delete</string>
     <string name="mygroups_delete_title">Delete group</string>

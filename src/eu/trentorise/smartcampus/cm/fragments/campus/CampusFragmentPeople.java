@@ -17,7 +17,9 @@ package eu.trentorise.smartcampus.cm.fragments.campus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -44,6 +46,7 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class CampusFragmentPeople extends SherlockFragment {
 
+	private static final String ARG_GROUP = "ARG_GROUP";
 	ArrayAdapter<MinimalProfile> usersListAdapter;
 	List<MinimalProfile> usersList = new ArrayList<MinimalProfile>();
 
@@ -70,7 +73,11 @@ public class CampusFragmentPeople extends SherlockFragment {
 		});
 		
 		ListView usersListView = (ListView) getView().findViewById(R.id.people_listview);
-		usersListAdapter = new UsersMinimalProfileAdapter(getActivity(), R.layout.user_mp, new PeopleUserOptionsHandler());
+		Set<Long> initGroups = null;
+		if (getArguments() != null && getArguments().containsKey(ARG_GROUP)) {
+			initGroups = Collections.singleton(getArguments().getLong(ARG_GROUP));
+		}
+		usersListAdapter = new UsersMinimalProfileAdapter(getActivity(), R.layout.user_mp, new PeopleUserOptionsHandler(), initGroups);
 		usersListView.setAdapter(usersListAdapter);
 		super.onStart();
 	}
@@ -157,5 +164,11 @@ public class CampusFragmentPeople extends SherlockFragment {
 			result.setKnown(false);
 			usersListAdapter.notifyDataSetChanged();
 		}
+	}
+
+	public static Bundle prepareArgs(long socialId) {
+		Bundle b = new Bundle();
+		b.putLong(ARG_GROUP, socialId);
+		return b;
 	}
 }

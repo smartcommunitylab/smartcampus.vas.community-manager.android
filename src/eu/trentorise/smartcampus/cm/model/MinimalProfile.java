@@ -88,4 +88,29 @@ public class MinimalProfile extends SCUser {
 		return name + " "+surname;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Long.valueOf(getSocialId()).hashCode();
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MinimalProfile other = (MinimalProfile) obj;
+		if (getSocialId() <= 0) {
+			if (other.getSocialId() > 0) return false;
+		} else if (getSocialId() != other.getSocialId())
+			return false;
+		return true;
+	}
+
+	
 }

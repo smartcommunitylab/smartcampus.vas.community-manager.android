@@ -20,6 +20,8 @@ import java.util.Collection;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +46,7 @@ import eu.trentorise.smartcampus.cm.custom.DialogHandler;
 import eu.trentorise.smartcampus.cm.custom.UsersMinimalProfileAdapter;
 import eu.trentorise.smartcampus.cm.custom.UsersMinimalProfileAdapter.UserOptionsHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
+import eu.trentorise.smartcampus.cm.fragments.campus.CampusFragmentPeople;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.Group;
 import eu.trentorise.smartcampus.cm.model.MinimalProfile;
@@ -91,7 +94,7 @@ public class MyGroupsFragment extends SherlockFragment {
 		myGroupsSpinner.setAdapter(dataAdapter);
 		
 		ListView usersListView = (ListView) getView().findViewById(R.id.users_listview);
-		usersListAdapter = new UsersMinimalProfileAdapter(getSherlockActivity(), R.layout.user_mp, new MyGroupsUserOptionsHandler());
+		usersListAdapter = new UsersMinimalProfileAdapter(getSherlockActivity(), R.layout.user_mp, new MyGroupsUserOptionsHandler(), null);
 		usersListView.setAdapter(usersListAdapter);
 
 		update(CMHelper.getGroups());
@@ -154,6 +157,7 @@ public class MyGroupsFragment extends SherlockFragment {
 			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_rename, 3, R.string.mygroups_rename_title);
 			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_delete, 2, R.string.mygroups_delete_title);
 		}
+		submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add_person, Menu.NONE, R.string.mygroups_add_person_title);
 		super.onPrepareOptionsMenu(menu);
 	}
 
@@ -170,6 +174,17 @@ public class MyGroupsFragment extends SherlockFragment {
 			null);
 			dialog.setTitle(R.string.mygroups_add_title);
 			dialog.show();
+			return true;
+		case R.id.mygroups_add_person:
+			FragmentTransaction ft = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			Fragment fragment = new CampusFragmentPeople();
+			// Replacing old fragment with new one
+			ft.replace(android.R.id.content, fragment);
+			fragment.setArguments(CampusFragmentPeople.prepareArgs(selected.getSocialId()));
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			ft.addToBackStack(null);
+			ft.commit();
+
 			return true;
 		case R.id.mygroups_delete:
 			new SCAsyncTask<Group, Void, Collection<Group>>(getActivity(), new DeleteGroupProcessor(getActivity())).execute(selected);

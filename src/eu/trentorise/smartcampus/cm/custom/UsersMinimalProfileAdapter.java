@@ -16,6 +16,7 @@
 package eu.trentorise.smartcampus.cm.custom;
 
 import java.util.Collection;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.cm.R;
+import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.groups.MyGroupsAddToDialog;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
@@ -41,13 +43,15 @@ public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
 	Activity context;
 	int layoutResourceId;
 	private UserOptionsHandler handler;
+	private Set<Long> initGroups;
 
 	public UsersMinimalProfileAdapter(Activity context, int layoutResourceId,
-			UserOptionsHandler handler) {
+			UserOptionsHandler handler, Set<Long> initGroups) {
 		super(context, layoutResourceId);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
 		this.handler = handler;
+		this.initGroups = initGroups;
 	}
 
 	@Override
@@ -155,7 +159,7 @@ public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
 						public void handleSuccess(Collection<Group> result) {
 							handler.assignUserToGroups(user, result);
 						}
-					});
+					}, initGroups);
 			dialog.show();
 		}
 	}
@@ -183,12 +187,14 @@ public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
 						switch (which) {
 						case 0:
 							dialog.dismiss();
+							Set<Long> groups = CMHelper.getUserGroups(user);
+							if (initGroups != null)  groups.addAll(initGroups);
 							Dialog myGroupsDlg = new MyGroupsAddToDialog(context,new DialogHandler<Collection<Group>>() {
 								@Override
 								public void handleSuccess(Collection<Group> result) {
 									handler.assignUserToGroups(user, result);
 								}
-							});
+							}, groups);
 							myGroupsDlg.show();
 							break;
 						case 1:

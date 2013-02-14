@@ -19,8 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
@@ -88,6 +90,7 @@ public class CMHelper {
 
 	public static void setProfile(Profile profile) {
 		CMHelper.profile = profile;
+		profile.setCommunities(Collections.singletonList(instance.scCommunity));
 	}
 
 	public static Profile getProfile() {
@@ -137,8 +140,10 @@ public class CMHelper {
 			return null;
 		}
 		setGroups(readGroups());
-		getSCCommunity();
-		return Utils.convertJSONToObject(body, Profile.class);
+		// check that the default SC community is in the user communities and add it otherwise.
+		Profile p = Utils.convertJSONToObject(body, Profile.class);
+		checkSCCommunity(p);
+		return p;
 	}
 
 	public static Profile storeProfile(Profile profile)
@@ -510,16 +515,27 @@ public class CMHelper {
 		getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
 	}
 
-	public static Community getSCCommunity() {
-		try {
-			if (getInstance().scCommunity != null) return getInstance().scCommunity;
-			if (getProfile().getCommunities() != null && getProfile().getCommunities().size() > 0) {
-				getInstance().scCommunity = getProfile().getCommunities().get(0);
-				return getInstance().scCommunity;
-			}
-			
+	/**
+	 * check the presence of only the SC community in the user communities' list and add it if not present.
+	 * @param p 
+	 * @throws DataException
+	 * @throws ConnectionException
+	 * @throws ProtocolException
+	 * @throws SecurityException
+	 */
+	private static void checkSCCommunity(Profile p) throws DataException, ConnectionException, ProtocolException, SecurityException {
+		if (p.getCommunities() != null && p.getCommunities().size() > 0) {
+			getInstance().scCommunity = p.getCommunities().get(0);
+		}
+		else {
 			Collection<Community> list = getCommunities();
 			if (list != null && ! list.isEmpty()) getInstance().scCommunity = list.iterator().next();
+			addToCommunity(getInstance().scCommunity.getId());
+		}
+	}
+
+	public static Community getSCCommunity() {
+		try {
 			return getInstance().scCommunity;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -527,4 +543,24 @@ public class CMHelper {
 		}
 	}
 
+	public static ShareVisibility getEntitySharing(Long entityId) throws ConnectionException, ProtocolException, SecurityException, DataException {
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE + "/assignments/"+entityId);
+		request.setMethod(Method.GET);
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+		String body = response.getBody();
+		if (body == null || body.trim().length() == 0) {
+			return null;
+		}
+		return Utils.convertJSONToObject(body, ShareVisibility.class);
+	}
+
+	public static Set<Long> getUserGroups(MinimalProfile mp) {
+		Set<Long> res = new HashSet<Long>();
+		if (getGroups() != null) {
+			for (Group g : getGroups()) {
+				if (g.getUsers() != null && g.getUsers().contains(mp)) res.add(g.getSocialId());
+			}
+		}
+		return res;
+	}
 }
