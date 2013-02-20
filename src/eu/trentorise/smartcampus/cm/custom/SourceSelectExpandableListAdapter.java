@@ -40,12 +40,11 @@ import eu.trentorise.smartcampus.cm.model.SocialContainer;
 public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter {
 	private static final String GROUP_GROUPS = "Groups";
 	private static final Object GROUP_PEOPLE = "People";
-	private static final Object GROUP_COMMUNITIES = "Communities";
 
 	private SocialContainer completeData;
 
 	@SuppressWarnings("unchecked")
-	private Set<Integer>[] checked = new Set[]{new HashSet<Integer>(),new HashSet<Integer>(),new HashSet<Integer>()};
+	private Set<Integer>[] checked = new Set[]{new HashSet<Integer>(),new HashSet<Integer>()};
 
 	private Context ctx;
 	
@@ -70,9 +69,7 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 		return list;
 	}
 	public List<Community> getCommunities() {
-		List<Community> list = new ArrayList<Community>();
-		for (Integer item : checked[2]) list.add(completeData.getCommunities().get(item));
-		return list;
+		return completeData.getCommunities();
 	}
 
 	private void update(SocialContainer userData) {
@@ -91,19 +88,12 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 					}
 				} 
 			}
-			if (userData.getCommunities() != null && completeData.getCommunities() != null) {
-				for (int i = 0; i < completeData.getCommunities().size(); i++) {
-					for (Community c : userData.getCommunities()) {
-						if (completeData.getCommunities().get(i).getId().equals(c.getId())) checked[2].add(i);
-					}
-				} 
-			}
 		}
 	}
 
 	@Override
 	public int getGroupCount() {
-		return 3;
+		return 2;
 	}
 
 	@Override
@@ -111,7 +101,6 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 		switch (groupPosition) {
 		case 0: return completeData.getGroups() != null ? completeData.getGroups().size() : 0;
 		case 1: return completeData.getUsers() != null ? completeData.getUsers().size() : 0;
-		case 2: return completeData.getCommunities() != null ? completeData.getCommunities().size() : 0;
 		default: return 0;
 		}
 	}
@@ -121,7 +110,6 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 		switch (groupPosition) {
 		case 0: return GROUP_GROUPS;
 		case 1: return GROUP_PEOPLE;
-		case 2: return GROUP_COMMUNITIES;
 		default: return 0;
 		}
 	}
@@ -131,7 +119,6 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 		switch (groupPosition) {
 		case 0: return completeData.getGroups() != null ? completeData.getGroups().get(childPosition).getName() : null;
 		case 1: return completeData.getUsers() != null ? completeData.getUsers().get(childPosition).fullName() : null;
-		case 2: return completeData.getCommunities() != null ? completeData.getCommunities().get(childPosition).getName() : null;
 		default: return null;
 		}
 	}

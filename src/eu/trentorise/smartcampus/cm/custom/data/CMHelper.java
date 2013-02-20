@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
@@ -55,10 +56,7 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.storage.DataException;
-import eu.trentorise.smartcampus.storage.StorageConfigurationException;
 import eu.trentorise.smartcampus.storage.remote.RemoteStorage;
-import eu.trentorise.smartcampus.storage.sync.SyncManager;
-import eu.trentorise.smartcampus.storage.sync.SyncStorageConfiguration;
 
 public class CMHelper {
 
@@ -66,9 +64,7 @@ public class CMHelper {
 
 	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
 
-	private SyncManager mSyncManager;
 	private Context mContext;
-	private SyncStorageConfiguration config = null;
 
 	private static RemoteStorage remoteStorage = null;
 
@@ -78,6 +74,8 @@ public class CMHelper {
 	private static List<Group> savedGroups;
 	private static Map<Long, MinimalProfile> knownUsers = new HashMap<Long, MinimalProfile>();
 
+	private Community scCommunity = null;
+	
 	public static void init(Context mContext) {
 		instance = new CMHelper(mContext);
 	}
@@ -92,6 +90,7 @@ public class CMHelper {
 
 	public static void setProfile(Profile profile) {
 		CMHelper.profile = profile;
+		profile.setCommunities(Collections.singletonList(instance.scCommunity));
 	}
 
 	public static Profile getProfile() {
@@ -111,27 +110,12 @@ public class CMHelper {
 	protected CMHelper(Context mContext) {
 		super();
 		this.mContext = mContext;
-		this.mSyncManager = new SyncManager(mContext);
-		this.config = null;// new SyncStorageConfiguration(sc, GlobalConfig.getAppUrl(getInstance().mContext),
-							// Constants.SYNC_SERVICE, Constants.SYNC_INTERVAL);
 		this.mProtocolCarrier = new ProtocolCarrier(mContext,
 				Constants.APP_TOKEN);
 	}
 
-	public static void start() throws RemoteException, DataException,
-			StorageConfigurationException {
-		getInstance().mSyncManager.start(getAuthToken(), Constants.APP_TOKEN,
-				getInstance().config);
-	}
-
-	public static void synchronize() throws RemoteException, DataException,
-			StorageConfigurationException {
-		getInstance().mSyncManager.synchronize(getAuthToken(),
-				Constants.APP_TOKEN);
-	}
 
 	public static void destroy() throws DataException {
-		getInstance().mSyncManager.disconnect();
 	}
 
 	private static RemoteStorage getRemote(Context mContext, String token) throws ProtocolException, DataException {
@@ -156,7 +140,10 @@ public class CMHelper {
 			return null;
 		}
 		setGroups(readGroups());
-		return Utils.convertJSONToObject(body, Profile.class);
+		// check that the default SC community is in the user communities and add it otherwise.
+		Profile p = Utils.convertJSONToObject(body, Profile.class);
+		checkSCCommunity(p);
+		return p;
 	}
 
 	public static Profile storeProfile(Profile profile)
@@ -528,4 +515,52 @@ public class CMHelper {
 		getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
 	}
 
+	/**
+	 * check the presence of only the SC community in the user communities' list and add it if not present.
+	 * @param p 
+	 * @throws DataException
+	 * @throws ConnectionException
+	 * @throws ProtocolException
+	 * @throws SecurityException
+	 */
+	private static void checkSCCommunity(Profile p) throws DataException, ConnectionException, ProtocolException, SecurityException {
+		if (p.getCommunities() != null && p.getCommunities().size() > 0) {
+			getInstance().scCommunity = p.getCommunities().get(0);
+		}
+		else {
+			Collection<Community> list = getCommunities();
+			if (list != null && ! list.isEmpty()) getInstance().scCommunity = list.iterator().next();
+			addToCommunity(getInstance().scCommunity.getId());
+		}
+	}
+
+	public static Community getSCCommunity() {
+		try {
+			return getInstance().scCommunity;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static ShareVisibility getEntitySharing(Long entityId) throws ConnectionException, ProtocolException, SecurityException, DataException {
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE + "/assignments/"+entityId);
+		request.setMethod(Method.GET);
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+		String body = response.getBody();
+		if (body == null || body.trim().length() == 0) {
+			return null;
+		}
+		return Utils.convertJSONToObject(body, ShareVisibility.class);
+	}
+
+	public static Set<Long> getUserGroups(MinimalProfile mp) {
+		Set<Long> res = new HashSet<Long>();
+		if (getGroups() != null) {
+			for (Group g : getGroups()) {
+				if (g.getUsers() != null && g.getUsers().contains(mp)) res.add(g.getSocialId());
+			}
+		}
+		return res;
+	}
 }

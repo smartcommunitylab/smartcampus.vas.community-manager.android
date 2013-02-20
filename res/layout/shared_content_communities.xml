@@ -21,11 +21,6 @@
     android:background="@color/sc_light_gray"
     android:orientation="vertical" >
 
-    <Spinner
-        android:id="@+id/shared_content_communities_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
 
     <include layout="@layout/shared_content_filters" />
 

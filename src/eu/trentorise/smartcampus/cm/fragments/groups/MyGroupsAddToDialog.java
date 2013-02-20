@@ -42,11 +42,13 @@ public class MyGroupsAddToDialog extends Dialog {
 	private DialogHandler<Collection<Group>> groupAssignmentHandler = null;
 	private CheckListAdapter listAdatpter = null;
 	private Activity context = null;
+	private Set<Long> selectedGroups = null;
 	
-	public MyGroupsAddToDialog(Activity context, DialogHandler<Collection<Group>> groupAssignmentHandler) {
+	public MyGroupsAddToDialog(Activity context, DialogHandler<Collection<Group>> groupAssignmentHandler, Set<Long> selected) {
 		super(context);
 		this.groupAssignmentHandler = groupAssignmentHandler;
 		this.context = context;
+		this.selectedGroups = selected;
 	}
 
 	@Override
@@ -102,6 +104,9 @@ public class MyGroupsAddToDialog extends Dialog {
 			item.enabled = g.getSocialId() != CMConstants.MY_PEOPLE_GROUP_ID;
 			item.checked = g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID;
 //			if (g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID) continue;
+			if (selectedGroups != null && selectedGroups.contains(g.getSocialId())) {
+				item.checked = true;
+			}
 			listAdatpter.add(item);
 		}
 		listAdatpter.notifyDataSetChanged();

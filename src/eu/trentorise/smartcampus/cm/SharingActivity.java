@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
-import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.sharing.ShareEntityObject;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
@@ -35,6 +34,7 @@ import eu.trentorise.smartcampus.cm.model.Community;
 import eu.trentorise.smartcampus.cm.model.Group;
 import eu.trentorise.smartcampus.cm.model.MinimalProfile;
 import eu.trentorise.smartcampus.cm.model.Profile;
+import eu.trentorise.smartcampus.cm.model.ShareVisibility;
 import eu.trentorise.smartcampus.cm.model.SimpleSocialContainer;
 import eu.trentorise.smartcampus.cm.model.SocialContainer;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
@@ -46,23 +46,29 @@ public class SharingActivity extends BaseCMActivity {
 	
 	@Override
 	protected void loadData(String token) {
-		new SCAsyncTask<Void, Void, SocialContainer>(this, new LoadUserCompleteData(this)).execute();
+		new SCAsyncTask<Void, Void, SocialContainer[]>(this, new LoadUserCompleteData(this)).execute();
 	}
 
+	private ShareEntityObject getShare() {
+		if (share == null) {
+			if (getIntent() != null) {
+				share = (ShareEntityObject) getIntent().getSerializableExtra(getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity));
+			}
+		}
+		return share;
+	}
+	
 	@Override
 	protected void setUpContent() {
 		setContentView(R.layout.source_select);
 		getSupportActionBar().setDisplayUseLogoEnabled(true);
-
-		if (getIntent() != null) {
-			share = (ShareEntityObject) getIntent().getSerializableExtra(getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity));
-		}
-		if (share != null) {
-			setTitle("Sharing "+ share.getType() +"'"+share.getTitle()+"'");
-		} else {
+		
+		if (getShare() == null) {
 			CMHelper.showFailure(this, R.string.app_failure_operation);
 			finish();
 			return;
+		} else {
+			setTitle("Sharing "+ share.getType() +"'"+share.getTitle()+"'");
 		}
 
 		Button ok = (Button) findViewById(R.id.source_select_ok);
@@ -91,37 +97,69 @@ public class SharingActivity extends BaseCMActivity {
 		});
 	}
 
-	private class LoadUserCompleteData extends AbstractAsyncTaskProcessor<Void, SocialContainer> {
+	private class LoadUserCompleteData extends AbstractAsyncTaskProcessor<Void, SocialContainer[]> {
 
 		public LoadUserCompleteData(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public SocialContainer performAction(Void... params) throws SecurityException, Exception {
-			SocialContainer container = new SimpleSocialContainer();
+		public SocialContainer[] performAction(Void... params) throws SecurityException, Exception {
+			SocialContainer complete = new SimpleSocialContainer();
+			SocialContainer current = new SimpleSocialContainer();
 			
-			List<Group> groups = CMHelper.readGroups();
-			List<Group> custom = new ArrayList<Group>();
+			Profile profile = CMHelper.getProfile();
+			if (profile == null) profile = CMHelper.retrieveProfile();
+			List<Group> groups = CMHelper.getGroups();
+			
+			ShareVisibility visibility = CMHelper.getEntitySharing(getShare().getEntityId());
+			current.setAllUsers(visibility.isAllUsers());
+
+			List<Group> completeGroups = new ArrayList<Group>();
+			current.setGroups(new ArrayList<Group>());
 			Group allKnown = null;
 			for (Group g : groups) {
 				if (g.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) {
 					allKnown = g;
+					if (visibility.isAllKnownUsers()) current.getGroups().add(g);
 				}
-				custom.add(g);
+				completeGroups.add(g);
+				if (visibility.getGroupIds() != null && visibility.getGroupIds().contains(g.getSocialId())) {
+					current.getGroups().add(g);
+				}
 			}
-			container.setGroups(custom);
-			Profile profile = CMHelper.retrieveProfile();
-			container.setCommunities(profile.getCommunities());
+			complete.setGroups(completeGroups);
+			
+			// CURRENTLY COMMUNITIES ARE NOT CONSIDERED
+			// TODO change once the communities are re-integrated again
+//			complete.setCommunities(profile.getCommunities());
+//			current.setCommunities(new ArrayList<Community>());
+//			for (Community c : complete.getCommunities()) {
+//				if (visibility.getCommunityIds() != null && visibility.getCommunityIds().contains(c.getSocialId())) {
+//					current.getCommunities().add(c);
+//				}
+//			}
+			
 			List<MinimalProfile> users = new ArrayList<MinimalProfile>();
 			if (allKnown != null && allKnown.getUsers() != null) users.addAll(allKnown.getUsers());
-			container.setUsers(users);
-			return container;
+			complete.setUsers(users);
+			
+			current.setUsers(new ArrayList<MinimalProfile>());
+			for (MinimalProfile mp : complete.getUsers()) {
+				if (visibility.getUserIds() != null && visibility.getUserIds().contains(mp.getSocialId())) {
+					current.getUsers().add(mp);
+				}
+			}
+			
+			return new SocialContainer[]{complete,current};
 		}
 
 		@Override
-		public void handleResult(final SocialContainer result) {
-			adapter = new SourceSelectExpandableListAdapter(SharingActivity.this, result, null); 
+		public void handleResult(SocialContainer[] result) {
+			adapter = new SourceSelectExpandableListAdapter(SharingActivity.this, result[0], result[1]); 
+			CheckBox all = (CheckBox)findViewById(R.id.source_select_public);
+			all.setChecked(result[1].isAllUsers());
+
 			ExpandableListView view = (ExpandableListView)findViewById(R.id.source_select_list);
 			view.setAdapter(adapter);
 
@@ -135,7 +173,7 @@ public class SharingActivity extends BaseCMActivity {
 			super(SharingActivity.this, new AbstractAsyncTaskProcessor<SocialContainer, Void>(SharingActivity.this) {
 				@Override
 				public Void performAction(SocialContainer... params) throws SecurityException, Exception {
-					CMHelper.share(share, params[0]);
+					CMHelper.share(getShare(), params[0]);
 					return null;
 				}
 

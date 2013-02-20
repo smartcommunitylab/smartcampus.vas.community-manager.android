@@ -16,9 +16,6 @@
 package eu.trentorise.smartcampus.cm.fragments.profile;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,17 +23,12 @@ import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -46,21 +38,13 @@ import com.actionbarsherlock.view.MenuItem;
 
 import eu.trentorise.smartcampus.cm.Constants;
 import eu.trentorise.smartcampus.cm.R;
-import eu.trentorise.smartcampus.cm.custom.CommunityAdapter;
-import eu.trentorise.smartcampus.cm.custom.CommunityAdapter.CommunityProvider;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.fragments.ActionBarHelper;
-import eu.trentorise.smartcampus.cm.fragments.campus.CampusFragmentCommunities;
 import eu.trentorise.smartcampus.cm.helper.BitmapUtils;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheProvider;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;
-import eu.trentorise.smartcampus.cm.model.Community;
 import eu.trentorise.smartcampus.cm.model.Profile;
-import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class MyProfileFragment extends SherlockFragment {
-
-	private ArrayAdapter<Community> communityListAdapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -103,30 +87,6 @@ public class MyProfileFragment extends SherlockFragment {
 						Constants.EDIT_PROFILE_ACTIVITY_REQUEST_PIC);
 			}
 		});
-
-		Button button = (Button) getView().findViewById(
-				R.id.myprofile_communities_expand);
-		button.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Bundle bundle = new Bundle();
-				bundle.putSerializable(Constants.EDIT_PROFILE_PROFILE_EXTRA,
-						CMHelper.getProfile());
-				bundle.putInt(ActionBarHelper.ARG_TAB,
-						R.string.campus_tab_communities);
-				FragmentTransaction fragmentTransaction = getSherlockActivity()
-						.getSupportFragmentManager().beginTransaction();
-				Fragment fragment = new CampusFragmentCommunities();
-				fragment.setArguments(bundle);
-				fragmentTransaction
-						.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-				fragmentTransaction.replace(android.R.id.content, fragment);
-				// fragmentTransaction.addToBackStack(Constants.MYGROUPS_FRAGMENT_TAG);
-				fragmentTransaction.commit();
-				// getActivity().startActivity(intent);
-			}
-		});
 	}
 
 	@Override
@@ -154,57 +114,9 @@ public class MyProfileFragment extends SherlockFragment {
 		}
 	}
 
-	private class MyCommunityProvider implements CommunityProvider {
-
-		@Override
-		public List<Community> getCommunities() throws SecurityException,
-				Exception {
-			List<Community> list = CMHelper.getProfile().getCommunities() != null ? CMHelper
-					.getProfile().getCommunities() : new ArrayList<Community>();
-			return list;
-		}
-
-		@Override
-		public void performCommunityAction(Community community)
-				throws SecurityException, Exception {
-			if (CMHelper.removeFromCommunity(community.getId())) {
-				Profile profile = CMHelper.getProfile();
-				if (profile.getCommunities() != null) {
-					for (Iterator<Community> iterator = profile
-							.getCommunities().iterator(); iterator.hasNext();) {
-						Community comm = iterator.next();
-						if (comm.getId() == community.getId()) {
-							iterator.remove();
-							break;
-						}
-					}
-				}
-			}
-		}
-
-		@Override
-		public int getCommunityActionResource() {
-			return R.string.myprofile_community_remove;
-		}
-
-		@Override
-		public View getContainerView() {
-			return getView().findViewById(R.id.myprofile_layout);
-		}
-	}
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent result) {
 		super.onActivityResult(requestCode, resultCode, result);
-		// if (Constants.EDIT_PROFILE_ACTIVITY_REQUEST_EDIT == requestCode
-		// && Constants.EDIT_PROFILE_ACTIVITY_RESULT_OK == resultCode) {
-		// if (result
-		// .getSerializableExtra(Constants.EDIT_PROFILE_PROFILE_EXTRA) != null)
-		// {
-		// updateProfile((Profile) result
-		// .getSerializableExtra(Constants.EDIT_PROFILE_PROFILE_EXTRA));
-		// }
-		// }
 
 		if (requestCode == Constants.EDIT_PROFILE_ACTIVITY_REQUEST_PIC
 				&& resultCode != 0) {
@@ -252,11 +164,6 @@ public class MyProfileFragment extends SherlockFragment {
 		TextView detailsView = (TextView) getView().findViewById(
 				R.id.myprofile_details);
 		detailsView.setText(userProfile.details());
-		ListView commListView = (ListView) getView().findViewById(
-				R.id.myprofile_communitylist);
-		communityListAdapter = new CommunityAdapter(new MyCommunityProvider(),
-				getSherlockActivity(), R.layout.community);
-		commListView.setAdapter(communityListAdapter);
 
 		// update profile pic if present
 		ImageView imgView = (ImageView) getView().findViewById(

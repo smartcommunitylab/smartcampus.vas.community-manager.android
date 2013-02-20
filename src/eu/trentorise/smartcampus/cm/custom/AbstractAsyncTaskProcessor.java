@@ -38,7 +38,7 @@ public abstract class AbstractAsyncTaskProcessor<Params, Result> implements SCAs
 	public void handleFailure(Exception e) {
 		Log.e(activity.getClass().getName(), ""+e.getMessage());
 		HandleExceptionHelper.showFailure(activity, R.string.app_failure_operation);
-
+		e.printStackTrace();
 	}
 	
 	

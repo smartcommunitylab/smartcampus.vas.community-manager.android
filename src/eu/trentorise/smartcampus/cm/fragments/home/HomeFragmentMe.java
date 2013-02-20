@@ -24,6 +24,8 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.Toast;
+import eu.trentorise.smartcampus.android.common.sharing.ShareEntityObject;
+import eu.trentorise.smartcampus.android.common.sharing.SharingHelper;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
@@ -76,9 +78,11 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 		case MENU_ITEM_APP:
 			ViewHelper.viewInApp(getActivity(), content.getEntityType(), content.getEntityId(), new Bundle());
 			return true;
-//		case MENU_ITEM_SHARING:
+		case MENU_ITEM_SHARING:
+			ShareEntityObject seo = new ShareEntityObject(content.getEntityId(), content.getTitle(), content.getEntityType());
+			SharingHelper.share(getActivity(), seo);
 //			Toast.makeText(getActivity(), "Sharing options: "+content.getEntityId(), Toast.LENGTH_SHORT).show();
-//			return true;
+			return true;
 		default:
 			return super.handleMenuItem(content, itemId);
 		}
@@ -87,7 +91,7 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 	@Override
 	protected void populateMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
 		menu.add(0, MENU_ITEM_APP, 0, R.string.shared_content_menu_app);
-//		menu.add(0, MENU_ITEM_SHARING, 0, R.string.shared_content_menu_sharing);
+		menu.add(0, MENU_ITEM_SHARING, 0, R.string.shared_content_menu_sharing);
 	}
 
 }
