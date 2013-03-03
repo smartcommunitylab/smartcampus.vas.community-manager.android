@@ -50,8 +50,10 @@ import eu.trentorise.smartcampus.cm.model.StoreProfile;
 import eu.trentorise.smartcampus.cm.model.Topic;
 import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
 import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
+import eu.trentorise.smartcampus.protocolcarrier.custom.FileRequestParam;
 import eu.trentorise.smartcampus.protocolcarrier.custom.MessageRequest;
 import eu.trentorise.smartcampus.protocolcarrier.custom.MessageResponse;
+import eu.trentorise.smartcampus.protocolcarrier.custom.RequestParam;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
@@ -313,7 +315,9 @@ public class CMHelper {
 		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
 				Constants.FILE_SERVICE + "/");
 		request.setMethod(Method.POST);
-		request.setFileContent(content);
+		FileRequestParam param = new FileRequestParam();
+		param.setContent(content);
+		request.setRequestParams(Collections.<RequestParam>singletonList(param));
 		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
 				request, Constants.APP_TOKEN, getAuthToken());
 
@@ -332,7 +336,9 @@ public class CMHelper {
 		request.setMethod(Method.POST);
 
 		// set requestFile true to get the byte array of file requested
-		request.setFileContent(content);
+		FileRequestParam param = new FileRequestParam();
+		param.setContent(content);
+		request.setRequestParams(Collections.<RequestParam>singletonList(param));
 		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
 				request, Constants.APP_TOKEN, getAuthToken());
 
