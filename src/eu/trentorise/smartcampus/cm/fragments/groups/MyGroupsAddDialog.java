@@ -27,7 +27,7 @@ import android.widget.Toast;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.Group;
+import eu.trentorise.smartcampus.social.model.Group;
 
 public class MyGroupsAddDialog extends Dialog {
 

@@ -75,22 +75,6 @@
                     android:layout_toRightOf="@+id/myprofile_pic"
                     android:orientation="vertical"
                     android:padding="10dp" >
-
-                    <TextView
-                        android:id="@+id/myprofile_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Some text1"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@color/sc_dark_gray" />
-
-                    <TextView
-                        android:id="@+id/myprofile_details"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Some text2 bit longer"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/sc_gray" />
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>

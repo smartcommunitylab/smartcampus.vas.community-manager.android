@@ -33,8 +33,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 
 import eu.trentorise.smartcampus.cm.Constants;
 import eu.trentorise.smartcampus.cm.R;
@@ -42,7 +40,7 @@ import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.helper.BitmapUtils;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheProvider;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;
-import eu.trentorise.smartcampus.cm.model.Profile;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 
 public class MyProfileFragment extends SherlockFragment {
 
@@ -90,31 +88,6 @@ public class MyProfileFragment extends SherlockFragment {
 	}
 
 	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM,
-				R.id.menu_item_myprofile_edit, 1,
-				R.string.menu_item_myprofile_edit_text);
-		item.setIcon(R.drawable.ic_contex_edit);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		super.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_item_myprofile_edit:
-			Intent intent = new Intent(getActivity(), EditProfileActivity.class);
-			intent.putExtra(Constants.EDIT_PROFILE_PROFILE_EXTRA,
-					CMHelper.getProfile());
-			startActivityForResult(intent,
-					Constants.EDIT_PROFILE_ACTIVITY_REQUEST_EDIT);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-
-	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent result) {
 		super.onActivityResult(requestCode, resultCode, result);
 
@@ -135,7 +108,7 @@ public class MyProfileFragment extends SherlockFragment {
 
 				// cache image locally
 				ImageCacheProvider.store(
-						"" + CMHelper.getProfile().getUserId(),
+						"" + CMHelper.getProfile().getSocialId(),
 						baos.toByteArray());
 
 				// upload picture to profile repository
@@ -151,31 +124,25 @@ public class MyProfileFragment extends SherlockFragment {
 
 	}
 
-	private void updateProfile(Profile userProfile) {
+	private void updateProfile(PictureProfile userProfile) {
 		TextView nameTextView = (TextView) getView().findViewById(
 				R.id.myprofile_name);
 		nameTextView.setText(userProfile.getName());
 		TextView surnameTextView = (TextView) getView().findViewById(
 				R.id.myprofile_surname);
 		surnameTextView.setText(userProfile.getSurname());
-		TextView contentView = (TextView) getView().findViewById(
-				R.id.myprofile_content);
-		contentView.setText(userProfile.content());
-		TextView detailsView = (TextView) getView().findViewById(
-				R.id.myprofile_details);
-		detailsView.setText(userProfile.details());
 
 		// update profile pic if present
 		ImageView imgView = (ImageView) getView().findViewById(
 				R.id.myprofile_pic);
 
-		imgView.setTag("" + CMHelper.getProfile().getUserId());
+		imgView.setTag("" + CMHelper.getProfile().getSocialId());
 		if (userProfile.getPictureUrl() != null
 				&& userProfile.getPictureUrl().length() > 0) {
 			try {
 				new ImageCacheTask(imgView,R.drawable.placeholder).execute(
 						userProfile.getPictureUrl(), ""
-								+ CMHelper.getProfile().getUserId());
+								+ CMHelper.getProfile().getSocialId());
 			} catch (Exception e) {
 				Log.e("MyProfileFragment", "Exception loading profile image");
 			}
@@ -185,10 +152,10 @@ public class MyProfileFragment extends SherlockFragment {
 
 	class UpdateProfileTask extends AsyncTask<Void, Void, Void> {
 
-		Profile profile;
+		PictureProfile profile;
 		byte[] content;
 
-		public UpdateProfileTask(Profile profile, byte[] content) {
+		public UpdateProfileTask(PictureProfile profile, byte[] content) {
 			super();
 			this.content = content;
 			this.profile = profile;

@@ -29,8 +29,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.cm.R;
-import eu.trentorise.smartcampus.cm.model.Community;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.social.model.Community;
+import eu.trentorise.smartcampus.social.model.Concept;
 
 public class CommunityAdapter extends ArrayAdapter<Community> {
 
@@ -61,8 +62,6 @@ public class CommunityAdapter extends ArrayAdapter<Community> {
 					.findViewById(R.id.community_action);
 			holder.community_name = (TextView) row
 					.findViewById(R.id.community_name);
-			holder.community_description = (TextView) row
-					.findViewById(R.id.community_description);
 			holder.community_tags = (TextView) row
 					.findViewById(R.id.community_tags);
 			row.setTag(holder);
@@ -82,19 +81,18 @@ public class CommunityAdapter extends ArrayAdapter<Community> {
 		}
 
 		holder.community_name.setText(comm.getName()); // name
-		holder.community_description.setText(comm.getDescription());
 		holder.community_tags.setText(createTagsString(comm.getTags()));
 
 		return row;
 	}
 
-	private CharSequence createTagsString(String[] tags) {
-		if (tags == null || tags.length == 0)
+	private CharSequence createTagsString(List<Concept> tags) {
+		if (tags == null || tags.size() == 0)
 			return "";
 		String res = "";
-		for (int i = 0; i < tags.length; i++) {
-			res += tags[i];
-			if (i < tags.length - 1)
+		for (int i = 0; i < tags.size(); i++) {
+			res += tags.get(i).getName();
+			if (i < tags.size() - 1)
 				res += ", ";
 		}
 		return res;
@@ -103,7 +101,6 @@ public class CommunityAdapter extends ArrayAdapter<Community> {
 	static class DataHolder {
 		ImageButton community_action;
 		TextView community_name;
-		TextView community_description;
 		TextView community_tags;
 	}
 

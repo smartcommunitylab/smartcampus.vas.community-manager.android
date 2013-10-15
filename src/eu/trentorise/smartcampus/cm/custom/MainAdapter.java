@@ -33,7 +33,6 @@ import eu.trentorise.smartcampus.cm.fragments.campus.CampusFragmentPeople;
 import eu.trentorise.smartcampus.cm.fragments.groups.MyGroupsFragment;
 import eu.trentorise.smartcampus.cm.fragments.home.HomeFragmentMe;
 import eu.trentorise.smartcampus.cm.fragments.profile.MyProfileFragment;
-import eu.trentorise.smartcampus.cm.fragments.topics.TopicsFragment;
 
 
 public class MainAdapter extends BaseAdapter {
@@ -175,8 +174,6 @@ public class MainAdapter extends BaseAdapter {
 					HomeFragmentMe.class),
 			new MainActionDescriptor(R.string.a_campus, R.drawable.ic_campus,
 					CampusFragmentPeople.class),
-			new MainActionDescriptor(R.string.a_topics, R.drawable.ic_topics,
-					TopicsFragment.class),
 			new MainActionDescriptor(R.string.a_groups, R.drawable.ic_groups,
 					MyGroupsFragment.class),
 			new MainActionDescriptor(R.string.a_profile, R.drawable.ic_myp,

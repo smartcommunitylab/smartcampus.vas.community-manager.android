@@ -137,5 +137,8 @@
     <string name="groups_title">Groups</string>
     <string name="profile_title">Profile</string>
     <string name="campus_title">Campus</string>
+
+    <string name="token_required">Please login before proceeding with the application.</string>
+    <string name="auth_failed">Application initialization failed. Try connecting again.</string>
     
 </resources>

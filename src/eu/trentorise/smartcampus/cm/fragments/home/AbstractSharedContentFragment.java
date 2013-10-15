@@ -26,8 +26,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -41,7 +41,7 @@ import eu.trentorise.smartcampus.cm.fragments.ActionBarHelper;
 import eu.trentorise.smartcampus.cm.fragments.home.LoadObjectProcessor.ContentRequest;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.CMConstants.ObjectFilterDescriptor;
-import eu.trentorise.smartcampus.cm.model.SharedContent;
+import eu.trentorise.smartcampus.social.model.Entity;
 
 public abstract class AbstractSharedContentFragment extends AbstractTabbedFragment implements OnScrollListener  {
 
@@ -89,8 +89,8 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 		contentsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				SharedContent content = adapter.getItem(position);
-				ViewHelper.viewInApp(getActivity(), content.getEntityType(), content.getEntityId(), new Bundle());
+				Entity content = adapter.getItem(position);
+				ViewHelper.viewInApp(getActivity(), CMConstants.getTypeByTypeId(content.getEntityType()), content.getEntityId(), new Bundle());
 			}
 		});
 		super.onStart();
@@ -136,7 +136,7 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 		if (contentRequest.position == 0) {
 			adapter.clear();
 		}
-		new SCAsyncTask<ContentRequest, Void, List<SharedContent>>(getActivity(), getLoadProcessor()).execute(contentRequest);
+		new SCAsyncTask<ContentRequest, Void, List<Entity>>(getActivity(), getLoadProcessor()).execute(contentRequest);
 	}
 
 	protected LoadObjectProcessor getLoadProcessor() {
@@ -190,11 +190,11 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		SharedContent content = adapter.getItem(info.position);
+		Entity content = adapter.getItem(info.position);
 		return handleMenuItem(content, item.getItemId());
 	}
 
-	protected boolean handleMenuItem(SharedContent content, int itemId) {
+	protected boolean handleMenuItem(Entity content, int itemId) {
 		return false;
 	}
 

@@ -35,16 +35,16 @@ import eu.trentorise.smartcampus.cm.custom.CheckListAdapter.CheckListItem;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
-import eu.trentorise.smartcampus.cm.model.Group;
+import eu.trentorise.smartcampus.social.model.Group;
 
 public class MyGroupsAddToDialog extends Dialog {
 
 	private DialogHandler<Collection<Group>> groupAssignmentHandler = null;
 	private CheckListAdapter listAdatpter = null;
 	private Activity context = null;
-	private Set<Long> selectedGroups = null;
+	private Set<String> selectedGroups = null;
 	
-	public MyGroupsAddToDialog(Activity context, DialogHandler<Collection<Group>> groupAssignmentHandler, Set<Long> selected) {
+	public MyGroupsAddToDialog(Activity context, DialogHandler<Collection<Group>> groupAssignmentHandler, Set<String> selected) {
 		super(context);
 		this.groupAssignmentHandler = groupAssignmentHandler;
 		this.context = context;
@@ -86,13 +86,11 @@ public class MyGroupsAddToDialog extends Dialog {
 						selected.add(textview.getText().toString());
 					}
 				}
-				if (selected.size() > 0) {
-					List<Group> result = new ArrayList<Group>();
-					for (Group g : CMHelper.getGroups()) {
-						if (selected.contains(g.getName())) result.add(g); 
-					}
-					groupAssignmentHandler.handleSuccess(result);
+				List<Group> result = new ArrayList<Group>();
+				for (Group g : CMHelper.getGroups()) {
+					if (selected.contains(g.getName())) result.add(g); 
 				}
+				groupAssignmentHandler.handleSuccess(result);
 				
 				dismiss();
 			}
@@ -101,8 +99,8 @@ public class MyGroupsAddToDialog extends Dialog {
 		for (Group g : CMHelper.getGroups()) {
 			CheckListItem item = new CheckListItem();
 			item.text = g.getName();
-			item.enabled = g.getSocialId() != CMConstants.MY_PEOPLE_GROUP_ID;
-			item.checked = g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID;
+			item.enabled = true;
+//			item.checked = g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID);
 //			if (g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID) continue;
 			if (selectedGroups != null && selectedGroups.contains(g.getSocialId())) {
 				item.checked = true;
@@ -111,24 +109,4 @@ public class MyGroupsAddToDialog extends Dialog {
 		}
 		listAdatpter.notifyDataSetChanged();
 	}
-
-//	private class LoadGroupsProcessor extends AbstractAsyncTaskProcessor<Void, Collection<Group>> {
-//
-//		public LoadGroupsProcessor(Activity activity) {
-//			super(activity);
-//		}
-//
-//		@Override
-//		public Collection<Group> performAction(Void... params) throws SecurityException, Exception {
-//			return CMHelper.readGroups();
-//		}
-//
-//		@Override
-//		public void handleResult(Collection<Group> result) {
-//			groups = result == null ? new ArrayList<Group>() : new ArrayList<Group>(result);
-//			for (Group g : groups) listAdatpter.add(g.getName());
-//			listAdatpter.notifyDataSetChanged();
-//		}
-//		
-//	}
 }

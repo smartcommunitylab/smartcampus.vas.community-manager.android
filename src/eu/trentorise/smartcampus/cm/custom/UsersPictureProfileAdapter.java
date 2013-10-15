@@ -19,9 +19,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,19 +32,18 @@ import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.groups.MyGroupsAddToDialog;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;
-import eu.trentorise.smartcampus.cm.model.CMConstants;
-import eu.trentorise.smartcampus.cm.model.Group;
-import eu.trentorise.smartcampus.cm.model.MinimalProfile;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
+import eu.trentorise.smartcampus.social.model.Group;
 
-public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
+public class UsersPictureProfileAdapter extends ArrayAdapter<PictureProfile> {
 
 	Activity context;
 	int layoutResourceId;
 	private UserOptionsHandler handler;
-	private Set<Long> initGroups;
+	private Set<String> initGroups;
 
-	public UsersMinimalProfileAdapter(Activity context, int layoutResourceId,
-			UserOptionsHandler handler, Set<Long> initGroups) {
+	public UsersPictureProfileAdapter(Activity context, int layoutResourceId,
+			UserOptionsHandler handler, Set<String> initGroups) {
 		super(context, layoutResourceId);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
@@ -59,7 +56,7 @@ public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
 		View row = convertView;
 		DataHolder holder = null;
 
-		MinimalProfile user_mp = (MinimalProfile) getItem(position);
+		PictureProfile user_mp = (PictureProfile) getItem(position);
 
 		if (row == null) {
 			LayoutInflater inflater = context.getLayoutInflater();
@@ -83,13 +80,13 @@ public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
 		}
 
 		holder.user_mp_pic.setImageResource(R.drawable.placeholder);
-		holder.user_mp_pic.setTag(""+user_mp.getUserId());
+		holder.user_mp_pic.setTag(""+user_mp.getId());
 		if (user_mp.getPictureUrl() != null) {
 			new ImageCacheTask(holder.user_mp_pic, R.drawable.placeholder).execute(
-					user_mp.getPictureUrl(), "" + user_mp.getUserId());
+					user_mp.getPictureUrl(), "" + user_mp.getId());
 		}
 
-		if (user_mp.isKnown()) {
+		if (CMHelper.isKnown(user_mp)) {
 			holder.user_mp_more
 					.setOnClickListener(new KnownUserClickListener());
 			holder.user_mp_more.setText(R.string.user_mp_more);
@@ -126,23 +123,7 @@ public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
 	class KnownUserClickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
-			final MinimalProfile user = (MinimalProfile) v.getTag();
-			
-//			Dialog dialog = new PersonOptionsDialog(context,
-//			// handle remove from 'my people'
-//					new DialogHandler<Void>() {
-//						@Override
-//						public void handleSuccess(Void result) {
-//							handler.handleRemoveFromKnown(user);
-//						}
-//					},
-//					// handle assign to groups
-//					new DialogHandler<Collection<Group>>() {
-//						@Override
-//						public void handleSuccess(Collection<Group> result) {
-//							handler.assignUserToGroups(user, result);
-//						}
-//					}, user);
+			final PictureProfile user = (PictureProfile) v.getTag();
 			Dialog dialog = createUserOptionsDialog(user);
 			dialog.show();
 		}
@@ -151,7 +132,7 @@ public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
 	class UnknownUserClickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
-			final MinimalProfile user = (MinimalProfile) v.getTag();
+			final PictureProfile user = (PictureProfile) v.getTag();
 			Dialog dialog = new MyGroupsAddToDialog(context,
 			// handle assign user to groups
 					new DialogHandler<Collection<Group>>() {
@@ -165,47 +146,19 @@ public class UsersMinimalProfileAdapter extends ArrayAdapter<MinimalProfile> {
 	}
 
 	public interface UserOptionsHandler {
-		void handleRemoveFromKnown(MinimalProfile user);
-
-		void assignUserToGroups(MinimalProfile user, Collection<Group> groups);
+		void assignUserToGroups(PictureProfile user, Collection<Group> groups);
 	}
 	
-	private static String[] options = new String[]{
-			"Assign to groups",
-//			"View in My Buddies",
-//			"Contact",
-			"Remove from "+CMConstants.MY_PEOPLE_GROUP_NAME
-	};
-
-	private Dialog createUserOptionsDialog(final MinimalProfile user) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		builder.setTitle(R.string.person_options_title);
-		builder.setItems(options,
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-						case 0:
-							dialog.dismiss();
-							Set<Long> groups = CMHelper.getUserGroups(user);
-							if (initGroups != null)  groups.addAll(initGroups);
-							Dialog myGroupsDlg = new MyGroupsAddToDialog(context,new DialogHandler<Collection<Group>>() {
-								@Override
-								public void handleSuccess(Collection<Group> result) {
-									handler.assignUserToGroups(user, result);
-								}
-							}, groups);
-							myGroupsDlg.show();
-							break;
-						case 1:
-							dialog.dismiss();
-							handler.handleRemoveFromKnown(user);
-							break;
-						}
-					}
-				});
-		return builder.create();
-
+	private Dialog createUserOptionsDialog(final PictureProfile user) {
+		Set<String> groups = CMHelper.getUserGroups(user);
+		if (initGroups != null)  groups.addAll(initGroups);
+		Dialog myGroupsDlg = new MyGroupsAddToDialog(context,new DialogHandler<Collection<Group>>() {
+			@Override
+			public void handleSuccess(Collection<Group> result) {
+				handler.assignUserToGroups(user, result);
+			}
+		}, groups);
+		return myGroupsDlg;
 	} 
 	
 }

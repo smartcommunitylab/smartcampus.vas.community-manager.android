@@ -37,18 +37,18 @@ import com.actionbarsherlock.app.SherlockFragment;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
-import eu.trentorise.smartcampus.cm.custom.UsersMinimalProfileAdapter;
-import eu.trentorise.smartcampus.cm.custom.UsersMinimalProfileAdapter.UserOptionsHandler;
+import eu.trentorise.smartcampus.cm.custom.UsersPictureProfileAdapter;
+import eu.trentorise.smartcampus.cm.custom.UsersPictureProfileAdapter.UserOptionsHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.Group;
-import eu.trentorise.smartcampus.cm.model.MinimalProfile;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.social.model.Group;
 
 public class CampusFragmentPeople extends SherlockFragment {
 
 	private static final String ARG_GROUP = "ARG_GROUP";
-	ArrayAdapter<MinimalProfile> usersListAdapter;
-	List<MinimalProfile> usersList = new ArrayList<MinimalProfile>();
+	ArrayAdapter<PictureProfile> usersListAdapter;
+	List<PictureProfile> usersList = new ArrayList<PictureProfile>();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,36 +68,36 @@ public class CampusFragmentPeople extends SherlockFragment {
 			
 			@Override
 			public void onClick(View v) {
-				new SCAsyncTask<String, Void, List<MinimalProfile>>(getActivity(), new LoadUserProcessor(getActivity())).execute(((EditText)getView().findViewById(R.id.people_search)).getText().toString());
+				new SCAsyncTask<String, Void, List<PictureProfile>>(getActivity(), new LoadUserProcessor(getActivity())).execute(((EditText)getView().findViewById(R.id.people_search)).getText().toString());
 			}
 		});
 		
 		ListView usersListView = (ListView) getView().findViewById(R.id.people_listview);
-		Set<Long> initGroups = null;
+		Set<String> initGroups = null;
 		if (getArguments() != null && getArguments().containsKey(ARG_GROUP)) {
-			initGroups = Collections.singleton(getArguments().getLong(ARG_GROUP));
+			initGroups = Collections.singleton(getArguments().getString(ARG_GROUP));
 		}
-		usersListAdapter = new UsersMinimalProfileAdapter(getActivity(), R.layout.user_mp, new PeopleUserOptionsHandler(), initGroups);
+		usersListAdapter = new UsersPictureProfileAdapter(getActivity(), R.layout.user_mp, new PeopleUserOptionsHandler(), initGroups);
 		usersListView.setAdapter(usersListAdapter);
 		super.onStart();
 	}
 
-	private class LoadUserProcessor extends AbstractAsyncTaskProcessor<String, List<MinimalProfile>> {
+	private class LoadUserProcessor extends AbstractAsyncTaskProcessor<String, List<PictureProfile>> {
 
 		public LoadUserProcessor(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public List<MinimalProfile> performAction(String... params) throws SecurityException, Exception {
+		public List<PictureProfile> performAction(String... params) throws SecurityException, Exception {
 			return CMHelper.getPeople(params[0]);
 		}
 
 		@Override
-		public void handleResult(List<MinimalProfile> result) {
+		public void handleResult(List<PictureProfile> result) {
 			usersListAdapter.clear();
 			if (result != null) {
-				for (MinimalProfile mp : result) usersListAdapter.add(mp);
+				for (PictureProfile mp : result) usersListAdapter.add(mp);
 			}
 			usersListAdapter.notifyDataSetChanged();
 			
@@ -112,18 +112,13 @@ public class CampusFragmentPeople extends SherlockFragment {
 	private class PeopleUserOptionsHandler implements UserOptionsHandler {
 
 		@Override
-		public void handleRemoveFromKnown(MinimalProfile user) {
-			new SCAsyncTask<MinimalProfile, Void, MinimalProfile>(getActivity(), new RemoveFromKnown(getActivity())).execute(user);
-		}
-
-		@Override
-		public void assignUserToGroups(MinimalProfile user, Collection<Group> groups) {
-			new SCAsyncTask<Object, Void, MinimalProfile>(getActivity(), new AssignToGroups(getActivity())).execute(user,groups);
+		public void assignUserToGroups(PictureProfile user, Collection<Group> groups) {
+			new SCAsyncTask<Object, Void, PictureProfile>(getActivity(), new AssignToGroups(getActivity())).execute(user,groups);
 		}
 		
 	}
 
-	private class AssignToGroups extends AbstractAsyncTaskProcessor<Object, MinimalProfile> {
+	private class AssignToGroups extends AbstractAsyncTaskProcessor<Object, PictureProfile> {
 
 		public AssignToGroups(Activity activity) {
 			super(activity);
@@ -131,44 +126,24 @@ public class CampusFragmentPeople extends SherlockFragment {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public MinimalProfile performAction(Object... params) throws SecurityException, Exception {
-			if (CMHelper.assignToGroups((MinimalProfile)params[0], (Collection<Group>)params[1]))  {
-				return (MinimalProfile)params[0];
+		public PictureProfile performAction(Object... params) throws SecurityException, Exception {
+			if (CMHelper.assignToGroups((PictureProfile)params[0], (Collection<Group>)params[1]))  {
+				return (PictureProfile)params[0];
 			}
 			return null;
 		}
 
 		@Override
-		public void handleResult(MinimalProfile result) {
+		public void handleResult(PictureProfile result) {
 			if (result != null) {
-				result.setKnown(true);
 				usersListAdapter.notifyDataSetChanged();
 			}
 		}
 	}
 	
-	private class RemoveFromKnown extends AbstractAsyncTaskProcessor<MinimalProfile, MinimalProfile> {
-
-		public RemoveFromKnown(Activity activity) {
-			super(activity);
-		}
-
-		@Override
-		public MinimalProfile performAction(MinimalProfile... params) throws SecurityException, Exception {
-			CMHelper.removeFromKnown(params[0]);
-			return params[0];
-		}
-
-		@Override
-		public void handleResult(MinimalProfile result) {
-			result.setKnown(false);
-			usersListAdapter.notifyDataSetChanged();
-		}
-	}
-
-	public static Bundle prepareArgs(long socialId) {
+	public static Bundle prepareArgs(String socialId) {
 		Bundle b = new Bundle();
-		b.putLong(ARG_GROUP, socialId);
+		b.putString(ARG_GROUP, socialId);
 		return b;
 	}
 }

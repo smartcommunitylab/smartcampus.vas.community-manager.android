@@ -15,6 +15,11 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.model;
 
+import java.io.Serializable;
+
+import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
+import eu.trentorise.smartcampus.social.model.User;
+
 /**
  * 
  * Minimal information for a user visualization
@@ -22,50 +27,33 @@ package eu.trentorise.smartcampus.cm.model;
  * @author Mirko Perillo
  * 
  */
-public class MinimalProfile extends SCUser {
-
-	private static final long serialVersionUID = -5207522961747636696L;
-	private String name;
-	private String surname;
-	private UserInformation userInformation;
+public class PictureProfile extends User implements Serializable {
+	private static final long serialVersionUID = 2720812823469859081L;
+	
 	private String pictureUrl;
-	private boolean known;
 
-	public MinimalProfile() {
+	public PictureProfile() {
 		super();
 	}
 
-	public MinimalProfile(String name, String surname, String pictureUrl, boolean known) {
-		super();
-		this.name = name;
-		this.surname = surname;
-		this.pictureUrl = pictureUrl;
-		this.known = known;
+	/**
+	 * @param result
+	 */
+	public PictureProfile(BasicProfile result) {
+		setId(result.getUserId());
+		setName(result.getName());
+		setSocialId(result.getSocialId());
+		setSurname(result.getSurname());
 	}
 
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public UserInformation getUserInformation() {
-		return userInformation;
-	}
-
-	public void setUserInformation(UserInformation userInformation) {
-		this.userInformation = userInformation;
+	/**
+	 * @param user
+	 */
+	public PictureProfile(User user) {
+		setId(user.getId());
+		setName(user.getName());
+		setSocialId(user.getSocialId());
+		setSurname(user.getSurname());
 	}
 
 	public String getPictureUrl() {
@@ -76,23 +64,17 @@ public class MinimalProfile extends SCUser {
 		this.pictureUrl = pictureUrl;
 	}
 
-	public boolean isKnown() {
-		return known;
-	}
-
-	public void setKnown(boolean known) {
-		this.known = known;
-	}
-
 	public String fullName() {
-		return name + " "+surname;
+		return getName() + " "+getSurname();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + Long.valueOf(getSocialId()).hashCode();
+		int result = super.hashCode();
+		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+		result = prime * result
+				+ ((getSocialId() == null) ? 0 : getSocialId().hashCode());
 		return result;
 	}
 
@@ -100,17 +82,23 @@ public class MinimalProfile extends SCUser {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MinimalProfile other = (MinimalProfile) obj;
-		if (getSocialId() <= 0) {
-			if (other.getSocialId() > 0) return false;
-		} else if (getSocialId() != other.getSocialId())
+		PictureProfile other = (PictureProfile) obj;
+		if (getId() == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!getId().equals(other.getId()))
+			return false;
+		if (getSocialId() == null) {
+			if (other.getSocialId() != null)
+				return false;
+		} else if (!getSocialId().equals(other.getSocialId()))
 			return false;
 		return true;
 	}
-
+	
 	
 }

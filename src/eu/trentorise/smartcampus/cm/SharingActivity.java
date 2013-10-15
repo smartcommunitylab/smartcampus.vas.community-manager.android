@@ -25,34 +25,34 @@ import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import eu.trentorise.smartcampus.android.common.sharing.ShareEntityObject;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.SourceSelectExpandableListAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
-import eu.trentorise.smartcampus.cm.model.Community;
-import eu.trentorise.smartcampus.cm.model.Group;
-import eu.trentorise.smartcampus.cm.model.MinimalProfile;
-import eu.trentorise.smartcampus.cm.model.Profile;
-import eu.trentorise.smartcampus.cm.model.ShareVisibility;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.model.SimpleSocialContainer;
 import eu.trentorise.smartcampus.cm.model.SocialContainer;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.social.model.Community;
+import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.social.model.ShareVisibility;
+import eu.trentorise.smartcampus.social.model.User;
 
 public class SharingActivity extends BaseCMActivity {
 //	
 	private SourceSelectExpandableListAdapter adapter = null;
-	private ShareEntityObject share = null;
+	private Entity share = null;
 	
 	@Override
-	protected void loadData(String token) {
+	protected void loadData() {
 		new SCAsyncTask<Void, Void, SocialContainer[]>(this, new LoadUserCompleteData(this)).execute();
 	}
 
-	private ShareEntityObject getShare() {
+	private Entity getShare() {
 		if (share == null) {
 			if (getIntent() != null) {
-				share = (ShareEntityObject) getIntent().getSerializableExtra(getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity));
+				share = (Entity) getIntent().getSerializableExtra(getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity));
 			}
 		}
 		return share;
@@ -68,7 +68,7 @@ public class SharingActivity extends BaseCMActivity {
 			finish();
 			return;
 		} else {
-			setTitle("Sharing "+ share.getType() +"'"+share.getTitle()+"'");
+			setTitle("Sharing "+ share.getEntityType() +"'"+share.getTitle()+"'");
 		}
 
 		Button ok = (Button) findViewById(R.id.source_select_ok);
@@ -76,7 +76,7 @@ public class SharingActivity extends BaseCMActivity {
 			@Override
 			public void onClick(View v) {
 				List<Group> groups = adapter.getGroups();
-				List<MinimalProfile> users = adapter.getUsers();
+				List<PictureProfile> users = adapter.getUsers();
 				List<Community> communities = adapter.getCommunities();
 				SimpleSocialContainer userData = new SimpleSocialContainer(); 
 				
@@ -108,7 +108,7 @@ public class SharingActivity extends BaseCMActivity {
 			SocialContainer complete = new SimpleSocialContainer();
 			SocialContainer current = new SimpleSocialContainer();
 			
-			Profile profile = CMHelper.getProfile();
+			PictureProfile profile = CMHelper.getProfile();
 			if (profile == null) profile = CMHelper.retrieveProfile();
 			List<Group> groups = CMHelper.getGroups();
 			
@@ -140,12 +140,15 @@ public class SharingActivity extends BaseCMActivity {
 //				}
 //			}
 			
-			List<MinimalProfile> users = new ArrayList<MinimalProfile>();
-			if (allKnown != null && allKnown.getUsers() != null) users.addAll(allKnown.getUsers());
+			List<PictureProfile> users = new ArrayList<PictureProfile>();
+			if (allKnown != null && allKnown.getUsers() != null) {
+				for (User u : allKnown.getUsers())
+					users.add(CMHelper.getPictureProfile(u.getSocialId()));
+			}
 			complete.setUsers(users);
 			
-			current.setUsers(new ArrayList<MinimalProfile>());
-			for (MinimalProfile mp : complete.getUsers()) {
+			current.setUsers(new ArrayList<PictureProfile>());
+			for (PictureProfile mp : complete.getUsers()) {
 				if (visibility.getUserIds() != null && visibility.getUserIds().contains(mp.getSocialId())) {
 					current.getUsers().add(mp);
 				}
@@ -173,7 +176,7 @@ public class SharingActivity extends BaseCMActivity {
 			super(SharingActivity.this, new AbstractAsyncTaskProcessor<SocialContainer, Void>(SharingActivity.this) {
 				@Override
 				public Void performAction(SocialContainer... params) throws SecurityException, Exception {
-					CMHelper.share(getShare(), params[0]);
+					CMHelper.share(getShare(), params[0].toShareVisibility());
 					return null;
 				}
 

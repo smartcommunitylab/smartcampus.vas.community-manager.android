@@ -20,65 +20,61 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
+import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
-import eu.trentorise.smartcampus.ac.authenticator.AMSCAccessProvider;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
-import eu.trentorise.smartcampus.android.common.Utils;
-import eu.trentorise.smartcampus.android.common.sharing.ShareEntityObject;
-import eu.trentorise.smartcampus.android.common.tagging.SemanticSuggestion;
-import eu.trentorise.smartcampus.android.common.tagging.SuggestionHelper;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
-import eu.trentorise.smartcampus.cm.model.Community;
-import eu.trentorise.smartcampus.cm.model.Group;
-import eu.trentorise.smartcampus.cm.model.GroupAssignment;
-import eu.trentorise.smartcampus.cm.model.MinimalProfile;
-import eu.trentorise.smartcampus.cm.model.Profile;
-import eu.trentorise.smartcampus.cm.model.ProfileSearchFilter;
-import eu.trentorise.smartcampus.cm.model.ShareOperation;
-import eu.trentorise.smartcampus.cm.model.ShareVisibility;
-import eu.trentorise.smartcampus.cm.model.SharedContent;
-import eu.trentorise.smartcampus.cm.model.SocialContainer;
-import eu.trentorise.smartcampus.cm.model.StoreProfile;
-import eu.trentorise.smartcampus.cm.model.Topic;
-import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
-import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
-import eu.trentorise.smartcampus.protocolcarrier.custom.FileRequestParam;
-import eu.trentorise.smartcampus.protocolcarrier.custom.MessageRequest;
-import eu.trentorise.smartcampus.protocolcarrier.custom.MessageResponse;
-import eu.trentorise.smartcampus.protocolcarrier.custom.RequestParam;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
+import eu.trentorise.smartcampus.profileservice.BasicProfileService;
+import eu.trentorise.smartcampus.profileservice.ProfileServiceException;
+import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
-import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.social.model.Communities;
+import eu.trentorise.smartcampus.social.model.Community;
+import eu.trentorise.smartcampus.social.model.Entities;
+import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.social.model.Groups;
+import eu.trentorise.smartcampus.social.model.ShareVisibility;
+import eu.trentorise.smartcampus.social.model.User;
+import eu.trentorise.smartcampus.socialservice.SocialService;
+import eu.trentorise.smartcampus.socialservice.SocialServiceException;
 import eu.trentorise.smartcampus.storage.DataException;
-import eu.trentorise.smartcampus.storage.remote.RemoteStorage;
 
 public class CMHelper {
 
 	private static CMHelper instance = null;
 
-	private static SCAccessProvider accessProvider = new AMSCAccessProvider();
+	private static SCAccessProvider accessProvider = null;
 
 	private Context mContext;
 
-	private static RemoteStorage remoteStorage = null;
+//	private static RemoteStorage remoteStorage = null;
+//	private ProtocolCarrier mProtocolCarrier = null;
 
-	private ProtocolCarrier mProtocolCarrier = null;
-
-	private static Profile profile;
+	private BasicProfileService basicProfileService = null;
+	private SocialService socialService = null;
+	
+	private static PictureProfile profile;
+	private static List<Community> communities = null;
 	private static List<Group> savedGroups;
-	private static Map<Long, MinimalProfile> knownUsers = new HashMap<Long, MinimalProfile>();
+
+	private static Map<String, User> knownUsers = new HashMap<String, User>();
 
 	private Community scCommunity = null;
 	
-	public static void init(Context mContext) {
+//	private static Map<String, String> types = new HashMap<String, String>();
+	
+	public static void init(Context mContext) throws ProtocolException {
 		instance = new CMHelper(mContext);
 	}
 
@@ -86,17 +82,21 @@ public class CMHelper {
 		return instance != null;
 	}
 	
-	public static String getAuthToken() {
-		return accessProvider.readToken(instance.mContext, null);
+	public static String getAuthToken() throws AACException {
+		return accessProvider.readToken(instance.mContext);
 	}
 
-	public static void setProfile(Profile profile) {
+	public static void setProfile(PictureProfile profile) {
 		CMHelper.profile = profile;
-		profile.setCommunities(Collections.singletonList(instance.scCommunity));
+		CMHelper.communities = Collections.singletonList(instance.scCommunity);
 	}
 
-	public static Profile getProfile() {
+	public static PictureProfile getProfile() {
 		return profile;
+	}
+	
+	public static List<Community> getCommunities() {
+		return communities;
 	}
 
 	private static CMHelper getInstance() throws DataException {
@@ -106,165 +106,75 @@ public class CMHelper {
 	}
 
 	public static SCAccessProvider getAccessProvider() {
+		if (accessProvider == null) accessProvider = SCAccessProvider.getInstance(instance.mContext);
 		return accessProvider;
 	}
 
-	protected CMHelper(Context mContext) {
+	protected CMHelper(Context mContext) throws ProtocolException {
 		super();
 		this.mContext = mContext;
-		this.mProtocolCarrier = new ProtocolCarrier(mContext,
-				Constants.APP_TOKEN);
+//		this.mProtocolCarrier = new ProtocolCarrier(mContext,
+//				Constants.APP_TOKEN);
+		String url = GlobalConfig.getAppUrl(mContext);
+		if (!url.endsWith("/")) url += "/";
+		basicProfileService = new BasicProfileService(url+"aac");
+		socialService = new SocialService(url+"core.social");
 	}
-
 
 	public static void destroy() throws DataException {
 	}
 
-	private static RemoteStorage getRemote(Context mContext, String token) throws ProtocolException, DataException {
-		if (remoteStorage == null) {
-			remoteStorage = new RemoteStorage(mContext, Constants.APP_TOKEN);
-		}
-		remoteStorage.setConfig(token, GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE);
-		return remoteStorage;
-	}
+	public static PictureProfile retrieveProfile() throws AACException, SecurityException, ProfileServiceException, DataException, SocialServiceException {
 
-	public static Profile retrieveProfile() throws ConnectionException,
-			ProtocolException, SecurityException, DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE
-						+ "/eu.trentorise.smartcampus.cm.model.Profile/current");
-		request.setMethod(Method.GET);
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		String body = response.getBody();
-		if (body == null || body.trim().length() == 0) {
-			setGroups(new ArrayList<Group>());
-			return null;
-		}
+		BasicProfile profile = getInstance().basicProfileService.getBasicProfile(getAuthToken());
+		checkSCCommunity(profile);
 		setGroups(readGroups());
-		// check that the default SC community is in the user communities and add it otherwise.
-		Profile p = Utils.convertJSONToObject(body, Profile.class);
-		checkSCCommunity(p);
-		return p;
+		return new PictureProfile(profile);
 	}
 
-	public static Profile storeProfile(Profile profile)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE
-						+ "/eu.trentorise.smartcampus.cm.model.StoreProfile");
-		request.setMethod(Method.POST);
-		String json = Utils.convertToJSON(Utils.convertObjectToData(
-				StoreProfile.class, profile));
-		request.setBody(json);
+	public static boolean addToCommunity(String communityId) throws SecurityException, SocialServiceException, DataException, AACException {
+		return getInstance().socialService.addUserToCommunity(getAuthToken(), communityId); 
+	}
 
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		String body = response.getBody();
-		if (body == null || body.trim().length() == 0) {
-			return null;
+	public static boolean removeFromCommunity(String communityId)throws SecurityException, SocialServiceException, DataException, AACException {
+		return getInstance().socialService.removeUserFromCommunity(getAuthToken(), communityId); 
+	}
+	public static List<PictureProfile> getPeople(String search) throws SecurityException, ProfileServiceException, DataException, AACException {
+		List<BasicProfile> profiles = getInstance().basicProfileService.getBasicProfiles(search, getAuthToken());
+		List<PictureProfile> result = new ArrayList<PictureProfile>();
+		for (BasicProfile bp : profiles) {
+			result.add(new PictureProfile(bp));
 		}
-		setGroups(readGroups());
-		profile = Utils.convertJSONToObject(body, Profile.class);
-		setProfile(profile);
-		return profile;
+		return result;
 	}
 
-	public static boolean addToCommunity(String communityId)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE + "/addtocommunity/" + communityId);
-		request.setMethod(Method.PUT);
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		String body = response.getBody();
-		if (body == null || body.trim().length() == 0) {
-			return false;
-		}
-		return Boolean.parseBoolean(body);
-	}
+	private static List<Group> readGroups() throws SecurityException, SocialServiceException, DataException, AACException {
+		Groups groups = getInstance().socialService.getUserGroups(getAuthToken());
+		if (groups == null || groups.getContent() == null) return new ArrayList<Group>();
+		return groups.getContent();
+	}	
 
-	public static boolean removeFromCommunity(String communityId)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE + "/removefromcommunity/" + communityId);
-		request.setMethod(Method.PUT);
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		String body = response.getBody();
-		if (body == null || body.trim().length() == 0) {
-			return false;
-		}
-		return Boolean.parseBoolean(body);
-	}
-
-	public static List<MinimalProfile> getPeople(String search)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		Collection<MinimalProfile> coll = null;
-		if (search != null && search.trim().length() != 0) {
-			ProfileSearchFilter filter = new ProfileSearchFilter();
-			filter.setFullname(search.toLowerCase());
-			coll = getRemote(getInstance().mContext, getAuthToken())
-					.searchObjects(filter, MinimalProfile.class);
+	public static Group saveGroup(Group group) throws SecurityException, SocialServiceException, DataException, AACException  {
+		if (group.getSocialId() != null) {
+			if (getInstance().socialService.updateUserGroup(getAuthToken(), group)) {
+				group = getInstance().socialService.getUserGroup(group.getSocialId(), getAuthToken());
+			} 
 		} else {
-			coll = getRemote(getInstance().mContext, getAuthToken())
-					.getObjects(MinimalProfile.class);
-		}
-		if (coll != null)
-			return new ArrayList<MinimalProfile>(coll);
-		return Collections.emptyList();
-	}
-
-	public static List<Group> readGroups() throws DataException,
-			ConnectionException, ProtocolException, SecurityException {
-		Collection<Group> groups = null;
-		groups = getRemote(instance.mContext, getAuthToken()).getObjects(
-				Group.class);
-
-		if (groups != null) {
-			for (Group g : groups) {
-				if (g.getUsers() != null) {
-					for (MinimalProfile mp : g.getUsers()) {
-						mp.setKnown(true);
-					}
-				}
-			}
-		}
-		return groups == null ? new ArrayList<Group>() : new ArrayList<Group>(
-				groups);
-	}
-
-	public static Group saveGroup(Group group) throws DataException,
-			ConnectionException, ProtocolException, SecurityException {
-		Group newGroup = group;
-		if (group.getId() != null) {
-			getRemote(instance.mContext, getAuthToken()).update(group, false);
-		} else {
-			newGroup = getRemote(instance.mContext, getAuthToken()).create(
-					group);
+			group = getInstance().socialService.createUserGroup(getAuthToken(), group.getName());
 		}
 		setGroups(readGroups());
-		return newGroup;
+		return group;
 	}
 
-	public static void deleteGroup(Group group) throws DataException,
-			ConnectionException, ProtocolException, SecurityException {
-		getRemote(instance.mContext, getAuthToken()).delete(group.getId(),
-				Group.class);
+	public static void deleteGroup(Group group) throws SocialServiceException, DataException, AACException {
+		getInstance().socialService.deleteUserGroup(getAuthToken(), group.getSocialId());
 		setGroups(readGroups());
 	}
 
-	public static Collection<Community> getCommunities() throws DataException,
-			ConnectionException, ProtocolException, SecurityException {
-		Collection<Community> collection = null;
-		collection = getRemote(instance.mContext, getAuthToken()).getObjects(
-				Community.class);
-
-		return collection;
+	public static Collection<Community> fetchCommunities() throws SecurityException, SocialServiceException, DataException, AACException  {
+		Communities comms = getInstance().socialService.getCommunities(getAuthToken());
+		if (comms == null || comms.getContent() == null) return Collections.emptyList();
+		return comms.getContent();
 	}
 
 	public static void endAppFailure(Activity activity, int id) {
@@ -278,116 +188,105 @@ public class CMHelper {
 				Toast.LENGTH_LONG).show();
 	}
 
-	public static MinimalProfile removeFromKnown(MinimalProfile user)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE + "/defaultgroup/" + user.getSocialId());
-		request.setMethod(Method.DELETE);
-		getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN,
-				getAuthToken());
-		setGroups(readGroups());
+	public static PictureProfile removeFromKnown(PictureProfile user)
+//			throws ConnectionException, ProtocolException, SecurityException,
+//			DataException 
+	{
+//		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
+//				Constants.SERVICE + "/defaultgroup/" + user.getSocialId());
+//		request.setMethod(Method.DELETE);
+//		getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN,
+//				getAuthToken());
+//		setGroups(readGroups());
 		return user;
 	}
 
-	public static void uploadPictureProfile(Profile profile, byte[] content)
+	public static void uploadPictureProfile(PictureProfile profile, byte[] content)
 			throws ConnectionException, ProtocolException, SecurityException,
 			DataException {
-		if (profile.getPictureUrl() != null) {
-			String fid = profile.getPictureUrl().substring(
-					profile.getPictureUrl().lastIndexOf('/') + 1);
-			try {
-				replaceFile(Long.parseLong(fid), content);
-			} catch (NumberFormatException e) {
-				Log.e("CMHelper", "error parsing resource url");
-				throw new DataException();
-			}
-		} else {
-			String resourceUrl = updloadFile(content);
-			profile.setPictureUrl(resourceUrl);
-			storeProfile(profile);
+//		if (profile.getPictureUrl() != null) {
+//			String fid = profile.getPictureUrl().substring(
+//					profile.getPictureUrl().lastIndexOf('/') + 1);
+//			try {
+//				replaceFile(Long.parseLong(fid), content);
+//			} catch (NumberFormatException e) {
+//				Log.e("CMHelper", "error parsing resource url");
+//				throw new DataException();
+//			}
+//		} else {
+//			String resourceUrl = updloadFile(content);
+//			profile.setPictureUrl(resourceUrl);
+//			storeProfile(profile);
 		}
-	}
+//	}
 
-	public static String updloadFile(byte[] content)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.FILE_SERVICE + "/");
-		request.setMethod(Method.POST);
-		FileRequestParam param = new FileRequestParam();
-		param.setContent(content);
-		request.setRequestParams(Collections.<RequestParam>singletonList(param));
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
+//	public static String updloadFile(byte[] content)
+//			throws ConnectionException, ProtocolException, SecurityException,
+//			DataException {
+//		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
+//				Constants.FILE_SERVICE + "/");
+//		request.setMethod(Method.POST);
+//		FileRequestParam param = new FileRequestParam();
+//		param.setContent(content);
+//		request.setRequestParams(Collections.<RequestParam>singletonList(param));
+//		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
+//				request, Constants.APP_TOKEN, getAuthToken());
+//
+//		String resourceUrl = GlobalConfig.getAppUrl(getInstance().mContext) + "/" + Constants.FILE_SERVICE
+//				+ "/" + Long.parseLong(response.getBody());
+//
+//		return resourceUrl;
+//
+//	}
 
-		String resourceUrl = GlobalConfig.getAppUrl(getInstance().mContext) + "/" + Constants.FILE_SERVICE
-				+ "/" + Long.parseLong(response.getBody());
-
-		return resourceUrl;
-
-	}
-
-	public static boolean replaceFile(long fid, byte[] content)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.FILE_SERVICE + "/" + fid);
-		request.setMethod(Method.POST);
-
-		// set requestFile true to get the byte array of file requested
-		FileRequestParam param = new FileRequestParam();
-		param.setContent(content);
-		request.setRequestParams(Collections.<RequestParam>singletonList(param));
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-
-		return Boolean.parseBoolean(response.getBody());
-
-	}
+//	public static boolean replaceFile(long fid, byte[] content)
+//			throws ConnectionException, ProtocolException, SecurityException,
+//			DataException {
+//		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
+//				Constants.FILE_SERVICE + "/" + fid);
+//		request.setMethod(Method.POST);
+//
+//		// set requestFile true to get the byte array of file requested
+//		FileRequestParam param = new FileRequestParam();
+//		param.setContent(content);
+//		request.setRequestParams(Collections.<RequestParam>singletonList(param));
+//		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
+//				request, Constants.APP_TOKEN, getAuthToken());
+//
+//		return Boolean.parseBoolean(response.getBody());
+//
+//	}
 
 	public static byte[] downloadFile(long fid) throws ConnectionException,
 			ProtocolException, SecurityException, DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE + "/file/" + fid);
-		request.setMethod(Method.GET);
-
-		// set requestFile true to get the byte array of file requested
-		request.setRequestFile(true);
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-
-		return response.getFileContent();
-
+//		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
+//				Constants.SERVICE + "/file/" + fid);
+//		request.setMethod(Method.GET);
+//
+//		// set requestFile true to get the byte array of file requested
+//		request.setRequestFile(true);
+//		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
+//				request, Constants.APP_TOKEN, getAuthToken());
+//
+//		return response.getFileContent();
+//
+	return null;
 	}
 
-	public static boolean assignToGroups(MinimalProfile user,
-			Collection<Group> groups) throws ConnectionException,
-			ProtocolException, SecurityException, DataException {
-		GroupAssignment ga = new GroupAssignment();
-		ga.setUserId(user.getSocialId());
-		ga.setGroupIds(new ArrayList<Long>());
-		if (groups != null) {
-			for (Group g : groups) {
-				if (g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID)
-					continue;
-				ga.getGroupIds().add(g.getSocialId());
-			}
+	public static boolean assignToGroups(User user, Collection<Group> groups) throws SecurityException, SocialServiceException, DataException, AACException {
+		List<String> users = Collections.singletonList(user.getSocialId());
+		if (groups == null) groups = Collections.emptyList();
+		for (Group g : savedGroups) {
+			if (g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID)) continue;
+			if (groups.contains(g)) getInstance().socialService.addUsersToGroup(g.getSocialId(), users, getAuthToken());
+			else getInstance().socialService.removeUsersFromGroup(g.getSocialId(), users, getAuthToken());
 		}
-
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE + "/assigntogroup");
-		request.setMethod(Method.PUT);
-		request.setBody(Utils.convertToJSON(ga));
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		String body = response.getBody();
+		if (groups.isEmpty()) {
+			getInstance().socialService.removeUsersFromGroup(CMConstants.MY_PEOPLE_GROUP_ID, users, getAuthToken());
+		}
+		
 		setGroups(readGroups());
-		if (body == null || body.trim().length() == 0) {
-			return false;
-		}
-		return Boolean.parseBoolean(body);
-
+		return true;
 	}
 
 	public static List<Group> getGroups() {
@@ -395,146 +294,78 @@ public class CMHelper {
 	}
 
 	private static void setGroups(List<Group> groups) {
-		savedGroups = groups;
+		savedGroups = new ArrayList<Group>();
+		knownUsers.clear();
 		for (Group g : groups) {
-			if (g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID) {
+			if (g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID)) {
 				if (g.getUsers() != null) {
-					for (MinimalProfile mp : g.getUsers()) {
+					for (User mp : g.getUsers()) {
 						knownUsers.put(mp.getSocialId(), mp);
 					}
 				}
-				break;
+			} else {
+				savedGroups.add(g);
 			}
 		}
 	}
 
-	public static MinimalProfile getKnownUser(Long id) {
-		return knownUsers.get(id);
+	public static List<Entity> readSharedObjects(ShareVisibility shareVisibility, int position, int size, String type) throws SecurityException, SocialServiceException, DataException, AACException {
+		Entities entities = getInstance().socialService.getEntitiesSharedWithUser(getAuthToken(), shareVisibility, position, size, CMConstants.getTypeIdByType(type));
+		if (entities == null || entities.getContent() == null) return Collections.emptyList();
+		else checkTypes(entities);
+		return entities.getContent();
 	}
 
-	public static List<Topic> getTopics() throws DataException,
-			ConnectionException, ProtocolException, SecurityException {
-		Collection<Topic> coll = getRemote(instance.mContext, getAuthToken())
-				.getObjects(Topic.class);
-		if (coll != null)
-			return new ArrayList<Topic>(coll);
-		return Collections.emptyList();
+	public static List<Entity> readMyObjects(int position, int size, String type) throws SecurityException, SocialServiceException, DataException, AACException  {
+		Entities entities = getInstance().socialService.getUserEntities(getAuthToken(), position, size, CMConstants.getTypeIdByType(type));
+		if (entities == null || entities.getContent() == null) return Collections.emptyList();
+		else checkTypes(entities);
+		return entities.getContent();
 	}
 
-	public static Topic saveTopic(Topic topic) throws DataException,
-			ConnectionException, ProtocolException, SecurityException {
-		List<String> old = topic.getContentTypes();
-		Topic result = null;
-		if (topic.getId() != null) {
-			result = topic;
-			getRemote(instance.mContext, getAuthToken()).update(topic, false);
-		} else {
-			result = getRemote(instance.mContext, getAuthToken()).create(topic);
-		}
-		result.setContentTypes(old);
-		return result;
-	}
-
-	public static boolean removeTopic(String id) throws DataException,
-			ConnectionException, ProtocolException, SecurityException {
-		getRemote(instance.mContext, getAuthToken()).delete(id, Topic.class);
-		return true;
-	}
-
-	public static List<SemanticSuggestion> getSuggestions(CharSequence suggest)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		return SuggestionHelper.getSuggestions(suggest, getInstance().mContext,
-				GlobalConfig.getAppUrl(getInstance().mContext), getAuthToken(), Constants.APP_TOKEN);
-	}
-
-	public static List<SharedContent> readSharedObjects(
-			ShareVisibility shareVisibility, int position, int size, String type)
-			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE + "/sharedcontent");
-		request.setMethod(Method.POST);
-		request.setBody(Utils.convertToJSON(shareVisibility));
-		request.setQuery("position=" + position + "&size=" + size + "&type="
-				+ (type == null ? "" : type));
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		String body = response.getBody();
-		if (body == null || body.trim().length() == 0) {
-			return Collections.emptyList();
-		}
-		return Utils.convertJSONToObjects(body, SharedContent.class);
-	}
-
-	public static List<SharedContent> readMyObjects(int position, int size,
-			String type) throws ConnectionException, ProtocolException,
-			SecurityException, DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE + "/content");
-		request.setMethod(Method.GET);
-		request.setQuery("position=" + position + "&size=" + size + "&type="
-				+ (type == null ? "" : type));
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		String body = response.getBody();
-		if (body == null || body.trim().length() == 0) {
-			return Collections.emptyList();
-		}
-		return Utils.convertJSONToObjects(body, SharedContent.class);
-	}
-
-	public static void share(ShareEntityObject share, SocialContainer socialContainer) throws ConnectionException, ProtocolException, SecurityException, DataException {
-		ShareOperation op = new ShareOperation();
-		op.setEntityId(share.getEntityId());
-		op.setVisibility(new ShareVisibility());
-		op.getVisibility().setAllUsers(socialContainer.isAllUsers());
-		if (socialContainer.getGroups() != null) {
-			List<Long> groups = new ArrayList<Long>();
-			for (Group g : socialContainer.getGroups()) {
-				if (g.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) {
-					op.getVisibility().setAllKnownUsers(true);
-				} else {
-					groups.add(g.getSocialId());
-				}
+	/**
+	 * @param entities
+	 * @throws AACException 
+	 * @throws DataException 
+	 * @throws SocialServiceException 
+	 * @throws SecurityException 
+	 */
+	private static void checkTypes(Entities entities) throws SecurityException, SocialServiceException, DataException, AACException {
+		for (Iterator<Entity> iterator = entities.getContent().iterator(); iterator.hasNext();) {
+			Entity e = iterator.next();
+//			if (!types.containsKey(e.getEntityType())) {
+//				EntityType et = getInstance().socialService.getEntityTypeById(getAuthToken(), e.getEntityType());
+//				if (et != null) {
+//					types.put(et.getId(), et.getName());
+//					types.put(et.getName(), et.getId());
+//				}
+//			}
+			if (CMConstants.getTypeByTypeId(e.getEntityType()) == null) {
+				iterator.remove();
 			}
-			op.getVisibility().setGroupIds(groups);
 		}
-		if (socialContainer.getCommunities() != null) {
-			List<Long> communityIds = new ArrayList<Long>();
-			for (Community c : socialContainer.getCommunities()) {
-				communityIds.add(c.getSocialId());
-			}
-			op.getVisibility().setCommunityIds(communityIds);
-		}
-		if (socialContainer.getUsers() != null) {
-			List<Long> userIds = new ArrayList<Long>();
-			for (MinimalProfile c : socialContainer.getUsers()) {
-				userIds.add(c.getSocialId());
-			}
-			op.getVisibility().setUserIds(userIds);
-		}
-		
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE + "/share");
-		request.setMethod(Method.POST);
-		request.setBody(Utils.convertToJSON(op));
-		getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+	}
+
+	public static void share(Entity share, ShareVisibility vis) throws SecurityException, SocialServiceException, DataException, AACException {
+		getInstance().socialService.shareUserEntity(getAuthToken(), share.getEntityId(), vis);
 	}
 
 	/**
 	 * check the presence of only the SC community in the user communities' list and add it if not present.
 	 * @param p 
 	 * @throws DataException
+	 * @throws AACException 
+	 * @throws SocialServiceException 
 	 * @throws ConnectionException
 	 * @throws ProtocolException
 	 * @throws SecurityException
 	 */
-	private static void checkSCCommunity(Profile p) throws DataException, ConnectionException, ProtocolException, SecurityException {
-		if (p.getCommunities() != null && p.getCommunities().size() > 0) {
-			getInstance().scCommunity = p.getCommunities().get(0);
+	private static void checkSCCommunity(BasicProfile p) throws DataException, SecurityException, SocialServiceException, AACException  {
+		if (getCommunities() != null && getCommunities().size() > 0) {
+			getInstance().scCommunity = getCommunities().get(0);
 		}
 		else {
-			Collection<Community> list = getCommunities();
+			Collection<Community> list = fetchCommunities();
 			if (list != null && ! list.isEmpty()) getInstance().scCommunity = list.iterator().next();
 			addToCommunity(getInstance().scCommunity.getId());
 		}
@@ -549,24 +380,48 @@ public class CMHelper {
 		}
 	}
 
-	public static ShareVisibility getEntitySharing(Long entityId) throws ConnectionException, ProtocolException, SecurityException, DataException {
-		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE + "/assignments/"+entityId);
-		request.setMethod(Method.GET);
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
-		String body = response.getBody();
-		if (body == null || body.trim().length() == 0) {
-			return null;
-		}
-		return Utils.convertJSONToObject(body, ShareVisibility.class);
+	public static ShareVisibility getEntitySharing(String entityId) throws SecurityException, SocialServiceException, DataException, AACException {
+		Entity entity = getInstance().socialService.getUserEntity(getAuthToken(), entityId);
+		if (entity == null) return null;
+		return entity.getVisibility();
 	}
 
-	public static Set<Long> getUserGroups(MinimalProfile mp) {
-		Set<Long> res = new HashSet<Long>();
+	public static Set<String> getUserGroups(User mp) {
+		Set<String> res = new HashSet<String>();
 		if (getGroups() != null) {
 			for (Group g : getGroups()) {
-				if (g.getUsers() != null && g.getUsers().contains(mp)) res.add(g.getSocialId());
+				if (g.getUsers() != null) {
+					for (User u : g.getUsers()) {
+						if (u.getSocialId().equals(mp.getSocialId())) res.add(g.getSocialId());
+					}
+				}	
 			}
 		}
 		return res;
+	}
+
+	/**
+	 * @param socialId
+	 * @return
+	 */
+	public static PictureProfile getPictureProfile(String socialId) {
+		return new PictureProfile(knownUsers.get(socialId));
+	}
+
+	/**
+	 * @param user_mp
+	 * @return
+	 */
+	public static boolean isKnown(PictureProfile user_mp) {
+		return knownUsers.containsKey(user_mp.getSocialId());
+	}
+
+	/**
+	 * @param entityType
+	 * @return
+	 */
+	public static String getEntityTypeName(String entityType) {
+//		return types.get(entityType);
+		return CMConstants.getTypeByTypeId(entityType);
 	}
 }

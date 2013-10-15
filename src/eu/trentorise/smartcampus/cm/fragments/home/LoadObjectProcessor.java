@@ -22,11 +22,11 @@ import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.home.LoadObjectProcessor.ContentRequest;
-import eu.trentorise.smartcampus.cm.model.ShareVisibility;
-import eu.trentorise.smartcampus.cm.model.SharedContent;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.social.model.ShareVisibility;
 
-public class LoadObjectProcessor extends AbstractAsyncTaskProcessor<ContentRequest, List<SharedContent>> {
+public class LoadObjectProcessor extends AbstractAsyncTaskProcessor<ContentRequest, List<Entity>> {
 
 	private SharedContentsAdapter adapter;
 
@@ -36,14 +36,14 @@ public class LoadObjectProcessor extends AbstractAsyncTaskProcessor<ContentReque
 	}
 
 	@Override
-	public List<SharedContent> performAction(ContentRequest... params) throws SecurityException, Exception {
+	public List<Entity> performAction(ContentRequest... params) throws SecurityException, Exception {
 		return CMHelper.readSharedObjects(params[0].visibility, params[0].position, params[0].size, params[0].type);
 	}
 
 	@Override
-	public void handleResult(List<SharedContent> result) {
+	public void handleResult(List<Entity> result) {
 		if (result != null) {
-			for (SharedContent shared: result) {
+			for (Entity shared: result) {
 				adapter.add(shared);
 			}
 		}

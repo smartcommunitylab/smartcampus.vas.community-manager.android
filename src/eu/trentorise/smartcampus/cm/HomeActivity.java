@@ -15,27 +15,22 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm;
 
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import eu.trentorise.smartcampus.cm.R;
-import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.BackListener;
 import eu.trentorise.smartcampus.cm.fragments.MainFragment;
-import eu.trentorise.smartcampus.cm.fragments.profile.EditProfileActivity;
-import eu.trentorise.smartcampus.cm.model.Profile;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class HomeActivity extends BaseCMActivity {
 
 	@Override
-	protected void loadData(String token) {
-		new SCAsyncTask<Void, Void, Profile>(this, new LoadProfileProcessor()).execute();
+	protected void loadData() {
+		new SCAsyncTask<Void, Void, PictureProfile>(this, new LoadProfileProcessor()).execute();
 	}
 
 	@Override
@@ -66,31 +61,23 @@ public class HomeActivity extends BaseCMActivity {
 		super.onBackPressed();
 	}
 
-	private void startApp(Profile profile) {
+	private void startApp(PictureProfile profile) {
 		CMHelper.setProfile(profile);
 		setUpContent();
 	}
 
 	private class LoadProfileProcessor implements
-			SCAsyncTaskProcessor<Void, Profile> {
+			SCAsyncTaskProcessor<Void, PictureProfile> {
 
 		@Override
-		public Profile performAction(Void... params) throws SecurityException,
+		public PictureProfile performAction(Void... params) throws SecurityException,
 				Exception {
 			return CMHelper.retrieveProfile();
 		}
 
 		@Override
-		public void handleResult(Profile result) {
-			Profile profile = result;
-			if (profile == null) {
-				Intent intent = new Intent(HomeActivity.this,
-						EditProfileActivity.class);
-				startActivityForResult(intent,
-						Constants.EDIT_PROFILE_ACTIVITY_REQUEST_CREATE);
-			} else {
-				startApp(result);
-			}
+		public void handleResult(PictureProfile result) {
+			startApp(result);
 		}
 
 		@Override
@@ -108,15 +95,7 @@ public class HomeActivity extends BaseCMActivity {
 		
 		@Override
 		public void handleSecurityError() {
-			SCAccessProvider accessProvider = CMHelper.getAccessProvider();
-			try {
-				accessProvider.invalidateToken(HomeActivity.this, null);
-				accessProvider.getAuthToken(HomeActivity.this, null);
-			} catch (Exception e) {
-				Log.e(HomeActivity.class.getName(), e.getMessage());
-				CMHelper.endAppFailure(HomeActivity.this,
-						R.string.app_failure_security);
-			}
+			CMHelper.endAppFailure(HomeActivity.this, R.string.app_failure_security);
 		}
 
 	}

@@ -19,22 +19,21 @@ import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.view.ContextMenu;
-import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
-import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
-import eu.trentorise.smartcampus.android.common.follow.FollowHelper;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.CustomSpinnerAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.Group;
-import eu.trentorise.smartcampus.cm.model.ShareVisibility;
-import eu.trentorise.smartcampus.cm.model.SharedContent;
+import eu.trentorise.smartcampus.cm.model.CMConstants;
+import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.social.model.ShareVisibility;
 
 public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 
@@ -95,7 +94,7 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 	@Override
 	protected void populateContentRequest() {
 		ShareVisibility vis = new ShareVisibility();
-		vis.setGroupIds(new ArrayList<Long>());
+		vis.setGroupIds(new ArrayList<String>());
 		if (CMHelper.getGroups() != null && !CMHelper.getGroups().isEmpty()) {
 			if (myGroupsSpinner != null && !myGroupsSpinner.getAdapter().isEmpty()) {
 				selected = CMHelper.getGroups().get(myGroupsSpinner.getSelectedItemPosition());
@@ -108,14 +107,10 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 	}
 
 	@Override
-	protected boolean handleMenuItem(SharedContent content, int itemId) {
+	protected boolean handleMenuItem(Entity content, int itemId) {
 		switch (itemId) {
 		case MENU_ITEM_APP:
-			ViewHelper.viewInApp(getActivity(), content.getEntityType(), content.getEntityId(), new Bundle());
-			return true;
-		case MENU_ITEM_TOPIC:
-			FollowEntityObject obj = new FollowEntityObject(content.getEntityId(), content.getTitle(), content.getEntityType());
-			FollowHelper.follow(getActivity(), obj);
+			ViewHelper.viewInApp(getActivity(), CMConstants.getTypeByTypeId(content.getEntityType()), content.getEntityId(), new Bundle());
 			return true;
 		case MENU_ITEM_AUTHOR:
 			Toast.makeText(getActivity(), "Showing author: "+content.getOwnerId(), Toast.LENGTH_SHORT).show();
@@ -128,8 +123,6 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 	@Override
 	protected void populateMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
 		menu.add(0, MENU_ITEM_APP, 0, R.string.shared_content_menu_app);
-//		menu.add(0, MENU_ITEM_AUTHOR, 0, R.string.shared_content_menu_author);
-		menu.add(0, MENU_ITEM_TOPIC, 0, R.string.shared_content_menu_topic);
 	}
 
 }

@@ -32,10 +32,10 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.cm.R;
-import eu.trentorise.smartcampus.cm.model.Community;
-import eu.trentorise.smartcampus.cm.model.Group;
-import eu.trentorise.smartcampus.cm.model.MinimalProfile;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.model.SocialContainer;
+import eu.trentorise.smartcampus.social.model.Community;
+import eu.trentorise.smartcampus.social.model.Group;
 
 public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter {
 	private static final String GROUP_GROUPS = "Groups";
@@ -63,8 +63,8 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 		for (Integer item : checked[0]) list.add(completeData.getGroups().get(item));
 		return list;
 	}
-	public List<MinimalProfile> getUsers() {
-		List<MinimalProfile> list = new ArrayList<MinimalProfile>();
+	public List<PictureProfile> getUsers() {
+		List<PictureProfile> list = new ArrayList<PictureProfile>();
 		for (Integer item : checked[1]) list.add(completeData.getUsers().get(item));
 		return list;
 	}
@@ -77,13 +77,13 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 			if (userData.getGroups() != null && completeData.getGroups() != null) {
 				for (int i = 0; i < completeData.getGroups().size(); i++) {
 					for (Group g : userData.getGroups()) {
-						if (completeData.getGroups().get(i).getId().equals(g.getId())) checked[0].add(i);
+						if (completeData.getGroups().get(i).getSocialId().equals(g.getSocialId())) checked[0].add(i);
 					}
 				} 
 			}
 			if (userData.getUsers() != null && completeData.getUsers() != null) {
 				for (int i = 0; i < completeData.getUsers().size(); i++) {
-					for (MinimalProfile p : userData.getUsers()) {
+					for (PictureProfile p : userData.getUsers()) {
 						if (completeData.getUsers().get(i).getId().equals(p.getId())) checked[1].add(i);
 					}
 				} 

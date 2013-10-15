@@ -23,10 +23,9 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.Profile;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 
 public abstract class BaseCMActivity extends SherlockFragmentActivity {
 
@@ -41,19 +40,17 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 	private void initDataManagement(Bundle savedInstanceState) {
 		try {
 			CMHelper.init(getApplicationContext());
-			String token = CMHelper.getAccessProvider()
-					.getAuthToken(this, null);
-			if (token != null) {
-				initData(token);
+			if (!CMHelper.getAccessProvider().login(this, null)) {
+				initData();
 			}
 		} catch (Exception e) {
 			CMHelper.endAppFailure(this, R.string.app_failure_setup);
 		}
 	}
 
-	protected boolean initData(String token) {
+	protected boolean initData() {
 		try {
-			loadData(token);
+			loadData();
 		} catch (Exception e1) {
 			CMHelper.endAppFailure(this, R.string.app_failure_setup);
 			return false;
@@ -79,7 +76,7 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 		if (requestCode == Constants.EDIT_PROFILE_ACTIVITY_REQUEST_CREATE) {
 			if (Constants.EDIT_PROFILE_ACTIVITY_RESULT_OK == resultCode
 					&& data.getSerializableExtra(Constants.EDIT_PROFILE_PROFILE_EXTRA) != null) {
-				final Profile profile = (Profile) data
+				final PictureProfile profile = (PictureProfile) data
 						.getSerializableExtra(Constants.EDIT_PROFILE_PROFILE_EXTRA);
 				CMHelper.setProfile(profile);
 			} else if (Constants.EDIT_PROFILE_ACTIVITY_RESULT_CANCELLED == resultCode
@@ -98,10 +95,10 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 				if (token == null) {
 					CMHelper.endAppFailure(this, R.string.app_failure_security);
 				} else {
-					initData(token);
+					initData();
 				}
 			} else if (resultCode == RESULT_CANCELED) {
-				CMHelper.endAppFailure(this, eu.trentorise.smartcampus.ac.R.string.token_required);
+				CMHelper.endAppFailure(this, R.string.token_required);
 			}
 		}
 	}
@@ -115,6 +112,6 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 			getSupportActionBar().setDisplayShowTitleEnabled(false);
 		}
 	}
-	protected abstract void loadData(String token);
+	protected abstract void loadData();
 	protected abstract void setUpContent();
 }

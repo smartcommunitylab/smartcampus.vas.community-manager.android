@@ -24,12 +24,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.cm.R;
+import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.model.CMConstants.ObjectFilterDescriptor;
-import eu.trentorise.smartcampus.cm.model.SharedContent;
+import eu.trentorise.smartcampus.social.model.Concept;
+import eu.trentorise.smartcampus.social.model.Entity;
 
-public class SharedContentsAdapter extends ArrayAdapter<SharedContent> {
+public class SharedContentsAdapter extends ArrayAdapter<Entity> {
 
 	Context context;
 
@@ -60,7 +63,7 @@ public class SharedContentsAdapter extends ArrayAdapter<SharedContent> {
 			holder = (DataHolder) row.getTag();
 		}
 
-		SharedContent content = getItem(position);
+		Entity content = getItem(position);
 //		Content content = contentsList.get(position);
 		
 //		for (String s : content.imagesLinks) {
@@ -77,7 +80,8 @@ public class SharedContentsAdapter extends ArrayAdapter<SharedContent> {
 //			holder.content_images.addView(imageView);
 //			// Log.e(this.getClass().getSimpleName(), s + " DONE");
 //		}
-		ObjectFilterDescriptor descr = CMConstants.getObjectDescriptor(content.getEntityType());
+		String typeName = CMHelper.getEntityTypeName(content.getEntityType());
+		ObjectFilterDescriptor descr = CMConstants.getObjectDescriptor(typeName);
 		if (descr != null) {
 			holder.content_type_icon.setImageResource(descr.object_drawable);
 			holder.content_type_icon.setContentDescription(context.getString(descr.contentDescription));
@@ -85,8 +89,8 @@ public class SharedContentsAdapter extends ArrayAdapter<SharedContent> {
 		holder.content_title.setText(content.getTitle());
 		String tags = "";
 		if (content.getTags() != null) {
-			for (String s : content.getTags()) {
-				tags += s + " ";
+			for (Concept s : content.getTags()) {
+				tags += s.getName() + " ";
 			}
 			holder.content_tags.setText(tags);
 		} else {
@@ -101,13 +105,15 @@ public class SharedContentsAdapter extends ArrayAdapter<SharedContent> {
 
 		if (content.getUser() != null) {
 			if (holder.content_type_user != null) {
-				holder.content_type_user.setTag("" + content.getUser().getUserId());
+				holder.content_type_user.setTag("" + content.getUser().getId());
 			}
 
-			holder.content_user_name.setText(content.getUser().fullName());
-			if (content.getUser().getPictureUrl() != null) {
+			PictureProfile pp = CMHelper.getPictureProfile(content.getOwnerId());
+			holder.content_user_name.setText(pp.fullName());
+			
+			if (pp.getPictureUrl() != null) {
 				new ImageCacheTask(holder.content_type_user, R.drawable.placeholder_small).execute(
-						content.getUser().getPictureUrl(), "" + content.getUser().getUserId());
+						pp.getPictureUrl(), "" + content.getUser().getId());
 			} else {
 				holder.content_type_user.setImageResource(R.drawable.placeholder_small);
 			}

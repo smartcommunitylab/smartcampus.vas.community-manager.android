@@ -43,18 +43,19 @@ import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.CustomSpinnerAdapter;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
-import eu.trentorise.smartcampus.cm.custom.UsersMinimalProfileAdapter;
-import eu.trentorise.smartcampus.cm.custom.UsersMinimalProfileAdapter.UserOptionsHandler;
+import eu.trentorise.smartcampus.cm.custom.UsersPictureProfileAdapter;
+import eu.trentorise.smartcampus.cm.custom.UsersPictureProfileAdapter.UserOptionsHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.campus.CampusFragmentPeople;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
-import eu.trentorise.smartcampus.cm.model.Group;
-import eu.trentorise.smartcampus.cm.model.MinimalProfile;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.social.model.User;
 
 public class MyGroupsFragment extends SherlockFragment {
 
-	private ArrayAdapter<MinimalProfile> usersListAdapter;
+	private ArrayAdapter<PictureProfile> usersListAdapter;
 	private Spinner myGroupsSpinner;
 
 	private ArrayAdapter<String> dataAdapter;
@@ -94,7 +95,7 @@ public class MyGroupsFragment extends SherlockFragment {
 		myGroupsSpinner.setAdapter(dataAdapter);
 		
 		ListView usersListView = (ListView) getView().findViewById(R.id.users_listview);
-		usersListAdapter = new UsersMinimalProfileAdapter(getSherlockActivity(), R.layout.user_mp, new MyGroupsUserOptionsHandler(), null);
+		usersListAdapter = new UsersPictureProfileAdapter(getSherlockActivity(), R.layout.user_mp, new MyGroupsUserOptionsHandler(), null);
 		usersListView.setAdapter(usersListAdapter);
 
 		update(CMHelper.getGroups());
@@ -221,7 +222,6 @@ public class MyGroupsFragment extends SherlockFragment {
 		@Override
 		public Collection<Group> performAction(String... params) throws SecurityException, Exception {
 			Group newGroup = new Group();
-			newGroup.setId(group.getId());
 			newGroup.setSocialId(group.getSocialId());
 			newGroup.setName(params[0]);
 			newGroup.setUsers(group.getUsers());
@@ -273,12 +273,14 @@ public class MyGroupsFragment extends SherlockFragment {
 	private void updateUserList(Group selected) {
 		if (selected == null) {
 			myGroupsSpinner.setSelection(0);
-			selected = CMHelper.getGroups().get(0);
+			if (CMHelper.getGroups().size() > 0) {
+				selected = CMHelper.getGroups().get(0);
+			}
 		}
 		usersListAdapter.clear();
 		if (selected != null && selected.getUsers() != null) {
-			for (MinimalProfile user : selected.getUsers()) {
-				usersListAdapter.add(user);
+			for (User user : selected.getUsers()) {
+				usersListAdapter.add(CMHelper.getPictureProfile(user.getSocialId()));
 			}
 			usersListAdapter.notifyDataSetChanged();
 		}
@@ -286,39 +288,13 @@ public class MyGroupsFragment extends SherlockFragment {
 	}
 
 	private class MyGroupsUserOptionsHandler implements UserOptionsHandler {
-
 		@Override
-		public void handleRemoveFromKnown(MinimalProfile user) {
-			new SCAsyncTask<MinimalProfile, Void, MinimalProfile>(getActivity(), new RemoveFromKnownProcessor(getActivity())).execute(user);
-		}
-
-		@Override
-		public void assignUserToGroups(MinimalProfile user, Collection<Group> groups) {
-			new SCAsyncTask<Object, Void, MinimalProfile>(getActivity(), new AssignToGroups(getActivity())).execute(user, groups);
+		public void assignUserToGroups(PictureProfile user, Collection<Group> groups) {
+			new SCAsyncTask<Object, Void, PictureProfile>(getActivity(), new AssignToGroups(getActivity())).execute(user, groups);
 		}
 	} 
 	
-	private class RemoveFromKnownProcessor extends AbstractAsyncTaskProcessor<MinimalProfile, MinimalProfile> {
-
-		public RemoveFromKnownProcessor(Activity activity) {
-			super(activity);
-		}
-
-		@Override
-		public MinimalProfile performAction(MinimalProfile... params) throws SecurityException, Exception {
-			return CMHelper.removeFromKnown(params[0]);
-		}
-
-		@Override
-		public void handleResult(MinimalProfile result) {
-			Group group = CMHelper.getGroups().get(myGroupsSpinner.getSelectedItemPosition());
-			group.getUsers().remove(result);
-			updateUserList(group);
-		}
-		
-	}
-	
-	private class AssignToGroups extends AbstractAsyncTaskProcessor<Object, MinimalProfile> {
+	private class AssignToGroups extends AbstractAsyncTaskProcessor<Object, PictureProfile> {
 
 		public AssignToGroups(Activity activity) {
 			super(activity);
@@ -326,13 +302,13 @@ public class MyGroupsFragment extends SherlockFragment {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public MinimalProfile performAction(Object... params) throws SecurityException, Exception {
-			CMHelper.assignToGroups((MinimalProfile)params[0], (Collection<Group>)params[1]);
-			return (MinimalProfile)params[0];
+		public PictureProfile performAction(Object... params) throws SecurityException, Exception {
+			CMHelper.assignToGroups((PictureProfile)params[0], (Collection<Group>)params[1]);
+			return (PictureProfile)params[0];
 		}
 
 		@Override
-		public void handleResult(MinimalProfile result) {
+		public void handleResult(PictureProfile result) {
 			Group group = CMHelper.getGroups().get(myGroupsSpinner.getSelectedItemPosition());
 			updateUserList(group);
 		}

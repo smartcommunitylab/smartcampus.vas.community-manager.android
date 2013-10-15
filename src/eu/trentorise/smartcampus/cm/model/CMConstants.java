@@ -18,6 +18,7 @@ package eu.trentorise.smartcampus.cm.model;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +38,7 @@ public class CMConstants {
 	public static final String ENTTIY_TYPE_STORY = "Story";
 
 	private static Map<String, String> entityTypeMap = new HashMap<String, String>();
+	private static Map<String, String> entityTypeIdMap = new HashMap<String, String>();
 	static {
 		entityTypeMap.put(ENTTIY_TYPE_POI, "location");
 		entityTypeMap.put(ENTTIY_TYPE_EVENT, "event");
@@ -45,7 +47,18 @@ public class CMConstants {
 		entityTypeMap.put(ENTTIY_TYPE_PHOTO_VIDEO, "computer file");
 		entityTypeMap.put(ENTTIY_TYPE_JOURNEY, "journey");
 		entityTypeMap.put(ENTTIY_TYPE_STORY, "narrative");
-	}
+
+		entityTypeIdMap.put("44", "location");
+		entityTypeIdMap.put("39", "event");
+		entityTypeIdMap.put("45", "portfolio");
+		entityTypeIdMap.put("40", "experience");
+		entityTypeIdMap.put("41", "computer file");
+		entityTypeIdMap.put("42", "journey");
+		entityTypeIdMap.put("46", "narrative");
+		for (String k : new HashSet<String>(entityTypeIdMap.keySet())) {
+			entityTypeIdMap.put(entityTypeIdMap.get(k), k);
+		}
+}
 
 	public static String getLocalType(String remoteType) {
 		for (Entry<String,String> e : entityTypeMap.entrySet()) {
@@ -83,7 +96,7 @@ public class CMConstants {
 	}
 	
 	public static final String MY_PEOPLE_GROUP_NAME = "My People";
-	public static final long MY_PEOPLE_GROUP_ID = (long) -999;
+	public static final String MY_PEOPLE_GROUP_ID = "-999";
 
 	public static class ObjectFilterDescriptor {
 		
@@ -121,5 +134,12 @@ public class CMConstants {
 	}
 	public static ObjectFilterDescriptor getObjectDescriptor(String type) {
 		return objectFilterDescriptorMap.get(type);
+	}
+	
+	public static String getTypeByTypeId(String typeId) {
+		return entityTypeIdMap.get(typeId);
+	}
+	public static String getTypeIdByType(String type) {
+		return entityTypeIdMap.get(type);
 	}
 }

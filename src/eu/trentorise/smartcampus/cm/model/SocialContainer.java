@@ -17,14 +17,18 @@ package eu.trentorise.smartcampus.cm.model;
 
 import java.util.List;
 
+import eu.trentorise.smartcampus.social.model.Community;
+import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.social.model.ShareVisibility;
+
 public interface SocialContainer {
 
 	public boolean isAllUsers();
 	public void setAllUsers(boolean allUsers);
 	
-	public  List<MinimalProfile> getUsers();
+	public  List<PictureProfile> getUsers();
 
-	public  void setUsers(List<MinimalProfile> users);
+	public  void setUsers(List<PictureProfile> users);
 
 	public  List<Group> getGroups();
 
@@ -42,4 +46,6 @@ public interface SocialContainer {
 
 	public boolean isAllCommunities();
 	public void setAllCommunities(boolean allCommunities);
+
+	public ShareVisibility toShareVisibility();
 }

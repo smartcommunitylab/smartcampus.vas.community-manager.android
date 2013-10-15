@@ -19,20 +19,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
-import android.widget.Toast;
-import eu.trentorise.smartcampus.android.common.sharing.ShareEntityObject;
-import eu.trentorise.smartcampus.android.common.sharing.SharingHelper;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.R;
+import eu.trentorise.smartcampus.cm.SharingActivity;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.ShareVisibility;
-import eu.trentorise.smartcampus.cm.model.SharedContent;
+import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
+import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.social.model.ShareVisibility;
 
 public class HomeFragmentMe extends AbstractSharedContentFragment {
 
@@ -48,7 +48,7 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 	@Override
 	protected void populateContentRequest() {
 		ShareVisibility vis = new ShareVisibility();
-		vis.setUserIds(new ArrayList<Long>());
+		vis.setUserIds(new ArrayList<String>());
 		vis.getUserIds().add(CMHelper.getProfile().getSocialId());
 		contentRequest.visibility = vis;
 	}
@@ -66,22 +66,21 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 		}
 
 		@Override
-		public List<SharedContent> performAction(ContentRequest... params) throws SecurityException, Exception {
+		public List<Entity> performAction(ContentRequest... params) throws SecurityException, Exception {
 			return CMHelper.readMyObjects(params[0].position, params[0].size, params[0].type);
 		}
 
 	}
 
 	@Override
-	protected boolean handleMenuItem(SharedContent content, int itemId) {
+	protected boolean handleMenuItem(Entity content, int itemId) {
 		switch (itemId) {
 		case MENU_ITEM_APP:
-			ViewHelper.viewInApp(getActivity(), content.getEntityType(), content.getEntityId(), new Bundle());
+			ViewHelper.viewInApp(getActivity(), CMConstants.getTypeByTypeId(content.getEntityType()), content.getEntityId(), new Bundle());
 			return true;
 		case MENU_ITEM_SHARING:
-			ShareEntityObject seo = new ShareEntityObject(content.getEntityId(), content.getTitle(), content.getEntityType());
-			SharingHelper.share(getActivity(), seo);
-//			Toast.makeText(getActivity(), "Sharing options: "+content.getEntityId(), Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(getActivity(), SharingActivity.class);
+			intent.putExtra(getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity), content);
 			return true;
 		default:
 			return super.handleMenuItem(content, itemId);

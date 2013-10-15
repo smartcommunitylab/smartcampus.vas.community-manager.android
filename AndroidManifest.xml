@@ -38,6 +38,16 @@
         android:theme="@style/Theme.communitymanager" >
         <uses-library android:name="com.google.android.maps" />
         
+        <meta-data
+            android:name="eu.trentorise.smartcampus.account.ACCOUNT_TYPE"
+            android:value="eu.trentorise.smartcampus.account" />
+        <meta-data
+            android:name="eu.trentorise.smartcampus.account.ACCOUNT_NAME"
+            android:value="SmartCampus" />
+        <meta-data
+            android:name="eu.trentorise.smartcampus.account.ACCOUNT_BASED_ACCESS"
+            android:value="true" />
+        
          
         <activity
             android:name=".HomeActivity"
@@ -45,10 +55,10 @@
             android:launchMode="singleTop" 
             android:configChanges="orientation|screenSize"
             >
-<!--          <intent-filter> -->
-<!--                 <action android:name="android.intent.action.MAIN" /> -->
-<!--                 <category android:name="android.intent.category.LAUNCHER" /> -->
-<!--             </intent-filter>  -->
+         <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter> 
             
             <intent-filter>
                 <action android:name="eu.trentorise.smartcampus.START" />
@@ -57,20 +67,6 @@
             
         </activity>
         
-        <activity android:name=".fragments.profile.EditProfileActivity" />
-        <activity 
-            android:name="eu.trentorise.smartcampus.cm.fragments.topics.CreateTopicActivity" 
-            android:theme="@style/Theme.communitymanager" 
-            android:configChanges="orientation|screenSize"           
-            android:windowSoftInputMode="stateHidden">
-
-            <intent-filter>
-                <action android:name="eu.trentorise.smartcampus.cm.FOLLOW" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            
-        </activity>    
-
         <activity 
             android:name="eu.trentorise.smartcampus.cm.SharingActivity" 
             android:theme="@style/Theme.communitymanager" 

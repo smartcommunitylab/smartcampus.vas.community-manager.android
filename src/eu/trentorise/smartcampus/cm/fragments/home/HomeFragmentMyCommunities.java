@@ -26,9 +26,10 @@ import eu.trentorise.smartcampus.android.common.follow.FollowHelper;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.Community;
-import eu.trentorise.smartcampus.cm.model.ShareVisibility;
-import eu.trentorise.smartcampus.cm.model.SharedContent;
+import eu.trentorise.smartcampus.cm.model.CMConstants;
+import eu.trentorise.smartcampus.social.model.Community;
+import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.social.model.ShareVisibility;
 
 public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 
@@ -45,21 +46,17 @@ public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 	@Override
 	protected void populateContentRequest() {
 		ShareVisibility vis = new ShareVisibility();
-		vis.setCommunityIds(new ArrayList<Long>());
+		vis.setCommunityIds(new ArrayList<String>());
 		selected = CMHelper.getSCCommunity();
 		vis.getCommunityIds().add(selected.getSocialId());
 		contentRequest.visibility = vis;
 	}
 
 	@Override
-	protected boolean handleMenuItem(SharedContent content, int itemId) {
+	protected boolean handleMenuItem(Entity content, int itemId) {
 		switch (itemId) {
 		case MENU_ITEM_APP:
-			ViewHelper.viewInApp(getActivity(), content.getEntityType(), content.getEntityId(), new Bundle());
-			return true;
-		case MENU_ITEM_TOPIC:
-			FollowEntityObject obj = new FollowEntityObject(content.getEntityId(), content.getTitle(), content.getEntityType());
-			FollowHelper.follow(getActivity(), obj);
+			ViewHelper.viewInApp(getActivity(), CMConstants.getTypeByTypeId(content.getEntityType()), content.getEntityId(), new Bundle());
 			return true;
 		default:
 			return super.handleMenuItem(content, itemId);
@@ -69,7 +66,6 @@ public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 	@Override
 	protected void populateMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
 		menu.add(0, MENU_ITEM_APP, 0, R.string.shared_content_menu_app);
-		menu.add(0, MENU_ITEM_TOPIC, 0, R.string.shared_content_menu_topic);
 	}
 
 }

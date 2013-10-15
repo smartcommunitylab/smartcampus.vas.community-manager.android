@@ -17,13 +17,10 @@ package eu.trentorise.smartcampus.cm.custom;
 
 import android.app.Activity;
 import android.util.Log;
-import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
-import eu.trentorise.smartcampus.cm.HomeActivity;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.fragments.profile.EditProfileActivity;
 
 public abstract class AbstractAsyncTaskProcessor<Params, Result> implements SCAsyncTaskProcessor<Params, Result>{
 
@@ -50,14 +47,7 @@ public abstract class AbstractAsyncTaskProcessor<Params, Result> implements SCAs
 
 	@Override
 	public void handleSecurityError() {
-		SCAccessProvider accessProvider =  CMHelper.getAccessProvider();
-		try {
-			accessProvider.invalidateToken(activity, null);
-			accessProvider.getAuthToken(activity, null);
-		} catch (Exception e) {
-			Log.e(HomeActivity.class.getName(),""+ e.getMessage());
-			CMHelper.showFailure(activity, R.string.app_failure_security);
-		}
+		CMHelper.showFailure(activity, R.string.app_failure_security);
 	}
 	
 

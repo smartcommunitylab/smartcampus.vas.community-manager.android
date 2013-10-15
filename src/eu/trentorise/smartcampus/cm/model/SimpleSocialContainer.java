@@ -15,12 +15,18 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import eu.trentorise.smartcampus.social.model.Community;
+import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.social.model.ShareVisibility;
+import eu.trentorise.smartcampus.social.model.User;
 
 public class SimpleSocialContainer implements SocialContainer {
 
 	List<Community> communities;
-	List<MinimalProfile> users;
+	List<PictureProfile> users;
 	List<Group> groups;
 	private boolean allKnownUsers;
 	private boolean allKnownCommunities;
@@ -33,10 +39,10 @@ public class SimpleSocialContainer implements SocialContainer {
 	public void setCommunities(List<Community> communities) {
 		this.communities = communities;
 	}
-	public List<MinimalProfile> getUsers() {
+	public List<PictureProfile> getUsers() {
 		return users;
 	}
-	public void setUsers(List<MinimalProfile> users) {
+	public void setUsers(List<PictureProfile> users) {
 		this.users = users;
 	}
 	public List<Group> getGroups() {
@@ -69,4 +75,25 @@ public class SimpleSocialContainer implements SocialContainer {
 	public void setAllCommunities(boolean allCommunities) {
 		this.allCommunities = allCommunities;
 	}
+	@Override
+	public ShareVisibility toShareVisibility() {
+		ShareVisibility sv = new ShareVisibility();
+		sv.setAllCommunities(allCommunities);
+		sv.setAllKnownCommunities(allKnownCommunities);
+		sv.setAllKnownUsers(allKnownUsers);
+		sv.setAllUsers(allUsers);
+		sv.setCommunityIds(new ArrayList<String>());
+		if (communities != null)
+			for (Community c : communities) sv.getCommunityIds().add(c.getSocialId()); 
+		sv.setUserIds(new ArrayList<String>());
+		if (users != null)
+			for (User c : users) sv.getUserIds().add(c.getSocialId()); 
+		sv.setGroupIds(new ArrayList<String>());
+		if (groups != null)
+			for (Group c : groups) sv.getGroupIds().add(c.getSocialId()); 
+
+		return sv;
+	}
+	
+	
 }
