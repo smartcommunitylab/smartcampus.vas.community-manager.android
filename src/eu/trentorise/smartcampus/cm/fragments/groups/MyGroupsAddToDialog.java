@@ -34,7 +34,6 @@ import eu.trentorise.smartcampus.cm.custom.CheckListAdapter;
 import eu.trentorise.smartcampus.cm.custom.CheckListAdapter.CheckListItem;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.social.model.Group;
 
 public class MyGroupsAddToDialog extends Dialog {

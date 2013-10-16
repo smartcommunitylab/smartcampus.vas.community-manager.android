@@ -22,8 +22,6 @@ import java.util.Map;
 public class ImageCacheProvider {
 
 	private static final Map<String, CacheItem> cache = new HashMap<String, CacheItem>();
-	private static final int MAX_ITEMS = 100;
-	private static int itemcount = 0;
 	private static final long DEADLINE = 15 * 60 * 1000; // 15min
 
 	private ImageCacheProvider() {

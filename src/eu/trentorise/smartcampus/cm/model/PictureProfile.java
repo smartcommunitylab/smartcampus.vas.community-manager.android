@@ -17,7 +17,6 @@ package eu.trentorise.smartcampus.cm.model;
 
 import java.io.Serializable;
 
-import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 import eu.trentorise.smartcampus.social.model.User;
 
 /**
@@ -34,16 +33,6 @@ public class PictureProfile extends User implements Serializable {
 
 	public PictureProfile() {
 		super();
-	}
-
-	/**
-	 * @param result
-	 */
-	public PictureProfile(BasicProfile result) {
-		setId(result.getUserId());
-		setName(result.getName());
-		setSocialId(result.getSocialId());
-		setSurname(result.getSurname());
 	}
 
 	/**

@@ -38,7 +38,6 @@ import eu.trentorise.smartcampus.social.model.ShareVisibility;
 public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 
 	private static final int MENU_ITEM_APP = 1;
-	private static final int MENU_ITEM_TOPIC = 3;
 	private static final int MENU_ITEM_AUTHOR = 2;
 
 	private Spinner myGroupsSpinner;

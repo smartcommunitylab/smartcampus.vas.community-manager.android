@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.custom.data;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,9 +35,13 @@ import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
-import eu.trentorise.smartcampus.profileservice.BasicProfileService;
-import eu.trentorise.smartcampus.profileservice.ProfileServiceException;
-import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
+import eu.trentorise.smartcampus.network.JsonUtils;
+import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
+import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
+import eu.trentorise.smartcampus.protocolcarrier.custom.FileRequestParam;
+import eu.trentorise.smartcampus.protocolcarrier.custom.MessageRequest;
+import eu.trentorise.smartcampus.protocolcarrier.custom.MessageResponse;
+import eu.trentorise.smartcampus.protocolcarrier.custom.RequestParam;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.social.model.Communities;
@@ -59,9 +65,9 @@ public class CMHelper {
 	private Context mContext;
 
 //	private static RemoteStorage remoteStorage = null;
-//	private ProtocolCarrier mProtocolCarrier = null;
+	private ProtocolCarrier mProtocolCarrier = null;
 
-	private BasicProfileService basicProfileService = null;
+//	private BasicProfileService basicProfileService = null;
 	private SocialService socialService = null;
 	
 	private static PictureProfile profile;
@@ -113,23 +119,24 @@ public class CMHelper {
 	protected CMHelper(Context mContext) throws ProtocolException {
 		super();
 		this.mContext = mContext;
-//		this.mProtocolCarrier = new ProtocolCarrier(mContext,
-//				Constants.APP_TOKEN);
+		this.mProtocolCarrier = new ProtocolCarrier(mContext, Constants.APP_TOKEN);
 		String url = GlobalConfig.getAppUrl(mContext);
 		if (!url.endsWith("/")) url += "/";
-		basicProfileService = new BasicProfileService(url+"aac");
+//		basicProfileService = new BasicProfileService(url+"aac");
 		socialService = new SocialService(url+"core.social");
 	}
 
 	public static void destroy() throws DataException {
 	}
 
-	public static PictureProfile retrieveProfile() throws AACException, SecurityException, ProfileServiceException, DataException, SocialServiceException {
-
-		BasicProfile profile = getInstance().basicProfileService.getBasicProfile(getAuthToken());
-		checkSCCommunity(profile);
+	public static PictureProfile retrieveProfile() throws ProtocolException, DataException, ConnectionException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException, SecurityException, SocialServiceException {
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE_PROFILE + "/current");
+		request.setMethod(Method.GET);
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+		PictureProfile pp = JsonUtils.toObject(response.getBody(), PictureProfile.class);
+		checkSCCommunity();
 		setGroups(readGroups());
-		return new PictureProfile(profile);
+		return pp;
 	}
 
 	public static boolean addToCommunity(String communityId) throws SecurityException, SocialServiceException, DataException, AACException {
@@ -139,13 +146,16 @@ public class CMHelper {
 	public static boolean removeFromCommunity(String communityId)throws SecurityException, SocialServiceException, DataException, AACException {
 		return getInstance().socialService.removeUserFromCommunity(getAuthToken(), communityId); 
 	}
-	public static List<PictureProfile> getPeople(String search) throws SecurityException, ProfileServiceException, DataException, AACException {
-		List<BasicProfile> profiles = getInstance().basicProfileService.getBasicProfiles(search, getAuthToken());
-		List<PictureProfile> result = new ArrayList<PictureProfile>();
-		for (BasicProfile bp : profiles) {
-			result.add(new PictureProfile(bp));
+	public static List<PictureProfile> getPeople(String search) throws ProtocolException, DataException, ConnectionException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException {
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE_PROFILE);
+		try {
+			request.setQuery("filter="+URLEncoder.encode(search,"UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new DataException(e);
 		}
-		return result;
+		request.setMethod(Method.GET);
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+		return JsonUtils.toObjectList(response.getBody(), PictureProfile.class);
 	}
 
 	private static List<Group> readGroups() throws SecurityException, SocialServiceException, DataException, AACException {
@@ -188,89 +198,31 @@ public class CMHelper {
 				Toast.LENGTH_LONG).show();
 	}
 
-	public static PictureProfile removeFromKnown(PictureProfile user)
-//			throws ConnectionException, ProtocolException, SecurityException,
-//			DataException 
-	{
-//		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-//				Constants.SERVICE + "/defaultgroup/" + user.getSocialId());
-//		request.setMethod(Method.DELETE);
-//		getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN,
-//				getAuthToken());
-//		setGroups(readGroups());
-		return user;
-	}
-
 	public static void uploadPictureProfile(PictureProfile profile, byte[] content)
 			throws ConnectionException, ProtocolException, SecurityException,
-			DataException {
-//		if (profile.getPictureUrl() != null) {
-//			String fid = profile.getPictureUrl().substring(
-//					profile.getPictureUrl().lastIndexOf('/') + 1);
-//			try {
-//				replaceFile(Long.parseLong(fid), content);
-//			} catch (NumberFormatException e) {
-//				Log.e("CMHelper", "error parsing resource url");
-//				throw new DataException();
-//			}
-//		} else {
-//			String resourceUrl = updloadFile(content);
-//			profile.setPictureUrl(resourceUrl);
-//			storeProfile(profile);
-		}
-//	}
+			DataException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException {
 
-//	public static String updloadFile(byte[] content)
-//			throws ConnectionException, ProtocolException, SecurityException,
-//			DataException {
-//		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-//				Constants.FILE_SERVICE + "/");
-//		request.setMethod(Method.POST);
-//		FileRequestParam param = new FileRequestParam();
-//		param.setContent(content);
-//		request.setRequestParams(Collections.<RequestParam>singletonList(param));
-//		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-//				request, Constants.APP_TOKEN, getAuthToken());
-//
-//		String resourceUrl = GlobalConfig.getAppUrl(getInstance().mContext) + "/" + Constants.FILE_SERVICE
-//				+ "/" + Long.parseLong(response.getBody());
-//
-//		return resourceUrl;
-//
-//	}
-
-//	public static boolean replaceFile(long fid, byte[] content)
-//			throws ConnectionException, ProtocolException, SecurityException,
-//			DataException {
-//		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-//				Constants.FILE_SERVICE + "/" + fid);
-//		request.setMethod(Method.POST);
-//
-//		// set requestFile true to get the byte array of file requested
-//		FileRequestParam param = new FileRequestParam();
-//		param.setContent(content);
-//		request.setRequestParams(Collections.<RequestParam>singletonList(param));
-//		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-//				request, Constants.APP_TOKEN, getAuthToken());
-//
-//		return Boolean.parseBoolean(response.getBody());
-//
-//	}
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.FILE_SERVICE + "/");
+		request.setMethod(Method.POST);
+		FileRequestParam param = new FileRequestParam();
+		param.setContent(content);
+		param.setParamName("file");
+		param.setFilename("filename");
+		param.setContentType("image/jpg");
+		request.setRequestParams(Collections.<RequestParam> singletonList(param));
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+		CMHelper.profile = JsonUtils.toObject(response.getBody(), PictureProfile.class);
+	}
 
 	public static byte[] downloadFile(long fid) throws ConnectionException,
-			ProtocolException, SecurityException, DataException {
-//		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
-//				Constants.SERVICE + "/file/" + fid);
-//		request.setMethod(Method.GET);
-//
-//		// set requestFile true to get the byte array of file requested
-//		request.setRequestFile(true);
-//		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-//				request, Constants.APP_TOKEN, getAuthToken());
-//
-//		return response.getFileContent();
-//
-	return null;
+			ProtocolException, SecurityException, DataException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException {
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext),
+				Constants.FILE_SERVICE + "/" + fid);
+		request.setMethod(Method.GET);
+		// set requestFile true to get the byte array of file requested
+		request.setRequestFile(true);
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+		return response.getFileContent();
 	}
 
 	public static boolean assignToGroups(User user, Collection<Group> groups) throws SecurityException, SocialServiceException, DataException, AACException {
@@ -360,7 +312,7 @@ public class CMHelper {
 	 * @throws ProtocolException
 	 * @throws SecurityException
 	 */
-	private static void checkSCCommunity(BasicProfile p) throws DataException, SecurityException, SocialServiceException, AACException  {
+	private static void checkSCCommunity() throws DataException, SecurityException, SocialServiceException, AACException  {
 		if (getCommunities() != null && getCommunities().size() > 0) {
 			getInstance().scCommunity = getCommunities().get(0);
 		}

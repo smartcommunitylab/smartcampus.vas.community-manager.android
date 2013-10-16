@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,7 +28,7 @@ import eu.trentorise.smartcampus.cm.R;
 
 public class CMConstants {
 
-	public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd/MMM/yyyy '-' HH:mm");
+	public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd/MMM/yyyy '-' HH:mm", Locale.US);
 	
 	public static final String ENTTIY_TYPE_POI = "POI";
 	public static final String ENTTIY_TYPE_EVENT = "Event";

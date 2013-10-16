@@ -18,9 +18,6 @@ package eu.trentorise.smartcampus.cm.custom.data;
 public class Constants {
 
 	public static final String APP_TOKEN = "communitymanager";
-	public static final String SERVICE = "/smartcampus.vas.community-manager.web";
-	public static final String SYNC_SERVICE = "/smartcampus.vas.community-manager.web/sync";
-	public static final String FILE_SERVICE = "/smartcampus.vas.community-manager.web/file";
-	public static final long SYNC_INTERVAL = 60000;
-	public static final String SYNC_DB_NAME = "communitymanagerdb";
+	public static final String FILE_SERVICE = "/smartcampus.vas.community-manager.web/pictureprofile/file";
+	public static final String SERVICE_PROFILE = "/smartcampus.vas.community-manager.web/pictureprofile";
 }

@@ -21,8 +21,6 @@ import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
-import eu.trentorise.smartcampus.android.common.follow.FollowEntityObject;
-import eu.trentorise.smartcampus.android.common.follow.FollowHelper;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
@@ -34,7 +32,6 @@ import eu.trentorise.smartcampus.social.model.ShareVisibility;
 public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 
 	private static final int MENU_ITEM_APP = 1;
-	private static final int MENU_ITEM_TOPIC = 2;
 
 	Community selected = null;
 	
