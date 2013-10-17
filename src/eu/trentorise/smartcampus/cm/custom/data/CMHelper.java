@@ -36,6 +36,8 @@ import eu.trentorise.smartcampus.android.common.GlobalConfig;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.network.JsonUtils;
+import eu.trentorise.smartcampus.network.RemoteConnector;
+import eu.trentorise.smartcampus.network.RemoteConnector.CLIENT_TYPE;
 import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
 import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
 import eu.trentorise.smartcampus.protocolcarrier.custom.FileRequestParam;
@@ -120,6 +122,9 @@ public class CMHelper {
 		super();
 		this.mContext = mContext;
 		this.mProtocolCarrier = new ProtocolCarrier(mContext, Constants.APP_TOKEN);
+		if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
+			RemoteConnector.setClientType(CLIENT_TYPE.CLIENT_WILDCARD);
+		}
 		String url = GlobalConfig.getAppUrl(mContext);
 		if (!url.endsWith("/")) url += "/";
 //		basicProfileService = new BasicProfileService(url+"aac");
