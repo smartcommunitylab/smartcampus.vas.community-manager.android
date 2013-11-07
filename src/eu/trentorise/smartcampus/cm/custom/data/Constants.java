@@ -18,6 +18,6 @@ package eu.trentorise.smartcampus.cm.custom.data;
 public class Constants {
 
 	public static final String APP_TOKEN = "communitymanager";
-	public static final String FILE_SERVICE = "/smartcampus.vas.community-manager.web/pictureprofile/file";
-	public static final String SERVICE_PROFILE = "/smartcampus.vas.community-manager.web/pictureprofile";
+	public static final String FILE_SERVICE = "/mypeople.web/pictureprofile/file";
+	public static final String SERVICE_PROFILE = "/mypeople.web/pictureprofile";
 }

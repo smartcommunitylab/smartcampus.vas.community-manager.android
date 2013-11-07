@@ -157,8 +157,8 @@ public class MyGroupsFragment extends SherlockFragment {
 		if (selected != null && !selected.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) {
 			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_rename, 3, R.string.mygroups_rename_title);
 			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_delete, 2, R.string.mygroups_delete_title);
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add_person, Menu.NONE, R.string.mygroups_add_person_title);
 		}
-		submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add_person, Menu.NONE, R.string.mygroups_add_person_title);
 		super.onPrepareOptionsMenu(menu);
 	}
 

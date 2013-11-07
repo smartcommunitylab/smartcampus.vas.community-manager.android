@@ -69,14 +69,14 @@ public class ActionBarHelper {
 				HomeFragmentMyGroups.class, fragment.getClass().equals(HomeFragmentMyGroups.class) ? fragment : null));
 		activity.getSupportActionBar().addTab(tab);
 
-		// My Groups
-		tab = activity.getSupportActionBar().newTab();
-		tab.setText(R.string.home_tab_mycommunities);
-		tab.setTabListener(new TabListener<HomeFragmentMyCommunities>(activity,
-				Constants.HOME_FRAGMENT_MYCOMMUNITIES_TAG,
-				HomeFragmentMyCommunities.class,
-				fragment.getClass().equals(HomeFragmentMyCommunities.class) ? fragment : null));
-		activity.getSupportActionBar().addTab(tab);
+//		// My Communities
+//		tab = activity.getSupportActionBar().newTab();
+//		tab.setText(R.string.home_tab_mycommunities);
+//		tab.setTabListener(new TabListener<HomeFragmentMyCommunities>(activity,
+//				Constants.HOME_FRAGMENT_MYCOMMUNITIES_TAG,
+//				HomeFragmentMyCommunities.class,
+//				fragment.getClass().equals(HomeFragmentMyCommunities.class) ? fragment : null));
+//		activity.getSupportActionBar().addTab(tab);
 
 	}
 	

@@ -108,7 +108,7 @@ public class SharedContentsAdapter extends ArrayAdapter<Entity> {
 				holder.content_type_user.setTag("" + content.getUser().getId());
 			}
 
-			PictureProfile pp = CMHelper.getPictureProfile(content.getOwnerId());
+			PictureProfile pp = CMHelper.getPictureProfile(content.getUser().getSocialId());
 			holder.content_user_name.setText(pp.fullName());
 			
 			if (pp.getPictureUrl() != null) {

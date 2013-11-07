@@ -28,7 +28,6 @@ import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.SourceSelectExpandableListAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.model.SimpleSocialContainer;
 import eu.trentorise.smartcampus.cm.model.SocialContainer;
@@ -37,7 +36,6 @@ import eu.trentorise.smartcampus.social.model.Community;
 import eu.trentorise.smartcampus.social.model.Entity;
 import eu.trentorise.smartcampus.social.model.Group;
 import eu.trentorise.smartcampus.social.model.ShareVisibility;
-import eu.trentorise.smartcampus.social.model.User;
 
 public class SharingActivity extends BaseCMActivity {
 //	
@@ -117,12 +115,12 @@ public class SharingActivity extends BaseCMActivity {
 
 			List<Group> completeGroups = new ArrayList<Group>();
 			current.setGroups(new ArrayList<Group>());
-			Group allKnown = null;
+//			Group allKnown = null;
 			for (Group g : groups) {
-				if (g.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) {
-					allKnown = g;
-					if (visibility.isAllKnownUsers()) current.getGroups().add(g);
-				}
+//				if (g.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) {
+//					allKnown = g;
+//					if (visibility.isAllKnownUsers()) current.getGroups().add(g);
+//				}
 				completeGroups.add(g);
 				if (visibility.getGroupIds() != null && visibility.getGroupIds().contains(g.getSocialId())) {
 					current.getGroups().add(g);
@@ -140,11 +138,8 @@ public class SharingActivity extends BaseCMActivity {
 //				}
 //			}
 			
-			List<PictureProfile> users = new ArrayList<PictureProfile>();
-			if (allKnown != null && allKnown.getUsers() != null) {
-				for (User u : allKnown.getUsers())
-					users.add(CMHelper.getPictureProfile(u.getSocialId()));
-			}
+//			List<PictureProfile> users = new ArrayList<PictureProfile>();
+			List<PictureProfile> users = CMHelper.getKnownUsers();
 			complete.setUsers(users);
 			
 			current.setUsers(new ArrayList<PictureProfile>());

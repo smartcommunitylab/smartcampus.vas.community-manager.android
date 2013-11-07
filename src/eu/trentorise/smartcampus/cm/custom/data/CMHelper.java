@@ -76,7 +76,7 @@ public class CMHelper {
 	private static List<Community> communities = null;
 	private static List<Group> savedGroups;
 
-	private static Map<String, User> knownUsers = new HashMap<String, User>();
+	private static Map<String, PictureProfile> knownUsers = new HashMap<String, PictureProfile>();
 
 	private Community scCommunity = null;
 	
@@ -250,27 +250,72 @@ public class CMHelper {
 		return savedGroups;
 	}
 
-	private static void setGroups(List<Group> groups) {
+	private static void setGroups(List<Group> groups) throws DataException, AACException {
 		savedGroups = new ArrayList<Group>();
 		knownUsers.clear();
+		List<String> users = new ArrayList<String>();
 		for (Group g : groups) {
 			if (g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID)) {
-				if (g.getUsers() != null) {
-					for (User mp : g.getUsers()) {
-						knownUsers.put(mp.getSocialId(), mp);
-					}
+				continue;
+			} 
+			if (g.getUsers() != null) {
+				for (User mp : g.getUsers()) {
+					users.add(mp.getId());
 				}
-			} else {
-				savedGroups.add(g);
 			}
+			savedGroups.add(g);
+		}
+		List<PictureProfile> list = readPictureProfiles(users);
+		if (list != null) {
+			for (PictureProfile pp : list) {
+				knownUsers.put(pp.getSocialId(), pp);
+			}
+		}
+	}
+
+	/**
+	 * @param users
+	 * @return
+	 * @throws AACException 
+	 * @throws DataException 
+	 */
+	private static List<PictureProfile> readPictureProfiles(List<String> users) throws AACException, DataException {
+		try {
+			MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE_PROFILE);
+			request.setMethod(Method.GET);
+			String query = "";
+			for (String u : users) {
+				query += "&ids="+u;
+			}
+			request.setQuery(query);
+			MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+			List<PictureProfile> ppList = JsonUtils.toObjectList(response.getBody(), PictureProfile.class);
+			return ppList;
+		} catch (eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException e) {
+			throw new AACException(e);
+		} catch (Exception e) {
+			throw new DataException(e);
 		}
 	}
 
 	public static List<Entity> readSharedObjects(ShareVisibility shareVisibility, int position, int size, String type) throws SecurityException, SocialServiceException, DataException, AACException {
 		Entities entities = getInstance().socialService.getEntitiesSharedWithUser(getAuthToken(), shareVisibility, position, size, CMConstants.getTypeIdByType(type));
 		if (entities == null || entities.getContent() == null) return Collections.emptyList();
-		else checkTypes(entities);
+		else {
+			checkTypes(entities);
+			checkUsers(entities);
+		}
 		return entities.getContent();
+	}
+
+	/**
+	 * @param entities
+	 */
+	private static void checkUsers(Entities entities) {
+		for (Iterator<Entity> iterator = entities.getContent().iterator(); iterator.hasNext();) {
+			Entity e = iterator.next();
+			if (!knownUsers.containsKey(e.getUser().getSocialId())) iterator.remove();
+		}
 	}
 
 	public static List<Entity> readMyObjects(int position, int size, String type) throws SecurityException, SocialServiceException, DataException, AACException  {
@@ -362,7 +407,7 @@ public class CMHelper {
 	 * @return
 	 */
 	public static PictureProfile getPictureProfile(String socialId) {
-		return new PictureProfile(knownUsers.get(socialId));
+		return knownUsers.get(socialId);
 	}
 
 	/**
@@ -380,5 +425,13 @@ public class CMHelper {
 	public static String getEntityTypeName(String entityType) {
 //		return types.get(entityType);
 		return CMConstants.getTypeByTypeId(entityType);
+	}
+
+	/**
+	 * @return
+	 */
+	public static List<PictureProfile> getKnownUsers() {
+		if (knownUsers == null || knownUsers.isEmpty()) return null;
+		return new ArrayList<PictureProfile>(knownUsers.values());
 	}
 }
