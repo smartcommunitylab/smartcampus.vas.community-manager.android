@@ -28,6 +28,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import eu.trentorise.smartcampus.cm.HomeActivity;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.groups.MyGroupsAddToDialog;
@@ -106,7 +108,7 @@ public class UsersPictureProfileAdapter extends ArrayAdapter<PictureProfile> {
 		holder.user_mp_surname.setText(user_mp.getSurname()); // surname
 		// holder.user_mp_faculty.setText(user_mp.faculty); // faculty
 		// holder.user_mp_position.setText(user_mp.position); // position
-
+		
 		// Log.e(this.getClass().getSimpleName(), "ROW DONE");
 		return row;
 	}
@@ -124,8 +126,13 @@ public class UsersPictureProfileAdapter extends ArrayAdapter<PictureProfile> {
 		@Override
 		public void onClick(View v) {
 			final PictureProfile user = (PictureProfile) v.getTag();
+			if (CMHelper.getGroups().isEmpty()){
+				Toast.makeText(context, "Devi prima creare un gruppo", Toast.LENGTH_SHORT).show();
+			}
+			else{
 			Dialog dialog = createUserOptionsDialog(user);
 			dialog.show();
+			}
 		}
 	}
 
@@ -150,7 +157,7 @@ public class UsersPictureProfileAdapter extends ArrayAdapter<PictureProfile> {
 	}
 	
 	private Dialog createUserOptionsDialog(final PictureProfile user) {
-		Set<String> groups = CMHelper.getUserGroups(user);
+		Set<String> groups = CMHelper.getUserGroups(user);		
 		if (initGroups != null)  groups.addAll(initGroups);
 		Dialog myGroupsDlg = new MyGroupsAddToDialog(context,new DialogHandler<Collection<Group>>() {
 			@Override

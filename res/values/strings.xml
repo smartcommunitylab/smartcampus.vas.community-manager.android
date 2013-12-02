@@ -19,6 +19,15 @@
     <string name="empty" />
     <string name="add">Add</string>
     <string name="app_name">MyPeople</string>
+    
+    <string-array name="fragment_array">
+        <item>Shared</item>
+        <item>Campus</item>
+        <item>MyGroups</item>
+        <item>MyProfile</item>
+        <item>Settings</item>
+    </string-array>
+    
 
     <string name="home_tab_me">Me</string>
     <string name="home_tab_mygroups">My Groups</string>
@@ -140,5 +149,8 @@
 
     <string name="token_required">Please login before proceeding with the application.</string>
     <string name="auth_failed">Application initialization failed. Try connecting again.</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    
     
 </resources>

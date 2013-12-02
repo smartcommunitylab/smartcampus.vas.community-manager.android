@@ -29,10 +29,13 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
+import eu.trentorise.smartcampus.cm.BaseCMActivity;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.network.JsonUtils;
@@ -64,7 +67,7 @@ public class CMHelper {
 
 	private static SCAccessProvider accessProvider = null;
 
-	private Context mContext;
+	private static Context mContext;
 
 //	private static RemoteStorage remoteStorage = null;
 	private ProtocolCarrier mProtocolCarrier = null;
@@ -141,6 +144,16 @@ public class CMHelper {
 		PictureProfile pp = JsonUtils.toObject(response.getBody(), PictureProfile.class);
 		checkSCCommunity();
 		setGroups(readGroups());
+		
+		
+		SharedPreferences appSharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
+		String myProfile = appSharedPrefs.getString("profile", "");
+		PictureProfile picP = JsonUtils.toObject(myProfile, PictureProfile.class);
+		if (picP.getId() != null){
+			return picP;
+			}
+		
 		return pp;
 	}
 
@@ -391,6 +404,9 @@ public class CMHelper {
 	public static Set<String> getUserGroups(User mp) {
 		Set<String> res = new HashSet<String>();
 		if (getGroups() != null) {
+			
+			BaseCMActivity.UpdateGroups(mContext);
+			
 			for (Group g : getGroups()) {
 				if (g.getUsers() != null) {
 					for (User u : g.getUsers()) {
