@@ -20,6 +20,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -47,10 +48,18 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 
 	@Override
 	protected void populateContentRequest() {
-		ShareVisibility vis = new ShareVisibility();
-		vis.setUserIds(new ArrayList<String>());
-		vis.getUserIds().add(CMHelper.getProfile().getSocialId());
-		contentRequest.visibility = vis;
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				ShareVisibility vis = new ShareVisibility();
+				vis.setUserIds(new ArrayList<String>());
+				vis.getUserIds().add(CMHelper.getProfile().getSocialId());
+				contentRequest.visibility = vis;
+				return null;
+			}
+		};
 	}
 
 	@Override

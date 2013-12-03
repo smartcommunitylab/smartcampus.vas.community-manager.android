@@ -119,6 +119,7 @@ public class MyGroupsFragment extends SherlockFragment {
 		
 	}
 
+	
 /*	@Override
 	public void onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -180,7 +181,7 @@ public class MyGroupsFragment extends SherlockFragment {
 			FragmentTransaction ft = getSherlockActivity().getSupportFragmentManager().beginTransaction();
 			Fragment fragment = new CampusFragmentPeople();
 			// Replacing old fragment with new one
-			ft.replace(android.R.id.content, fragment);
+			ft.replace(R.id.content_frame, fragment);
 			fragment.setArguments(CampusFragmentPeople.prepareArgs(selected.getSocialId()));
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.addToBackStack(null);

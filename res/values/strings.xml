@@ -19,7 +19,7 @@
     <string name="empty" />
     <string name="add">Add</string>
     <string name="app_name">MyPeople</string>
-    
+
     <string-array name="fragment_array">
         <item>Shared</item>
         <item>Campus</item>
@@ -27,16 +27,13 @@
         <item>MyProfile</item>
         <item>Settings</item>
     </string-array>
-    
 
     <string name="home_tab_me">Me</string>
     <string name="home_tab_mygroups">My Groups</string>
     <string name="home_tab_mycommunities">Campus</string>
-    
     <string name="campus_tab_people">People</string>
     <string name="campus_tab_suggested">Suggested</string>
     <string name="campus_tab_communities">Communities</string>
-    
     <string name="mainmenu_home">Home</string>
     <string name="mainmenu_myprofile">My Profile</string>
     <string name="mainmenu_mygroups">My Groups</string>
@@ -54,10 +51,8 @@
     <string name="mygroups_rename">Rename</string>
     <string name="mygroups_rename_title">Rename group</string>
     <string name="mygroups_rename_hint">Rename group</string>
-    
     <string name="mygroups_sub">Options</string>
     <string name="mygroups_sub_title">Options</string>
-    
     <string name="person_options_title">Person options</string>
     <string name="mygroups_addto_options_title">Add to My Groups</string>
     <string name="people_hint_name">Search</string>
@@ -70,26 +65,22 @@
     <string name="editprofile">Edit profile</string>
     <string name="editprofile_name">Name</string>
     <string name="editprofile_surname">Surname</string>
-    
     <string name="app_failure_security">Failed to retrieve authentication data</string>
     <string name="app_failure_setup">Failed to initialize application</string>
-    <string name="app_failure_profile_missing">We need to save your profile in order to proceed with the application</string>    
+    <string name="app_failure_profile_missing">We need to save your profile in order to proceed with the application</string>
     <string name="app_failure_operation">OOPS! An error occurred. Please check your connection or try again later</string>
-    <string name="topic_action_desc">x</string>    
-    
+    <string name="topic_action_desc">x</string>
     <string name="mygroups_name_empty">Group name cannot be empty</string>
     <string name="mygroups_name_duplicate">Group with this name already exists</string>
-    
     <string name="create_topic_name">Title:</string>
     <string name="create_topic_def">About what?</string>
     <string name="create_topic_add">Add</string>
     <string name="create_topic_sources">Where from?</string>
     <string name="create_topic_def_hint">*Define your topic with tags.</string>
-      <!-- <string name="create_topic_def_hint">*A topic can be defined by text tags, semantic tags and entities.</string>-->
+    <!-- <string name="create_topic_def_hint">*A topic can be defined by text tags, semantic tags and entities.</string> -->
     <string name="create_topic_sources_hint">*Where do the info come from? (people, groups, communities)</string>
     <!-- <string name="create_topic_sources_hint">*Sources may include people, groups and communities.</string> -->
     <string name="create_topic_content">What kind of content?</string>
-    
     <string name="create_topic_arg_topic">topic</string>
     <string name="mytopics_add">Add</string>
     <string name="mytopics_add_title">Add new topic</string>
@@ -97,7 +88,6 @@
     <string name="mytopics_name_empty">Topic name cannot be empty</string>
     <string name="mytopics_sources_required">Choose at least one source</string>
     <string name="mytopics_content_type_required">Choose at least one content type</string>
-    
     <string name="topic_content_dialog_title">Select content types</string>
     <string name="topic_content_dialog_all">All types of content</string>
     <string name="topic_content_dialog_photo_video">Photo/Video</string>
@@ -108,10 +98,8 @@
     <string name="topic_content_dialog_journeys">Journeys</string>
     <string name="topic_content_dialog_stories">Stories</string>
     <string name="topic_content_dialog_type_required">Choose at least one content type</string>
-    
     <string name="content_empty">No items.</string>
     <string name="people_list_empty">No people here!</string>
-    
     <string name="source_select_title">Select sources</string>
     <string name="source_select_public">Public</string>
     <string name="shared_content_filters_portfolio">Portfolio</string>
@@ -120,37 +108,29 @@
     <string name="shared_content_filters_event">Event</string>
     <string name="shared_content_filters_experience">Experience</string>
     <string name="shared_content_filters_story">Story</string>
-    
     <string name="shared_content_menu_header">Shared content</string>
     <string name="shared_content_menu_author">Author\'s profile</string>
     <string name="shared_content_menu_topic">Make a topic and follow the update</string>
     <string name="shared_content_menu_sharing">Sharing options</string>
     <string name="shared_content_menu_app">Switch to app</string>
-
     <string name="a_shared">Shared</string>
     <string name="a_campus">Campus</string>
     <string name="a_topics">My topics</string>
     <string name="a_groups">My groups</string>
     <string name="a_profile">My profile</string>
-        
-    
     <string name="tmp_entity">Tag 1, Entity 2, &#8230;</string>
     <string name="tmp_sources">Source 1, source2, &#8230;</string>
     <string name="tmp_content">Type 1, type 2, &#8230;</string>
-    <string name="app_uid_label">SmartCampus</string>    
-    
+    <string name="app_uid_label">SmartCampus</string>
     <string name="sharing_success">Object shared succesfully.</string>
-    
     <string name="topics_title">Topics</string>
     <string name="shared_title">Shared data</string>
     <string name="groups_title">Groups</string>
     <string name="profile_title">Profile</string>
     <string name="campus_title">Campus</string>
-
     <string name="token_required">Please login before proceeding with the application.</string>
     <string name="auth_failed">Application initialization failed. Try connecting again.</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    
-    
+
 </resources>

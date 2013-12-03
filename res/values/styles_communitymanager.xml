@@ -26,8 +26,8 @@
         <item name="actionDropDownStyle">@style/communitymanager_DropDownNav</item>
         <item name="actionBarStyle">@style/communitymanager_solid_ActionBar</item>
 
-        <item name="android:homeAsUpIndicator">@drawable/backarrow</item>
-        <item name="homeAsUpIndicator">@drawable/backarrow</item>
+         <!-- <item name="android:homeAsUpIndicator">@drawable/backarrow</item>
+        <item name="homeAsUpIndicator">@drawable/backarrow</item> -->
         
         <item name="android:actionBarItemBackground">@drawable/selectable_background_communitymanager</item>
         <item name="android:popupMenuStyle">@style/communitymanager_PopupMenu</item>

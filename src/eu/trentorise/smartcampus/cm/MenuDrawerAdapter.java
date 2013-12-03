@@ -35,17 +35,16 @@ public class MenuDrawerAdapter extends ArrayAdapter<String> {
 		System.out.println(s);
 
 		if (s.equals(values[0])) {
-			imageView.setImageResource(R.drawable.ab_bottom_solid_communitymanager);
+			imageView.setImageResource(R.drawable.ic_ic_shared);
 		} else if (s.equals(values[1])) {
-			imageView.setImageResource(R.drawable.ab_bottom_solid_communitymanager);
+			imageView.setImageResource(R.drawable.ic_ic_campus);
 		} else if (s.equals(values[2])) {
-			imageView.setImageResource(R.drawable.ab_bottom_solid_communitymanager);
+			imageView.setImageResource(R.drawable.ic_groups);
 		} else if (s.equals(values[3])) {
-			imageView.setImageResource(R.drawable.ab_bottom_solid_communitymanager);
+			imageView.setImageResource(R.drawable.ic_ic_myp);
 		} else if (s.equals(values[4])) {
-			imageView.setImageResource(R.drawable.ab_bottom_solid_communitymanager);
+			imageView.setImageResource(R.drawable.ic_menu_preferences);
 		}
-
 		return rowView;
 	}
 }

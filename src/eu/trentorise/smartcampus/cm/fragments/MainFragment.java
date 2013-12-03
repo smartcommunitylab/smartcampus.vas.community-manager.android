@@ -50,15 +50,15 @@ public class MainFragment extends SherlockFragment {
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(false);
 		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
-		getSherlockActivity().getSupportActionBar().setTitle(R.string.app_name);
+		//getSherlockActivity().getSupportActionBar().setTitle(R.string.app_name);
 		ActionBarHelper.emptyActionBar(this);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		gridview = (GridView) getView().findViewById(R.id.gridview);
-		gridview.setAdapter(new MainAdapter(getSherlockActivity().getApplicationContext(), fragmentManager));
+//		gridview = (GridView) getView().findViewById(R.id.gridview);
+//		gridview.setAdapter(new MainAdapter(getSherlockActivity().getApplicationContext(), fragmentManager));
 	}
 
 }

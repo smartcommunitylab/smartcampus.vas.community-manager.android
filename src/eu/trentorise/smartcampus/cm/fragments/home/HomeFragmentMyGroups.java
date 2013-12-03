@@ -53,6 +53,7 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
+		
 		myGroupsSpinner = (Spinner) getView().findViewById(R.id.shared_content_groups_spinner);
 		if (dataAdapter == null) {
 		//	dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item);

@@ -32,6 +32,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
@@ -53,6 +54,10 @@ public class CampusFragmentPeople extends SherlockFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		if (getSherlockActivity().getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
+			getSherlockActivity().getSupportActionBar().setNavigationMode(
+					ActionBar.NAVIGATION_MODE_STANDARD);
+		}
 		return inflater.inflate(R.layout.people, container, false);
 	}
 

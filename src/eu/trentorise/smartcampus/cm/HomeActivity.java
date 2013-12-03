@@ -30,7 +30,7 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 public class HomeActivity extends BaseCMActivity {
 
 	public static PictureProfile picP;
-
+	
 	@Override
 	protected void loadData() {
 		new SCAsyncTask<Void, Void, PictureProfile>(this, new LoadProfileProcessor()).execute();
@@ -38,26 +38,6 @@ public class HomeActivity extends BaseCMActivity {
 
 	@Override
 	protected void setUpContent() {
-		
-		new AsyncTask<Void, Void, Void>() {
-
-			@Override
-			protected Void doInBackground(Void... params) {
-				// TODO Auto-generated method stub
-				getSupportActionBar().setDisplayShowTitleEnabled(true);
-				getSupportActionBar().setTitle(R.string.app_name);
-
-				if (getSupportFragmentManager().getBackStackEntryCount() > 0)
-					getSupportFragmentManager().popBackStack();
-				return null;
-			}
-		};
-
-		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Fragment frag = null;
-		frag = new MainFragment();
-		ft.replace(android.R.id.content, frag).commitAllowingStateLoss();
-
 	}
 
 	@Override
@@ -76,7 +56,7 @@ public class HomeActivity extends BaseCMActivity {
 
 	private void startApp(PictureProfile profile) {
 		CMHelper.setProfile(profile);
-		setUpContent();
+		//setUpContent();
 	}
 
 	private class LoadProfileProcessor implements
@@ -85,27 +65,6 @@ public class HomeActivity extends BaseCMActivity {
 		@Override
 		public PictureProfile performAction(Void... params) throws SecurityException,
 				Exception {
-			
-//			SharedPreferences appSharedPrefs = PreferenceManager
-//					.getDefaultSharedPreferences(getApplicationContext());
-//			String myProfile = appSharedPrefs.getString("profile", "");
-//			picP = JsonUtils.toObject(myProfile, PictureProfile.class);
-//			if (picP.getId() != null){
-//				return picP;
-//				}
-//			else {
-//				PictureProfile pp = CMHelper.retrieveProfile();
-//				Editor prefsEditor = appSharedPrefs.edit();
-//				String json = JsonUtils.toJSON(pp);
-//				prefsEditor.putString("profile", json);
-//				prefsEditor.commit();
-//					return pp;
-//				}
-			
-			
-			
-			
-			
 			return CMHelper.retrieveProfile();
 		}
 
@@ -133,17 +92,19 @@ public class HomeActivity extends BaseCMActivity {
 		}
 
 	}
+
 	
-	@Override
-	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			onBackPressed();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+	
+//	@Override
+//	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
+//		switch (item.getItemId()) {
+//		case android.R.id.home:
+//			onBackPressed();
+//			return true;
+//		default:
+//			return super.onOptionsItemSelected(item);
+//		}
+//	}
 	
 
 
