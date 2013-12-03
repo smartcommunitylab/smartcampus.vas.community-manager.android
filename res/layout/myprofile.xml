@@ -63,9 +63,9 @@
 
                 <ImageView
                     android:id="@+id/myprofile_pic"
+                    android:contentDescription="@string/empty"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:contentDescription="@string/empty"
                     android:src="@drawable/placeholder" />
 
                 <LinearLayout

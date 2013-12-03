@@ -34,7 +34,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 
@@ -126,17 +125,17 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 				R.string.drawer_close) {
 
 			public void onDrawerClosed(View view) {
-				//getSupportActionBar().setTitle(mDrawerTitle);
+				// getSupportActionBar().setTitle(mDrawerTitle);
 				supportInvalidateOptionsMenu();
 			}
 
 			public void onDrawerOpened(View drawerView) {
-				//getSupportActionBar().setTitle(mDrawerTitle);
+				// getSupportActionBar().setTitle(mDrawerTitle);
 				supportInvalidateOptionsMenu();
 			}
 
 			public void onDrawerSlide(View drawerView, float slideOffset) {
-				//getSupportActionBar().setTitle(mDrawerTitle);
+				// getSupportActionBar().setTitle(mDrawerTitle);
 				mDrawerLayout.bringChildToFront(drawerView);
 				supportInvalidateOptionsMenu();
 				super.onDrawerSlide(drawerView, slideOffset);
@@ -152,7 +151,7 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 	}
 
 	private void startHomeFragment() {
-		
+
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		FMe = new HomeFragmentMe();
 		Bundle args = new Bundle();
@@ -172,7 +171,6 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 			selectItem(position);
 		}
 	}
-	
 
 	private void selectItem(int position) {
 		String fragmentString = mFragmentTitles[position];
@@ -180,46 +178,52 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 		FragmentTransaction fragmentTransaction = getSupportFragmentManager()
 				.beginTransaction();
 		if (fragmentString.equals(mFragmentTitles[0])) {
-			//HomeFragmentMe fragment = new HomeFragmentMe();
+			// HomeFragmentMe fragment = new HomeFragmentMe();
 			fragmentTransaction
 					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(R.id.content_frame, FMe,
-					"Shared");
-//			fragmentTransaction.addToBackStack(FMe.getTag());
+			fragmentTransaction.replace(R.id.content_frame, FMe, "Shared");
+			// fragmentTransaction.addToBackStack(FMe.getTag());
 			fragmentTransaction.commit();
 			mDrawerLayout.closeDrawer(mDrawerList);
 		} else if (fragmentString.equals(mFragmentTitles[1])) {
+			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
+				getSupportActionBar().setSelectedNavigationItem(0);
 			CampusFragmentPeople fragment = new CampusFragmentPeople();
 			fragmentTransaction
 					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(R.id.content_frame, fragment,
-					"Campus");
-			//fragmentTransaction.addToBackStack(fragment.getTag());
+			fragmentTransaction.replace(R.id.content_frame, fragment, "Campus");
+			// fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			mDrawerLayout.closeDrawer(mDrawerList);
 		} else if (fragmentString.equals(mFragmentTitles[2])) {
+			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
+				getSupportActionBar().setSelectedNavigationItem(0);
 			MyGroupsFragment fragment = new MyGroupsFragment();
 			fragmentTransaction
 					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(R.id.content_frame, fragment,
 					"MyGroups");
-			//fragmentTransaction.addToBackStack(fragment.getTag());
+			// fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			mDrawerLayout.closeDrawer(mDrawerList);
 		} else if (fragmentString.equals(mFragmentTitles[3])) {
+			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
+				getSupportActionBar().setSelectedNavigationItem(0);
 			MyProfileFragment fragment = new MyProfileFragment();
 			fragmentTransaction
 					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(R.id.content_frame, fragment,
 					"MyProfile");
-			//fragmentTransaction.addToBackStack(fragment.getTag());
+			// fragmentTransaction.addToBackStack(fragment.getTag());
 			fragmentTransaction.commit();
 			mDrawerLayout.closeDrawer(mDrawerList);
 		} else if (fragmentString.equals(mFragmentTitles[4])) {
+			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
+				getSupportActionBar().setSelectedNavigationItem(0);
 			Intent i = (new Intent(BaseCMActivity.this, SettingsActivity.class));
 			startActivity(i);
 			mDrawerLayout.closeDrawer(mDrawerList);
-		} 
+		}
 
 	}
 
@@ -284,7 +288,6 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 
 	protected abstract void setUpContent();
 
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -313,7 +316,7 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 		// Sync the toggle state after onRestoreInstanceState has occurred.
 		mDrawerToggle.syncState();
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();

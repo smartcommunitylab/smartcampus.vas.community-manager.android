@@ -30,6 +30,7 @@ import java.util.Set;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
@@ -156,7 +157,23 @@ public class CMHelper {
 		
 		return pp;
 	}
-
+	
+	public static PictureProfile UpdateProfile() throws ProtocolException, DataException, ConnectionException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException, SecurityException, SocialServiceException {
+		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.SERVICE_PROFILE + "/current");
+		request.setMethod(Method.GET);
+		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+		PictureProfile pp = JsonUtils.toObject(response.getBody(), PictureProfile.class);
+		checkSCCommunity();
+		setGroups(readGroups());
+		SharedPreferences appSharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
+		Editor prefsEditor = appSharedPrefs.edit();
+		String json = JsonUtils.toJSON(pp);
+		prefsEditor.putString("profile", json);
+		prefsEditor.commit();
+		return pp;
+	
+	}
 	public static boolean addToCommunity(String communityId) throws SecurityException, SocialServiceException, DataException, AACException {
 		return getInstance().socialService.addUserToCommunity(getAuthToken(), communityId); 
 	}
@@ -218,7 +235,7 @@ public class CMHelper {
 
 	public static void uploadPictureProfile(PictureProfile profile, byte[] content)
 			throws ConnectionException, ProtocolException, SecurityException,
-			DataException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException {
+			DataException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException, SocialServiceException {
 
 		MessageRequest request = new MessageRequest(GlobalConfig.getAppUrl(getInstance().mContext), Constants.FILE_SERVICE + "/");
 		request.setMethod(Method.POST);
@@ -230,6 +247,7 @@ public class CMHelper {
 		request.setRequestParams(Collections.<RequestParam> singletonList(param));
 		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
 		CMHelper.profile = JsonUtils.toObject(response.getBody(), PictureProfile.class);
+		UpdateProfile();
 	}
 
 	public static byte[] downloadFile(long fid) throws ConnectionException,
