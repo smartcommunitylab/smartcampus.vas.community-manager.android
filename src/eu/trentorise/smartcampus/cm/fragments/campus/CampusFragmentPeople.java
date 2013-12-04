@@ -68,6 +68,7 @@ public class CampusFragmentPeople extends SherlockFragment {
 		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
 		getSherlockActivity().getSupportActionBar().setTitle(R.string.campus_title);
+		new SCAsyncTask<String, Void, List<PictureProfile>>(getActivity(), new LoadUserProcessor(getActivity())).execute(((EditText)getView().findViewById(R.id.people_search)).getText().toString());
 
 		ImageButton search = (ImageButton) getView().findViewById(R.id.people_search_img);
 		search.setOnClickListener(new View.OnClickListener() {
