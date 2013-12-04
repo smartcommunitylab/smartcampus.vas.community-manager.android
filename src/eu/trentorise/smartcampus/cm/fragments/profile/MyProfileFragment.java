@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -97,7 +98,13 @@ public class MyProfileFragment extends SherlockFragment {
 			try {
 				ImageView imgView = (ImageView) getView().findViewById(
 						R.id.myprofile_pic);
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				String imagePath = BitmapUtils.getBitmapAbsolutePath(getActivity(), imgUri);
+
+				Bitmap photo = BitmapFactory.decodeFile(imagePath, options);
+				
 				// resize picture to imageView dimensions
+
 				Bitmap profilePicture = BitmapUtils.scale(getActivity(),
 						imgUri, imgView.getWidth(), imgView.getHeight());
 				imgView.setImageBitmap(profilePicture);

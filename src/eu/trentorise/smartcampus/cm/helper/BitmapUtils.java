@@ -29,19 +29,22 @@ import android.util.Log;
 
 public class BitmapUtils {
 
-	private static Bitmap rotateBitmap(Bitmap img, String absPath) throws IOException {
+	private static Bitmap rotateBitmap(Bitmap img, String absPath)
+			throws IOException {
 		Matrix matrix = new Matrix();
 		ExifInterface exifReader = new ExifInterface(absPath);
-		int orientation = exifReader.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
+		int orientation = exifReader.getAttributeInt(
+				ExifInterface.TAG_ORIENTATION, -1);
 		if (orientation == ExifInterface.ORIENTATION_ROTATE_90) {
-		       matrix.postRotate(90);
+			matrix.postRotate(90);
 		} else if (orientation == ExifInterface.ORIENTATION_ROTATE_180) {
-		       matrix.postRotate(180);
+			matrix.postRotate(180);
 		} else if (orientation == ExifInterface.ORIENTATION_ROTATE_270) {
-		      matrix.postRotate(270);
+			matrix.postRotate(270);
 		}
 		if (orientation != ExifInterface.ORIENTATION_NORMAL) {
-			img = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+			img = Bitmap.createBitmap(img, 0, 0, img.getWidth(),
+					img.getHeight(), matrix, true);
 		}
 		return img;
 	}
@@ -80,9 +83,16 @@ public class BitmapUtils {
 			try {
 				bitmap = rotateBitmap(bitmap, imagePath);
 			} catch (IOException e) {
-				Log.w(BitmapUtils.class.getSimpleName(), "Problem rotating image: "+e.getMessage());
+				Log.w(BitmapUtils.class.getSimpleName(),
+						"Problem rotating image: " + e.getMessage());
 			}
-			bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
+			if (bitmap.getWidth() < bitmap.getHeight())
+				bitmap = Bitmap.createScaledBitmap(bitmap, width, 200, false);
+			else if (bitmap.getWidth() == bitmap.getHeight())
+				bitmap = Bitmap
+						.createScaledBitmap(bitmap, width, height, false);
+			else
+				bitmap = Bitmap.createScaledBitmap(bitmap, 200, height, false);
 			return bitmap;
 		} else {
 			return null;

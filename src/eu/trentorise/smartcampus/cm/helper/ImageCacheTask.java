@@ -30,7 +30,7 @@ public class ImageCacheTask extends AsyncTask<String, Void, Bitmap> {
 	private int placeholder;
 
 	private String tag;
-	
+
 	public ImageCacheTask(ImageView imageView, int placeholder) {
 		// Use a WeakReference to ensure the ImageView can be garbage
 		// collected
@@ -49,7 +49,7 @@ public class ImageCacheTask extends AsyncTask<String, Void, Bitmap> {
 		}
 		try {
 			this.tag = params[1];
-			
+
 			fileContent = ImageCacheProvider.get(params[1]);
 			if (fileContent == null) {
 				fileContent = CMHelper.downloadFile(Long.parseLong(params[0]
@@ -76,12 +76,25 @@ public class ImageCacheTask extends AsyncTask<String, Void, Bitmap> {
 	protected void onPostExecute(Bitmap result) {
 		super.onPostExecute(result);
 		ImageView imgView = imageViewReference.get();
-		if (imgView == null || !tag.equals(imgView.getTag())) return;
-		
+		if (imgView == null || !tag.equals(imgView.getTag()))
+			return;
+
 		imgView.setImageResource(placeholder);
 		if (result != null) {
 			if (imgView.getWidth() > 0 && imgView.getHeight() > 0) {
-				imgView.setImageBitmap(Bitmap.createScaledBitmap(result, imgView.getWidth(), imgView.getHeight(), false));
+				// if(imgView.getWidth() < imgView.getHeight())
+				if (result.getWidth() < result.getHeight())
+					// imgView.setImageBitmap(Bitmap.createScaledBitmap(result,
+					// imgView.getWidth(), imgView.getHeight(), false));
+					imgView.setImageBitmap(Bitmap.createScaledBitmap(result,
+							imgView.getWidth(), 200, false));
+				else if (result.getWidth() < result.getHeight())
+					imgView.setImageBitmap(Bitmap.createScaledBitmap(result,
+							200, imgView.getHeight(), false));
+				else
+					imgView.setImageBitmap(Bitmap.createScaledBitmap(result,
+							imgView.getWidth(), imgView.getHeight(), false));
+
 			} else {
 				imgView.setImageBitmap(result);
 			}

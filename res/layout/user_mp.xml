@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/user_mp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -33,7 +33,9 @@
             android:id="@+id/user_mp_pic"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            
             android:contentDescription="@string/empty"
+            android:scaleType="fitCenter"
             android:src="@android:color/transparent" />
 
         <!-- <ImageButton -->
