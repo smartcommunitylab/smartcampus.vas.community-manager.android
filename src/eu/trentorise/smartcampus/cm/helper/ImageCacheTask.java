@@ -88,7 +88,7 @@ public class ImageCacheTask extends AsyncTask<String, Void, Bitmap> {
 					// imgView.getWidth(), imgView.getHeight(), false));
 					imgView.setImageBitmap(Bitmap.createScaledBitmap(result,
 							imgView.getWidth(), 200, false));
-				else if (result.getWidth() < result.getHeight())
+				else if (result.getWidth() > result.getHeight())
 					imgView.setImageBitmap(Bitmap.createScaledBitmap(result,
 							200, imgView.getHeight(), false));
 				else
