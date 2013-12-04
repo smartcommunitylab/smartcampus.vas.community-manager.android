@@ -43,13 +43,13 @@ import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.CMConstants.ObjectFilterDescriptor;
 import eu.trentorise.smartcampus.social.model.Entity;
 
-public abstract class AbstractSharedContentFragment extends AbstractTabbedFragment implements OnScrollListener  {
+public abstract class AbstractSharedContentFragment extends
+		AbstractTabbedFragment implements OnScrollListener {
 
 	protected SharedContentsAdapter adapter = null;
 	protected ContentRequest contentRequest = null;
 	protected int lastSize = 0;
-	
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,6 +58,7 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 	}
 
 	protected abstract void populateContentRequest();
+
 	protected abstract int getLayoutId();
 
 	@Override
@@ -65,7 +66,8 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 		ActionBarHelper.populateSharedContentActionBar(this);
 		restartContentRequest();
 
-		ListView contentsListView = (ListView) getView().findViewById(R.id.content_listview);
+		ListView contentsListView = (ListView) getView().findViewById(
+				R.id.content_listview);
 		if (adapter == null) {
 			adapter = new SharedContentsAdapter(getActivity());
 			populateContentRequest();
@@ -81,29 +83,35 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 				updateContentView();
 				super.onChanged();
 			}
-			
+
 		});
-		
+
 		setUpFilterView();
 		updateContentView();
-		contentsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				Entity content = adapter.getItem(position);
-				ViewHelper.viewInApp(getActivity(), CMConstants.getTypeByTypeId(content.getEntityType()), content.getEntityId(), new Bundle());
-			}
-		});
+		contentsListView
+				.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						Entity content = adapter.getItem(position);
+						ViewHelper.viewInApp(getActivity(), CMConstants
+								.getTypeByTypeId(content.getEntityType()),
+								content.getEntityId(), new Bundle());
+					}
+				});
 		super.onStart();
 	}
-	
+
 	protected void setUpFilterView() {
-		LinearLayout filterView = (LinearLayout) getView().findViewById(R.id.shared_content_filters);
+		LinearLayout filterView = (LinearLayout) getView().findViewById(
+				R.id.shared_content_filters);
 		if (filterView != null) {
 			filterView.removeAllViews();
-			for (ObjectFilterDescriptor desc: CMConstants.FILTER_DESCRIPTORS) {
+			for (ObjectFilterDescriptor desc : CMConstants.FILTER_DESCRIPTORS) {
 				ImageButton btn = new ImageButton(getActivity());
-				btn.setContentDescription(getActivity().getString(desc.contentDescription));
-				if (contentRequest != null && contentRequest.type != null && contentRequest.type.equals(desc.type)) {
+				btn.setContentDescription(getActivity().getString(
+						desc.contentDescription));
+				if (contentRequest != null && contentRequest.type != null
+						&& contentRequest.type.equals(desc.type)) {
 					btn.setBackgroundResource(desc.drawable_selected);
 				} else {
 					btn.setBackgroundResource(desc.drawable);
@@ -111,23 +119,27 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 				btn.setTag(desc.type);
 				btn.setOnClickListener(filterClickListener);
 				filterView.addView(btn);
-				
+
 			}
 		}
 	}
 
 	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) { }
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	}
 
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		boolean loadMore = 
-				(firstVisibleItem + visibleItemCount >= totalItemCount) && // end of visible list reached 
-				(lastSize < adapter.getCount()) &&
-				adapter.getCount() >= contentRequest.size; // last load has been successful	
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+		boolean loadMore = (firstVisibleItem + visibleItemCount >= totalItemCount)
+				&& // end of visible list reached
+				(lastSize < adapter.getCount())
+				&& adapter.getCount() >= contentRequest.size; // last load has
+																// been
+																// successful
 		if (loadMore) {
 			lastSize = adapter.getCount();
-			contentRequest.position += contentRequest.size; 
+			contentRequest.position += contentRequest.size;
 			load();
 		}
 	}
@@ -136,19 +148,22 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 		if (contentRequest.position == 0) {
 			adapter.clear();
 		}
-		new SCAsyncTask<ContentRequest, Void, List<Entity>>(getActivity(), getLoadProcessor()).execute(contentRequest);
+		new SCAsyncTask<ContentRequest, Void, List<Entity>>(getActivity(),
+				getLoadProcessor()).execute(contentRequest);
 	}
 
 	protected LoadObjectProcessor getLoadProcessor() {
-		return new LoadObjectProcessor(getActivity(),adapter);
+		return new LoadObjectProcessor(getActivity(), adapter);
 	}
 
 	protected class FilterClickListener implements OnClickListener {
 		@Override
 		public void onClick(View v) {
-			LinearLayout filterView = (LinearLayout) getView().findViewById(R.id.shared_content_filters);
-			for (ObjectFilterDescriptor desc: CMConstants.FILTER_DESCRIPTORS) {
-				ImageButton btn = (ImageButton)filterView.findViewWithTag(desc.type);
+			LinearLayout filterView = (LinearLayout) getView().findViewById(
+					R.id.shared_content_filters);
+			for (ObjectFilterDescriptor desc : CMConstants.FILTER_DESCRIPTORS) {
+				ImageButton btn = (ImageButton) filterView
+						.findViewWithTag(desc.type);
 				if (btn.getTag().equals(v.getTag())) {
 					// if button is selected unselect it and clear the filter
 					if (v.getTag().equals(contentRequest.type)) {
@@ -174,14 +189,16 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 	}
 
 	private void updateContentView() {
-		if (getView() == null) return;
+		if (getView() == null)
+			return;
 		if (adapter != null && !adapter.isEmpty()) {
-			((LinearLayout)getView().findViewById(R.id.content)).removeView(getView().findViewById(R.id.content_empty));
-		} else if (getView().findViewById(R.id.content_empty)==null) {
+			((LinearLayout) getView().findViewById(R.id.content))
+					.removeView(getView().findViewById(R.id.content_empty));
+		} else if (getView().findViewById(R.id.content_empty) == null) {
 			TextView view = new TextView(getActivity());
 			view.setId(R.id.content_empty);
 			view.setText(R.string.content_empty);
-			((LinearLayout)getView().findViewById(R.id.content)).addView(view);
+			((LinearLayout) getView().findViewById(R.id.content)).addView(view);
 		}
 	}
 
@@ -189,7 +206,8 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
 		Entity content = adapter.getItem(info.position);
 		return handleMenuItem(content, item.getItemId());
 	}
@@ -199,12 +217,14 @@ public abstract class AbstractSharedContentFragment extends AbstractTabbedFragme
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View view,
+			ContextMenuInfo menuInfo) {
 		menu.setHeaderTitle(R.string.shared_content_menu_header);
 		populateMenu(menu, view, menuInfo);
 	}
 
-	protected void populateMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+	protected void populateMenu(ContextMenu menu, View view,
+			ContextMenuInfo menuInfo) {
 	}
 
 }

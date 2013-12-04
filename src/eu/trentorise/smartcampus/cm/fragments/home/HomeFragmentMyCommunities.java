@@ -34,12 +34,12 @@ public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 	private static final int MENU_ITEM_APP = 1;
 
 	Community selected = null;
-	
+
 	@Override
 	protected int getLayoutId() {
 		return R.layout.shared_content_communities;
 	}
-	
+
 	@Override
 	protected void populateContentRequest() {
 		ShareVisibility vis = new ShareVisibility();
@@ -53,7 +53,9 @@ public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 	protected boolean handleMenuItem(Entity content, int itemId) {
 		switch (itemId) {
 		case MENU_ITEM_APP:
-			ViewHelper.viewInApp(getActivity(), CMConstants.getTypeByTypeId(content.getEntityType()), content.getEntityId(), new Bundle());
+			ViewHelper.viewInApp(getActivity(),
+					CMConstants.getTypeByTypeId(content.getEntityType()),
+					content.getEntityId(), new Bundle());
 			return true;
 		default:
 			return super.handleMenuItem(content, itemId);
@@ -61,7 +63,8 @@ public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 	}
 
 	@Override
-	protected void populateMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+	protected void populateMenu(ContextMenu menu, View view,
+			ContextMenuInfo menuInfo) {
 		menu.add(0, MENU_ITEM_APP, 0, R.string.shared_content_menu_app);
 	}
 

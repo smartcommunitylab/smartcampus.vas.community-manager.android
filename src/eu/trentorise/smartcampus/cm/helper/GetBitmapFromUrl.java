@@ -46,7 +46,8 @@ public class GetBitmapFromUrl extends AsyncTask<String, Void, Bitmap> {
 	protected Bitmap doInBackground(String... params) {
 		try {
 			URL url = new URL(params[0]);
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
 			connection.setDoInput(true);
 			connection.connect();
 			InputStream input = connection.getInputStream();

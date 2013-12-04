@@ -22,10 +22,11 @@ import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 
-public abstract class AbstractAsyncTaskProcessor<Params, Result> implements SCAsyncTaskProcessor<Params, Result>{
+public abstract class AbstractAsyncTaskProcessor<Params, Result> implements
+		SCAsyncTaskProcessor<Params, Result> {
 
 	private Activity activity;
-	
+
 	public AbstractAsyncTaskProcessor(Activity activity) {
 		super();
 		this.activity = activity;
@@ -33,22 +34,21 @@ public abstract class AbstractAsyncTaskProcessor<Params, Result> implements SCAs
 
 	@Override
 	public void handleFailure(Exception e) {
-		Log.e(activity.getClass().getName(), ""+e.getMessage());
-		HandleExceptionHelper.showFailure(activity, R.string.app_failure_operation);
+		Log.e(activity.getClass().getName(), "" + e.getMessage());
+		HandleExceptionHelper.showFailure(activity,
+				R.string.app_failure_operation);
 		e.printStackTrace();
 	}
-	
-	
+
 	@Override
 	public void handleConnectionError() {
 		HandleExceptionHelper.showDialogConnectivity(activity);
-		
+
 	}
 
 	@Override
 	public void handleSecurityError() {
 		CMHelper.showFailure(activity, R.string.app_failure_security);
 	}
-	
 
 }

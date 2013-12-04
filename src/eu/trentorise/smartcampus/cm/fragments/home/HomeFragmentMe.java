@@ -37,7 +37,6 @@ import eu.trentorise.smartcampus.social.model.ShareVisibility;
 
 public class HomeFragmentMe extends AbstractSharedContentFragment {
 
-	
 	private static final int MENU_ITEM_APP = 1;
 	private static final int MENU_ITEM_SHARING = 2;
 
@@ -67,16 +66,18 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 		return new LoadMyObjectsProcessor(getActivity(), adapter);
 	}
 
-
 	private class LoadMyObjectsProcessor extends LoadObjectProcessor {
 
-		public LoadMyObjectsProcessor(Activity activity, SharedContentsAdapter adapter) {
+		public LoadMyObjectsProcessor(Activity activity,
+				SharedContentsAdapter adapter) {
 			super(activity, adapter);
 		}
 
 		@Override
-		public List<Entity> performAction(ContentRequest... params) throws SecurityException, Exception {
-			return CMHelper.readMyObjects(params[0].position, params[0].size, params[0].type);
+		public List<Entity> performAction(ContentRequest... params)
+				throws SecurityException, Exception {
+			return CMHelper.readMyObjects(params[0].position, params[0].size,
+					params[0].type);
 		}
 
 	}
@@ -85,11 +86,15 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 	protected boolean handleMenuItem(Entity content, int itemId) {
 		switch (itemId) {
 		case MENU_ITEM_APP:
-			ViewHelper.viewInApp(getActivity(), CMConstants.getTypeByTypeId(content.getEntityType()), content.getEntityId(), new Bundle());
+			ViewHelper.viewInApp(getActivity(),
+					CMConstants.getTypeByTypeId(content.getEntityType()),
+					content.getEntityId(), new Bundle());
 			return true;
 		case MENU_ITEM_SHARING:
 			Intent intent = new Intent(getActivity(), SharingActivity.class);
-			intent.putExtra(getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity), content);
+			intent.putExtra(
+					getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity),
+					content);
 			return true;
 		default:
 			return super.handleMenuItem(content, itemId);
@@ -97,7 +102,8 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 	}
 
 	@Override
-	protected void populateMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+	protected void populateMenu(ContextMenu menu, View view,
+			ContextMenuInfo menuInfo) {
 		menu.add(0, MENU_ITEM_APP, 0, R.string.shared_content_menu_app);
 		menu.add(0, MENU_ITEM_SHARING, 0, R.string.shared_content_menu_sharing);
 	}

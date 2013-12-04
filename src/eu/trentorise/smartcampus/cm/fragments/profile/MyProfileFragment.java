@@ -19,8 +19,8 @@ import java.io.ByteArrayOutputStream;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -66,9 +66,12 @@ public class MyProfileFragment extends SherlockFragment {
 		super.onStart();
 
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
-		getSherlockActivity().getSupportActionBar().setTitle(R.string.profile_title);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setTitle(
+				R.string.profile_title);
 
 		updateProfile(CMHelper.getProfile());
 		ImageView imgView = (ImageView) getView().findViewById(
@@ -99,10 +102,11 @@ public class MyProfileFragment extends SherlockFragment {
 				ImageView imgView = (ImageView) getView().findViewById(
 						R.id.myprofile_pic);
 				BitmapFactory.Options options = new BitmapFactory.Options();
-				String imagePath = BitmapUtils.getBitmapAbsolutePath(getActivity(), imgUri);
+				String imagePath = BitmapUtils.getBitmapAbsolutePath(
+						getActivity(), imgUri);
 
 				Bitmap photo = BitmapFactory.decodeFile(imagePath, options);
-				
+
 				// resize picture to imageView dimensions
 
 				Bitmap profilePicture = BitmapUtils.scale(getActivity(),
@@ -114,8 +118,8 @@ public class MyProfileFragment extends SherlockFragment {
 				baos.close();
 
 				// cache image locally
-				ImageCacheProvider.store(
-						"" + CMHelper.getProfile().getSocialId(),
+				ImageCacheProvider.store(""
+						+ CMHelper.getProfile().getSocialId(),
 						baos.toByteArray());
 
 				// upload picture to profile repository
@@ -147,7 +151,7 @@ public class MyProfileFragment extends SherlockFragment {
 		if (userProfile.getPictureUrl() != null
 				&& userProfile.getPictureUrl().length() > 0) {
 			try {
-				new ImageCacheTask(imgView,R.drawable.placeholder).execute(
+				new ImageCacheTask(imgView, R.drawable.placeholder).execute(
 						userProfile.getPictureUrl(), ""
 								+ CMHelper.getProfile().getSocialId());
 			} catch (Exception e) {

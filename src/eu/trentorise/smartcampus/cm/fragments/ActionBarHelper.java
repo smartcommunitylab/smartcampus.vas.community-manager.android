@@ -25,40 +25,46 @@ import eu.trentorise.smartcampus.cm.Constants;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.TabListener;
 import eu.trentorise.smartcampus.cm.fragments.home.HomeFragmentMe;
-import eu.trentorise.smartcampus.cm.fragments.home.HomeFragmentMyCommunities;
 import eu.trentorise.smartcampus.cm.fragments.home.HomeFragmentMyGroups;
 
 public class ActionBarHelper {
 
 	protected static final int mainlayout = android.R.id.content;
-	public final static String ARG_TAB = "arg_tab"; 
+	public final static String ARG_TAB = "arg_tab";
 
 	public static void emptyActionBar(SherlockFragment fragment) {
 		SherlockFragmentActivity activity = fragment.getSherlockActivity();
 		activity.getSupportActionBar().removeAllTabs();
-		activity.getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+		activity.getSupportActionBar().setNavigationMode(
+				ActionBar.NAVIGATION_MODE_STANDARD);
 	}
-	
+
 	public static void populateSharedContentActionBar(SherlockFragment fragment) {
 		SherlockFragmentActivity activity = fragment.getSherlockActivity();
 		if (fragment.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 			activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
-			fragment.getSherlockActivity().getSupportActionBar().setTitle(R.string.shared_title);
+			fragment.getSherlockActivity().getSupportActionBar()
+					.setTitle(R.string.shared_title);
 		} else {
 			activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 		}
-		
-//		getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		if (activity.getSupportActionBar() != null && activity.getSupportActionBar().getTabCount() > 0 && 
-				activity.getSupportActionBar().getTabAt(0).getText().equals(activity.getString(R.string.home_tab_me))) return;
+		// getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		if (activity.getSupportActionBar() != null
+				&& activity.getSupportActionBar().getTabCount() > 0
+				&& activity.getSupportActionBar().getTabAt(0).getText()
+						.equals(activity.getString(R.string.home_tab_me)))
+			return;
 
 		activity.getSupportActionBar().removeAllTabs();
-		
+
 		ActionBar.Tab tab = activity.getSupportActionBar().newTab();
 		tab.setText(R.string.home_tab_me);
 		tab.setTabListener(new TabListener<HomeFragmentMe>(activity,
-				Constants.HOME_FRAGMENT_ME_TAG, HomeFragmentMe.class, fragment.getClass().equals(HomeFragmentMe.class) ? fragment : null));
+				Constants.HOME_FRAGMENT_ME_TAG, HomeFragmentMe.class, fragment
+						.getClass().equals(HomeFragmentMe.class) ? fragment
+						: null));
 		activity.getSupportActionBar().addTab(tab);
 
 		// My Groups
@@ -66,23 +72,26 @@ public class ActionBarHelper {
 		tab.setText(R.string.home_tab_mygroups);
 		tab.setTabListener(new TabListener<HomeFragmentMyGroups>(activity,
 				Constants.HOME_FRAGMENT_MYGROUPS_TAG,
-				HomeFragmentMyGroups.class, fragment.getClass().equals(HomeFragmentMyGroups.class) ? fragment : null));
+				HomeFragmentMyGroups.class, fragment.getClass().equals(
+						HomeFragmentMyGroups.class) ? fragment : null));
 		activity.getSupportActionBar().addTab(tab);
 
-//		// My Communities
-//		tab = activity.getSupportActionBar().newTab();
-//		tab.setText(R.string.home_tab_mycommunities);
-//		tab.setTabListener(new TabListener<HomeFragmentMyCommunities>(activity,
-//				Constants.HOME_FRAGMENT_MYCOMMUNITIES_TAG,
-//				HomeFragmentMyCommunities.class,
-//				fragment.getClass().equals(HomeFragmentMyCommunities.class) ? fragment : null));
-//		activity.getSupportActionBar().addTab(tab);
+		// // My Communities
+		// tab = activity.getSupportActionBar().newTab();
+		// tab.setText(R.string.home_tab_mycommunities);
+		// tab.setTabListener(new
+		// TabListener<HomeFragmentMyCommunities>(activity,
+		// Constants.HOME_FRAGMENT_MYCOMMUNITIES_TAG,
+		// HomeFragmentMyCommunities.class,
+		// fragment.getClass().equals(HomeFragmentMyCommunities.class) ?
+		// fragment : null));
+		// activity.getSupportActionBar().addTab(tab);
 
 	}
-	
+
 	public static void populateCampusActionBar(SherlockFragment fragment) {
 		SherlockFragmentActivity activity = fragment.getSherlockActivity();
 		activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
 		activity.getSupportActionBar().setTitle(R.string.campus_title);
-	}	
+	}
 }

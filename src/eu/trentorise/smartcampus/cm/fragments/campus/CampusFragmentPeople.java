@@ -53,7 +53,8 @@ public class CampusFragmentPeople extends SherlockFragment {
 	List<PictureProfile> usersList = new ArrayList<PictureProfile>();
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		if (getSherlockActivity().getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_STANDARD) {
 			getSherlockActivity().getSupportActionBar().setNavigationMode(
 					ActionBar.NAVIGATION_MODE_STANDARD);
@@ -65,73 +66,96 @@ public class CampusFragmentPeople extends SherlockFragment {
 	public void onStart() {
 		super.onStart();
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
-		getSherlockActivity().getSupportActionBar().setTitle(R.string.campus_title);
-		new SCAsyncTask<String, Void, List<PictureProfile>>(getActivity(), new LoadUserProcessor(getActivity())).execute(((EditText)getView().findViewById(R.id.people_search)).getText().toString());
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setTitle(
+				R.string.campus_title);
+		new SCAsyncTask<String, Void, List<PictureProfile>>(getActivity(),
+				new LoadUserProcessor(getActivity()))
+				.execute(((EditText) getView().findViewById(R.id.people_search))
+						.getText().toString());
 
-		ImageButton search = (ImageButton) getView().findViewById(R.id.people_search_img);
+		ImageButton search = (ImageButton) getView().findViewById(
+				R.id.people_search_img);
 		search.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				new SCAsyncTask<String, Void, List<PictureProfile>>(getActivity(), new LoadUserProcessor(getActivity())).execute(((EditText)getView().findViewById(R.id.people_search)).getText().toString());
+				new SCAsyncTask<String, Void, List<PictureProfile>>(
+						getActivity(), new LoadUserProcessor(getActivity()))
+						.execute(((EditText) getView().findViewById(
+								R.id.people_search)).getText().toString());
 			}
 		});
-		
-		ListView usersListView = (ListView) getView().findViewById(R.id.people_listview);
+
+		ListView usersListView = (ListView) getView().findViewById(
+				R.id.people_listview);
 		Set<String> initGroups = null;
 		if (getArguments() != null && getArguments().containsKey(ARG_GROUP)) {
-			initGroups = Collections.singleton(getArguments().getString(ARG_GROUP));
+			initGroups = Collections.singleton(getArguments().getString(
+					ARG_GROUP));
 		}
-		usersListAdapter = new UsersPictureProfileAdapter(getActivity(), R.layout.user_mp, new PeopleUserOptionsHandler(), initGroups);
+		usersListAdapter = new UsersPictureProfileAdapter(getActivity(),
+				R.layout.user_mp, new PeopleUserOptionsHandler(), initGroups);
 		usersListView.setAdapter(usersListAdapter);
 		super.onStart();
 	}
 
-	private class LoadUserProcessor extends AbstractAsyncTaskProcessor<String, List<PictureProfile>> {
+	private class LoadUserProcessor extends
+			AbstractAsyncTaskProcessor<String, List<PictureProfile>> {
 
 		public LoadUserProcessor(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public List<PictureProfile> performAction(String... params) throws SecurityException, Exception {
+		public List<PictureProfile> performAction(String... params)
+				throws SecurityException, Exception {
 			return CMHelper.getPeople(params[0]);
 		}
 
 		@Override
 		public void handleResult(List<PictureProfile> result) {
 			usersListAdapter.clear();
-			if (result != null){
+			if (result != null) {
 				for (PictureProfile mp : result) {
-					if(mp.getId().equals(HomeActivity.picP.getId())){
-						usersListAdapter.remove(mp);;
-					}
-					else
-					usersListAdapter.add(mp);
+					if (mp.getId().equals(HomeActivity.picP.getId())) {
+						usersListAdapter.remove(mp);
+						;
+					} else
+						usersListAdapter.add(mp);
 				}
 			}
 			usersListAdapter.notifyDataSetChanged();
-			
-			eu.trentorise.smartcampus.cm.custom.ViewHelper.removeEmptyListView((LinearLayout)getView().findViewById(R.id.layout_people));
+
+			eu.trentorise.smartcampus.cm.custom.ViewHelper
+					.removeEmptyListView((LinearLayout) getView().findViewById(
+							R.id.layout_people));
 			if (result == null || result.isEmpty()) {
-				eu.trentorise.smartcampus.cm.custom.ViewHelper.addEmptyListView((LinearLayout)getView().findViewById(R.id.layout_people), R.string.people_list_empty);
+				eu.trentorise.smartcampus.cm.custom.ViewHelper
+						.addEmptyListView((LinearLayout) getView()
+								.findViewById(R.id.layout_people),
+								R.string.people_list_empty);
 			}
 		}
 
 	}
-	
+
 	private class PeopleUserOptionsHandler implements UserOptionsHandler {
 
 		@Override
-		public void assignUserToGroups(PictureProfile user, Collection<Group> groups) {
-			new SCAsyncTask<Object, Void, PictureProfile>(getActivity(), new AssignToGroups(getActivity())).execute(user,groups);
+		public void assignUserToGroups(PictureProfile user,
+				Collection<Group> groups) {
+			new SCAsyncTask<Object, Void, PictureProfile>(getActivity(),
+					new AssignToGroups(getActivity())).execute(user, groups);
 		}
-		
+
 	}
 
-	private class AssignToGroups extends AbstractAsyncTaskProcessor<Object, PictureProfile> {
+	private class AssignToGroups extends
+			AbstractAsyncTaskProcessor<Object, PictureProfile> {
 
 		public AssignToGroups(Activity activity) {
 			super(activity);
@@ -139,9 +163,11 @@ public class CampusFragmentPeople extends SherlockFragment {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public PictureProfile performAction(Object... params) throws SecurityException, Exception {
-			if (CMHelper.assignToGroups((PictureProfile)params[0], (Collection<Group>)params[1]))  {
-				return (PictureProfile)params[0];
+		public PictureProfile performAction(Object... params)
+				throws SecurityException, Exception {
+			if (CMHelper.assignToGroups((PictureProfile) params[0],
+					(Collection<Group>) params[1])) {
+				return (PictureProfile) params[0];
 			}
 			return null;
 		}
@@ -153,7 +179,7 @@ public class CampusFragmentPeople extends SherlockFragment {
 			}
 		}
 	}
-	
+
 	public static Bundle prepareArgs(String socialId) {
 		Bundle b = new Bundle();
 		b.putString(ARG_GROUP, socialId);

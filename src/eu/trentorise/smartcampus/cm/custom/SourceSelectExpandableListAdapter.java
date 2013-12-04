@@ -37,19 +37,21 @@ import eu.trentorise.smartcampus.cm.model.SocialContainer;
 import eu.trentorise.smartcampus.social.model.Community;
 import eu.trentorise.smartcampus.social.model.Group;
 
-public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter {
+public class SourceSelectExpandableListAdapter extends
+		BaseExpandableListAdapter {
 	private static final String GROUP_GROUPS = "Groups";
 	private static final Object GROUP_PEOPLE = "People";
 
 	private SocialContainer completeData;
 
 	@SuppressWarnings("unchecked")
-	private Set<Integer>[] checked = new Set[]{new HashSet<Integer>(),new HashSet<Integer>()};
+	private Set<Integer>[] checked = new Set[] { new HashSet<Integer>(),
+			new HashSet<Integer>() };
 
 	private Context ctx;
-	
-		
-	public SourceSelectExpandableListAdapter(Context ctx, SocialContainer completeData, SocialContainer userData) {
+
+	public SourceSelectExpandableListAdapter(Context ctx,
+			SocialContainer completeData, SocialContainer userData) {
 		super();
 		this.completeData = completeData;
 		this.ctx = ctx;
@@ -60,33 +62,42 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 
 	public List<Group> getGroups() {
 		List<Group> list = new ArrayList<Group>();
-		for (Integer item : checked[0]) list.add(completeData.getGroups().get(item));
+		for (Integer item : checked[0])
+			list.add(completeData.getGroups().get(item));
 		return list;
 	}
+
 	public List<PictureProfile> getUsers() {
 		List<PictureProfile> list = new ArrayList<PictureProfile>();
-		for (Integer item : checked[1]) list.add(completeData.getUsers().get(item));
+		for (Integer item : checked[1])
+			list.add(completeData.getUsers().get(item));
 		return list;
 	}
+
 	public List<Community> getCommunities() {
 		return completeData.getCommunities();
 	}
 
 	private void update(SocialContainer userData) {
 		if (userData != null) {
-			if (userData.getGroups() != null && completeData.getGroups() != null) {
+			if (userData.getGroups() != null
+					&& completeData.getGroups() != null) {
 				for (int i = 0; i < completeData.getGroups().size(); i++) {
 					for (Group g : userData.getGroups()) {
-						if (completeData.getGroups().get(i).getSocialId().equals(g.getSocialId())) checked[0].add(i);
+						if (completeData.getGroups().get(i).getSocialId()
+								.equals(g.getSocialId()))
+							checked[0].add(i);
 					}
-				} 
+				}
 			}
 			if (userData.getUsers() != null && completeData.getUsers() != null) {
 				for (int i = 0; i < completeData.getUsers().size(); i++) {
 					for (PictureProfile p : userData.getUsers()) {
-						if (completeData.getUsers().get(i).getId().equals(p.getId())) checked[1].add(i);
+						if (completeData.getUsers().get(i).getId()
+								.equals(p.getId()))
+							checked[1].add(i);
 					}
-				} 
+				}
 			}
 		}
 	}
@@ -99,27 +110,40 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 	@Override
 	public int getChildrenCount(int groupPosition) {
 		switch (groupPosition) {
-		case 0: return completeData.getGroups() != null ? completeData.getGroups().size() : 0;
-		case 1: return completeData.getUsers() != null ? completeData.getUsers().size() : 0;
-		default: return 0;
+		case 0:
+			return completeData.getGroups() != null ? completeData.getGroups()
+					.size() : 0;
+		case 1:
+			return completeData.getUsers() != null ? completeData.getUsers()
+					.size() : 0;
+		default:
+			return 0;
 		}
 	}
 
 	@Override
 	public Object getGroup(int groupPosition) {
 		switch (groupPosition) {
-		case 0: return GROUP_GROUPS;
-		case 1: return GROUP_PEOPLE;
-		default: return 0;
+		case 0:
+			return GROUP_GROUPS;
+		case 1:
+			return GROUP_PEOPLE;
+		default:
+			return 0;
 		}
 	}
 
 	@Override
 	public Object getChild(int groupPosition, int childPosition) {
 		switch (groupPosition) {
-		case 0: return completeData.getGroups() != null ? completeData.getGroups().get(childPosition).getName() : null;
-		case 1: return completeData.getUsers() != null ? completeData.getUsers().get(childPosition).fullName() : null;
-		default: return null;
+		case 0:
+			return completeData.getGroups() != null ? completeData.getGroups()
+					.get(childPosition).getName() : null;
+		case 1:
+			return completeData.getUsers() != null ? completeData.getUsers()
+					.get(childPosition).fullName() : null;
+		default:
+			return null;
 		}
 	}
 
@@ -137,48 +161,58 @@ public class SourceSelectExpandableListAdapter extends BaseExpandableListAdapter
 	public boolean hasStableIds() {
 		return true;
 	}
+
 	private static final int[] EMPTY_STATE_SET = {};
-    private static final int[] GROUP_EXPANDED_STATE_SET =
-            {android.R.attr.state_expanded};
-    private static final int[][] GROUP_STATE_SETS = {
-         EMPTY_STATE_SET, // 0
-         GROUP_EXPANDED_STATE_SET // 1
+	private static final int[] GROUP_EXPANDED_STATE_SET = { android.R.attr.state_expanded };
+	private static final int[][] GROUP_STATE_SETS = { EMPTY_STATE_SET, // 0
+			GROUP_EXPANDED_STATE_SET // 1
 	};
 
 	@Override
-	public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	public View getGroupView(int groupPosition, boolean isExpanded,
+			View convertView, ViewGroup parent) {
+		LayoutInflater inflater = (LayoutInflater) ctx
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.text_row, parent, false);
-		((TextView)view.findViewById(R.id.textlist_textView)).setText(getGroup(groupPosition).toString());
-		
-		ImageView indicator=(ImageView)view.findViewById(R.id.explist_indicator);
+		((TextView) view.findViewById(R.id.textlist_textView))
+				.setText(getGroup(groupPosition).toString());
 
-		if( getChildrenCount( groupPosition ) == 0 ) 
-			indicator.setVisibility( View.INVISIBLE );
-		 else {
-			indicator.setVisibility( View.VISIBLE );
-			int stateSetIndex = ( isExpanded ? 1 : 0) ;
+		ImageView indicator = (ImageView) view
+				.findViewById(R.id.explist_indicator);
+
+		if (getChildrenCount(groupPosition) == 0)
+			indicator.setVisibility(View.INVISIBLE);
+		else {
+			indicator.setVisibility(View.VISIBLE);
+			int stateSetIndex = (isExpanded ? 1 : 0);
 			Drawable drawable = indicator.getDrawable();
 			drawable.setState(GROUP_STATE_SETS[stateSetIndex]);
 		}
-	
+
 		return view;
 	}
-	
+
 	@Override
-	public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater)ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	public View getChildView(final int groupPosition, final int childPosition,
+			boolean isLastChild, View convertView, ViewGroup parent) {
+		LayoutInflater inflater = (LayoutInflater) ctx
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View view = inflater.inflate(R.layout.checklist_row, parent, false);
-		CheckBox checkBox = (CheckBox) view.findViewById(R.id.checklist_checkBox);
-		checkBox.setChecked(checked[groupPosition].contains(childPosition)); 
+		CheckBox checkBox = (CheckBox) view
+				.findViewById(R.id.checklist_checkBox);
+		checkBox.setChecked(checked[groupPosition].contains(childPosition));
 		checkBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				if (isChecked) checked[groupPosition].add(childPosition);
-				else checked[groupPosition].remove(childPosition);
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (isChecked)
+					checked[groupPosition].add(childPosition);
+				else
+					checked[groupPosition].remove(childPosition);
 			}
 		});
-		((TextView)view.findViewById(R.id.checklist_textView)).setText(getChild(groupPosition, childPosition).toString());
+		((TextView) view.findViewById(R.id.checklist_textView))
+				.setText(getChild(groupPosition, childPosition).toString());
 		return view;
 	}
 

@@ -42,8 +42,10 @@ public class MyGroupsAddToDialog extends Dialog {
 	private CheckListAdapter listAdatpter = null;
 	private Activity context = null;
 	private Set<String> selectedGroups = null;
-	
-	public MyGroupsAddToDialog(Activity context, DialogHandler<Collection<Group>> groupAssignmentHandler, Set<String> selected) {
+
+	public MyGroupsAddToDialog(Activity context,
+			DialogHandler<Collection<Group>> groupAssignmentHandler,
+			Set<String> selected) {
 		super(context);
 		this.groupAssignmentHandler = groupAssignmentHandler;
 		this.context = context;
@@ -59,7 +61,8 @@ public class MyGroupsAddToDialog extends Dialog {
 
 		setTitle(R.string.mygroups_addto_options_title);
 
-		listAdatpter = new CheckListAdapter(context, getLayoutInflater(), R.layout.checklist_row);
+		listAdatpter = new CheckListAdapter(context, getLayoutInflater(),
+				R.layout.checklist_row);
 		// adapter
 		checkListView.setAdapter(listAdatpter);
 
@@ -79,29 +82,34 @@ public class MyGroupsAddToDialog extends Dialog {
 				Set<String> selected = new HashSet<String>();
 				for (int i = 0; i < checkListView.getChildCount(); i++) {
 					View listChild = checkListView.getChildAt(i);
-					CheckBox checkbox = (CheckBox) listChild.findViewById(R.id.checklist_checkBox);
-					TextView textview = (TextView) listChild.findViewById(R.id.checklist_textView);
+					CheckBox checkbox = (CheckBox) listChild
+							.findViewById(R.id.checklist_checkBox);
+					TextView textview = (TextView) listChild
+							.findViewById(R.id.checklist_textView);
 					if (checkbox.isChecked()) {
 						selected.add(textview.getText().toString());
 					}
 				}
 				List<Group> result = new ArrayList<Group>();
 				for (Group g : CMHelper.getGroups()) {
-					if (selected.contains(g.getName())) result.add(g); 
+					if (selected.contains(g.getName()))
+						result.add(g);
 				}
 				groupAssignmentHandler.handleSuccess(result);
-				
+
 				dismiss();
 			}
 		});
-		
+
 		for (Group g : CMHelper.getGroups()) {
 			CheckListItem item = new CheckListItem();
 			item.text = g.getName();
 			item.enabled = true;
-//			item.checked = g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID);
-//			if (g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID) continue;
-			if (selectedGroups != null && selectedGroups.contains(g.getSocialId())) {
+			// item.checked =
+			// g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID);
+			// if (g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID) continue;
+			if (selectedGroups != null
+					&& selectedGroups.contains(g.getSocialId())) {
 				item.checked = true;
 			}
 			listAdatpter.add(item);

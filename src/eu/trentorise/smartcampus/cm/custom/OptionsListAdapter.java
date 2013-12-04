@@ -31,7 +31,8 @@ public class OptionsListAdapter extends ArrayAdapter<String> {
 	int layoutResourceId;
 	List<String> contentsList;
 
-	public OptionsListAdapter(Context context, int layoutResourceId, List<String> optionsList) {
+	public OptionsListAdapter(Context context, int layoutResourceId,
+			List<String> optionsList) {
 		super(context, layoutResourceId, optionsList);
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
@@ -48,7 +49,8 @@ public class OptionsListAdapter extends ArrayAdapter<String> {
 			row = inflater.inflate(layoutResourceId, parent, false);
 
 			holder = new DataHolder();
-			holder.optionTextView = (TextView) row.findViewById(android.R.id.text1);
+			holder.optionTextView = (TextView) row
+					.findViewById(android.R.id.text1);
 
 			row.setTag(holder);
 		} else {

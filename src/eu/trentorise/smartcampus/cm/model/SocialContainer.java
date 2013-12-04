@@ -24,27 +24,31 @@ import eu.trentorise.smartcampus.social.model.ShareVisibility;
 public interface SocialContainer {
 
 	public boolean isAllUsers();
+
 	public void setAllUsers(boolean allUsers);
-	
-	public  List<PictureProfile> getUsers();
 
-	public  void setUsers(List<PictureProfile> users);
+	public List<PictureProfile> getUsers();
 
-	public  List<Group> getGroups();
+	public void setUsers(List<PictureProfile> users);
 
-	public  void setGroups(List<Group> groups);
+	public List<Group> getGroups();
 
-	public  List<Community> getCommunities();
+	public void setGroups(List<Group> groups);
 
-	public  void setCommunities(List<Community> communities);
+	public List<Community> getCommunities();
+
+	public void setCommunities(List<Community> communities);
 
 	public boolean isAllKnownUsers();
+
 	public void setAllKnownUsers(boolean allKnownUsers);
 
 	public boolean isAllKnownCommunities();
+
 	public void setAllKnownCommunities(boolean allKnownCommunities);
 
 	public boolean isAllCommunities();
+
 	public void setAllCommunities(boolean allCommunities);
 
 	public ShareVisibility toShareVisibility();

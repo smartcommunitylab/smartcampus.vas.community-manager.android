@@ -32,49 +32,63 @@ public class SimpleSocialContainer implements SocialContainer {
 	private boolean allKnownCommunities;
 	private boolean allUsers;
 	private boolean allCommunities;
-	
+
 	public List<Community> getCommunities() {
 		return communities;
 	}
+
 	public void setCommunities(List<Community> communities) {
 		this.communities = communities;
 	}
+
 	public List<PictureProfile> getUsers() {
 		return users;
 	}
+
 	public void setUsers(List<PictureProfile> users) {
 		this.users = users;
 	}
+
 	public List<Group> getGroups() {
 		return groups;
 	}
+
 	public void setGroups(List<Group> groups) {
 		this.groups = groups;
 	}
+
 	public boolean isAllUsers() {
 		return allUsers;
 	}
+
 	public void setAllUsers(boolean allUsers) {
 		this.allUsers = allUsers;
 	}
+
 	public boolean isAllKnownUsers() {
 		return allKnownUsers;
 	}
+
 	public void setAllKnownUsers(boolean allKnownUsers) {
 		this.allKnownUsers = allKnownUsers;
 	}
+
 	public boolean isAllKnownCommunities() {
 		return allKnownCommunities;
 	}
+
 	public void setAllKnownCommunities(boolean allKnownCommunities) {
 		this.allKnownCommunities = allKnownCommunities;
 	}
+
 	public boolean isAllCommunities() {
 		return allCommunities;
 	}
+
 	public void setAllCommunities(boolean allCommunities) {
 		this.allCommunities = allCommunities;
 	}
+
 	@Override
 	public ShareVisibility toShareVisibility() {
 		ShareVisibility sv = new ShareVisibility();
@@ -84,16 +98,18 @@ public class SimpleSocialContainer implements SocialContainer {
 		sv.setAllUsers(allUsers);
 		sv.setCommunityIds(new ArrayList<String>());
 		if (communities != null)
-			for (Community c : communities) sv.getCommunityIds().add(c.getSocialId()); 
+			for (Community c : communities)
+				sv.getCommunityIds().add(c.getSocialId());
 		sv.setUserIds(new ArrayList<String>());
 		if (users != null)
-			for (User c : users) sv.getUserIds().add(c.getSocialId()); 
+			for (User c : users)
+				sv.getUserIds().add(c.getSocialId());
 		sv.setGroupIds(new ArrayList<String>());
 		if (groups != null)
-			for (Group c : groups) sv.getGroupIds().add(c.getSocialId()); 
+			for (Group c : groups)
+				sv.getGroupIds().add(c.getSocialId());
 
 		return sv;
 	}
-	
-	
+
 }

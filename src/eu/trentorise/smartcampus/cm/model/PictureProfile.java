@@ -28,7 +28,7 @@ import eu.trentorise.smartcampus.social.model.User;
  */
 public class PictureProfile extends User implements Serializable {
 	private static final long serialVersionUID = 2720812823469859081L;
-	
+
 	private String pictureUrl;
 
 	public PictureProfile() {
@@ -54,7 +54,7 @@ public class PictureProfile extends User implements Serializable {
 	}
 
 	public String fullName() {
-		return getName() + " "+getSurname();
+		return getName() + " " + getSurname();
 	}
 
 	@Override
@@ -88,6 +88,5 @@ public class PictureProfile extends User implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
 }

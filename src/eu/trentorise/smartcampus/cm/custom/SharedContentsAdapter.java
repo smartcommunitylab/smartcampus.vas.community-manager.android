@@ -27,8 +27,8 @@ import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
-import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.model.CMConstants.ObjectFilterDescriptor;
+import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.social.model.Concept;
 import eu.trentorise.smartcampus.social.model.Entity;
 
@@ -51,12 +51,18 @@ public class SharedContentsAdapter extends ArrayAdapter<Entity> {
 			row = inflater.inflate(R.layout.content, parent, false);
 
 			holder = new DataHolder();
-			holder.content_type_icon = (ImageView) row.findViewById(R.id.content_type_icon);
-			holder.content_type_user = (ImageView) row.findViewById(R.id.content_type_user);
-			holder.content_title = (TextView) row.findViewById(R.id.content_title);
-			holder.content_tags = (TextView) row.findViewById(R.id.content_tags);
-			holder.content_date = (TextView) row.findViewById(R.id.content_date);
-			holder.content_user_name = (TextView) row.findViewById(R.id.content_user);
+			holder.content_type_icon = (ImageView) row
+					.findViewById(R.id.content_type_icon);
+			holder.content_type_user = (ImageView) row
+					.findViewById(R.id.content_type_user);
+			holder.content_title = (TextView) row
+					.findViewById(R.id.content_title);
+			holder.content_tags = (TextView) row
+					.findViewById(R.id.content_tags);
+			holder.content_date = (TextView) row
+					.findViewById(R.id.content_date);
+			holder.content_user_name = (TextView) row
+					.findViewById(R.id.content_user);
 
 			row.setTag(holder);
 		} else {
@@ -64,27 +70,29 @@ public class SharedContentsAdapter extends ArrayAdapter<Entity> {
 		}
 
 		Entity content = getItem(position);
-//		Content content = contentsList.get(position);
-		
-//		for (String s : content.imagesLinks) {
-//			Bitmap bitmap = null;
-//			try {
-//				GetBitmapFromUrl getBitmap = new GetBitmapFromUrl();
-//				getBitmap.execute(s);
-//				bitmap = getBitmap.get();
-//			} catch (Exception e) {
-//				Log.e(this.getClass().getSimpleName(), e.getMessage());
-//			}
-//			ImageView imageView = new ImageView(context);
-//			imageView.setImageBitmap(bitmap);
-//			holder.content_images.addView(imageView);
-//			// Log.e(this.getClass().getSimpleName(), s + " DONE");
-//		}
+		// Content content = contentsList.get(position);
+
+		// for (String s : content.imagesLinks) {
+		// Bitmap bitmap = null;
+		// try {
+		// GetBitmapFromUrl getBitmap = new GetBitmapFromUrl();
+		// getBitmap.execute(s);
+		// bitmap = getBitmap.get();
+		// } catch (Exception e) {
+		// Log.e(this.getClass().getSimpleName(), e.getMessage());
+		// }
+		// ImageView imageView = new ImageView(context);
+		// imageView.setImageBitmap(bitmap);
+		// holder.content_images.addView(imageView);
+		// // Log.e(this.getClass().getSimpleName(), s + " DONE");
+		// }
 		String typeName = CMHelper.getEntityTypeName(content.getEntityType());
-		ObjectFilterDescriptor descr = CMConstants.getObjectDescriptor(typeName);
+		ObjectFilterDescriptor descr = CMConstants
+				.getObjectDescriptor(typeName);
 		if (descr != null) {
 			holder.content_type_icon.setImageResource(descr.object_drawable);
-			holder.content_type_icon.setContentDescription(context.getString(descr.contentDescription));
+			holder.content_type_icon.setContentDescription(context
+					.getString(descr.contentDescription));
 		}
 		holder.content_title.setText(content.getTitle());
 		String tags = "";
@@ -96,9 +104,10 @@ public class SharedContentsAdapter extends ArrayAdapter<Entity> {
 		} else {
 			holder.content_tags.setText(null);
 		}
-		
+
 		if (content.getCreationDate() != null) {
-			holder.content_date.setText(CMConstants.DATE_TIME_FORMAT.format(content.getCreationDate()));
+			holder.content_date.setText(CMConstants.DATE_TIME_FORMAT
+					.format(content.getCreationDate()));
 		} else {
 			holder.content_date.setText(null);
 		}
@@ -108,20 +117,23 @@ public class SharedContentsAdapter extends ArrayAdapter<Entity> {
 				holder.content_type_user.setTag("" + content.getUser().getId());
 			}
 
-			PictureProfile pp = CMHelper.getPictureProfile(content.getUser().getSocialId());
+			PictureProfile pp = CMHelper.getPictureProfile(content.getUser()
+					.getSocialId());
 			holder.content_user_name.setText(pp.fullName());
-			
+
 			if (pp.getPictureUrl() != null) {
-				new ImageCacheTask(holder.content_type_user, R.drawable.placeholder_small).execute(
+				new ImageCacheTask(holder.content_type_user,
+						R.drawable.placeholder_small).execute(
 						pp.getPictureUrl(), "" + content.getUser().getId());
 			} else {
-				holder.content_type_user.setImageResource(R.drawable.placeholder_small);
+				holder.content_type_user
+						.setImageResource(R.drawable.placeholder_small);
 			}
 		} else {
 			holder.content_user_name.setText(null);
 			holder.content_type_user.setImageBitmap(null);
 		}
-		
+
 		// Log.e(this.getClass().getSimpleName(), "ROW DONE");
 		return row;
 	}

@@ -59,7 +59,7 @@ public class MyGroupsFragment extends SherlockFragment {
 	private Spinner myGroupsSpinner;
 
 	private ArrayAdapter<String> dataAdapter;
-	
+
 	private Group selected = null;
 
 	@Override
@@ -84,18 +84,27 @@ public class MyGroupsFragment extends SherlockFragment {
 		super.onStart();
 
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
-		getSherlockActivity().getSupportActionBar().setTitle(R.string.groups_title);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
+		getSherlockActivity().getSupportActionBar().setTitle(
+				R.string.groups_title);
 
-		//dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item);
+		// dataAdapter = new ArrayAdapter<String>(getActivity(),
+		// android.R.layout.simple_spinner_item);
 		dataAdapter = new CustomSpinnerAdapter<String>(getActivity());
-		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		myGroupsSpinner = (Spinner) getView().findViewById(R.id.user_spinner_mygroups);
+		dataAdapter
+				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		myGroupsSpinner = (Spinner) getView().findViewById(
+				R.id.user_spinner_mygroups);
 		myGroupsSpinner.setAdapter(dataAdapter);
-		
-		ListView usersListView = (ListView) getView().findViewById(R.id.users_listview);
-		usersListAdapter = new UsersPictureProfileAdapter(getSherlockActivity(), R.layout.user_mp, new MyGroupsUserOptionsHandler(), null);
+
+		ListView usersListView = (ListView) getView().findViewById(
+				R.id.users_listview);
+		usersListAdapter = new UsersPictureProfileAdapter(
+				getSherlockActivity(), R.layout.user_mp,
+				new MyGroupsUserOptionsHandler(), null);
 		usersListView.setAdapter(usersListAdapter);
 
 		update(CMHelper.getGroups());
@@ -103,44 +112,47 @@ public class MyGroupsFragment extends SherlockFragment {
 		myGroupsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				selected = null; 
-			    try {
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				selected = null;
+				try {
 					selected = CMHelper.getGroups().get(position);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				updateUserList(selected);
 			}
+
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
 		});
-		
+
 	}
 
-	
-/*	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-//		MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
-//		inflater.inflate(R.menu.gripmenu, menu);
- * 
-		MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add, 1, R.string.mygroups_add);
-		item.setIcon(R.drawable.ic_action_bar_add);
-		item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+	/*
+	 * @Override public void onPrepareOptionsMenu(Menu menu) { menu.clear(); //
+	 * MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
+	 * // inflater.inflate(R.menu.gripmenu, menu);
+	 * 
+	 * MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add, 1,
+	 * R.string.mygroups_add); item.setIcon(R.drawable.ic_action_bar_add);
+	 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+	 * 
+	 * if (selected == null && CMHelper.getGroups() != null &&
+	 * CMHelper.getGroups().size() > 0) selected = CMHelper.getGroups().get(0);
+	 * if (selected != null &&
+	 * !selected.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) { item =
+	 * menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_delete, 2,
+	 * R.string.mygroups_delete_title);
+	 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); item =
+	 * menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_rename, 3,
+	 * R.string.mygroups_rename_title);
+	 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); }
+	 * 
+	 * super.onPrepareOptionsMenu(menu); }
+	 */
 
-		if (selected == null && CMHelper.getGroups() != null && CMHelper.getGroups().size() > 0) selected = CMHelper.getGroups().get(0);
-		if (selected != null && !selected.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) {
-			item = menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_delete, 2, R.string.mygroups_delete_title);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-			item = menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_rename, 3, R.string.mygroups_rename_title);
-			item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-		}
-
-		super.onPrepareOptionsMenu(menu);
-	}*/
-	
 	// fixed menu for consistency with other apps
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -148,17 +160,24 @@ public class MyGroupsFragment extends SherlockFragment {
 		inflater.inflate(R.menu.gripmenu, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
-	
+
 	@Override
-	public void onPrepareOptionsMenu(Menu menu){
+	public void onPrepareOptionsMenu(Menu menu) {
 		SubMenu submenu = menu.getItem(0).getSubMenu();
-		submenu.clear();		 
-		submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add, Menu.NONE, R.string.mygroups_add_title);
-		if (selected == null && CMHelper.getGroups() != null && CMHelper.getGroups().size() > 0) selected = CMHelper.getGroups().get(0);
-		if (selected != null && !selected.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) {
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_rename, 3, R.string.mygroups_rename_title);
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_delete, 2, R.string.mygroups_delete_title);
-			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add_person, Menu.NONE, R.string.mygroups_add_person_title);
+		submenu.clear();
+		submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add, Menu.NONE,
+				R.string.mygroups_add_title);
+		if (selected == null && CMHelper.getGroups() != null
+				&& CMHelper.getGroups().size() > 0)
+			selected = CMHelper.getGroups().get(0);
+		if (selected != null
+				&& !selected.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) {
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_rename, 3,
+					R.string.mygroups_rename_title);
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_delete, 2,
+					R.string.mygroups_delete_title);
+			submenu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add_person,
+					Menu.NONE, R.string.mygroups_add_person_title);
 		}
 		super.onPrepareOptionsMenu(menu);
 	}
@@ -167,38 +186,46 @@ public class MyGroupsFragment extends SherlockFragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.mygroups_add:
-			Dialog dialog = new MyGroupsAddDialog(getActivity(), new DialogHandler<String>() {
-				@Override
-				public void handleSuccess(String result) {
-					new SCAsyncTask<String, Void, Collection<Group>>(getActivity(), new SaveGroupProcessor(getActivity())).execute(result);
-				}
-			}, 
-			null);
+			Dialog dialog = new MyGroupsAddDialog(getActivity(),
+					new DialogHandler<String>() {
+						@Override
+						public void handleSuccess(String result) {
+							new SCAsyncTask<String, Void, Collection<Group>>(
+									getActivity(), new SaveGroupProcessor(
+											getActivity())).execute(result);
+						}
+					}, null);
 			dialog.setTitle(R.string.mygroups_add_title);
 			dialog.show();
 			return true;
 		case R.id.mygroups_add_person:
-			FragmentTransaction ft = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+			FragmentTransaction ft = getSherlockActivity()
+					.getSupportFragmentManager().beginTransaction();
 			Fragment fragment = new CampusFragmentPeople();
 			// Replacing old fragment with new one
 			ft.replace(R.id.content_frame, fragment);
-			fragment.setArguments(CampusFragmentPeople.prepareArgs(selected.getSocialId()));
+			fragment.setArguments(CampusFragmentPeople.prepareArgs(selected
+					.getSocialId()));
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.addToBackStack(null);
 			ft.commit();
 
 			return true;
 		case R.id.mygroups_delete:
-			new SCAsyncTask<Group, Void, Collection<Group>>(getActivity(), new DeleteGroupProcessor(getActivity())).execute(selected);
+			new SCAsyncTask<Group, Void, Collection<Group>>(getActivity(),
+					new DeleteGroupProcessor(getActivity())).execute(selected);
 			return true;
 		case R.id.mygroups_rename:
-			dialog = new MyGroupsAddDialog(getActivity(), new DialogHandler<String>() {
-				@Override
-				public void handleSuccess(String result) {
-					new SCAsyncTask<String, Void, Collection<Group>>(getActivity(), new SaveGroupProcessor(getActivity(), selected)).execute(result);
-				}
-			}, 
-			selected);
+			dialog = new MyGroupsAddDialog(getActivity(),
+					new DialogHandler<String>() {
+						@Override
+						public void handleSuccess(String result) {
+							new SCAsyncTask<String, Void, Collection<Group>>(
+									getActivity(), new SaveGroupProcessor(
+											getActivity(), selected))
+									.execute(result);
+						}
+					}, selected);
 			dialog.setTitle(R.string.mygroups_rename_title);
 			dialog.show();
 			return true;
@@ -207,26 +234,29 @@ public class MyGroupsFragment extends SherlockFragment {
 		}
 	}
 
-	public class SaveGroupProcessor extends AbstractAsyncTaskProcessor<String, Collection<Group>> {
+	public class SaveGroupProcessor extends
+			AbstractAsyncTaskProcessor<String, Collection<Group>> {
 
 		private Group group;
-		
+
 		public SaveGroupProcessor(Activity activity) {
 			super(activity);
 			this.group = new Group();
 		}
+
 		public SaveGroupProcessor(Activity activity, Group group) {
 			super(activity);
 			this.group = group;
 		}
 
 		@Override
-		public Collection<Group> performAction(String... params) throws SecurityException, Exception {
+		public Collection<Group> performAction(String... params)
+				throws SecurityException, Exception {
 			Group newGroup = new Group();
 			newGroup.setSocialId(group.getSocialId());
 			newGroup.setName(params[0]);
 			newGroup.setUsers(group.getUsers());
-			
+
 			CMHelper.saveGroup(newGroup);
 			group.setName(newGroup.getName());
 			return CMHelper.getGroups();
@@ -238,13 +268,16 @@ public class MyGroupsFragment extends SherlockFragment {
 		}
 	}
 
-	public class DeleteGroupProcessor extends AbstractAsyncTaskProcessor<Group, Collection<Group>> {
+	public class DeleteGroupProcessor extends
+			AbstractAsyncTaskProcessor<Group, Collection<Group>> {
 
 		public DeleteGroupProcessor(Activity activity) {
 			super(activity);
 		}
+
 		@Override
-		public Collection<Group> performAction(Group... params) throws SecurityException, Exception {
+		public Collection<Group> performAction(Group... params)
+				throws SecurityException, Exception {
 			CMHelper.deleteGroup(params[0]);
 			return CMHelper.getGroups();
 		}
@@ -256,11 +289,11 @@ public class MyGroupsFragment extends SherlockFragment {
 		}
 	}
 
-	
 	private void update(Collection<Group> result) {
-		//Group selected = result == null || result.isEmpty() ? null : result.iterator().next();
-		
-		dataAdapter.clear(); 
+		// Group selected = result == null || result.isEmpty() ? null :
+		// result.iterator().next();
+
+		dataAdapter.clear();
 
 		for (Group temp : CMHelper.getGroups()) {
 			dataAdapter.add(temp.getName());
@@ -269,7 +302,6 @@ public class MyGroupsFragment extends SherlockFragment {
 
 		updateUserList(selected);
 	}
-
 
 	private void updateUserList(Group selected) {
 		if (selected == null) {
@@ -281,7 +313,8 @@ public class MyGroupsFragment extends SherlockFragment {
 		usersListAdapter.clear();
 		if (selected != null && selected.getUsers() != null) {
 			for (User user : selected.getUsers()) {
-				usersListAdapter.add(CMHelper.getPictureProfile(user.getSocialId()));
+				usersListAdapter.add(CMHelper.getPictureProfile(user
+						.getSocialId()));
 			}
 			usersListAdapter.notifyDataSetChanged();
 		}
@@ -290,12 +323,15 @@ public class MyGroupsFragment extends SherlockFragment {
 
 	private class MyGroupsUserOptionsHandler implements UserOptionsHandler {
 		@Override
-		public void assignUserToGroups(PictureProfile user, Collection<Group> groups) {
-			new SCAsyncTask<Object, Void, PictureProfile>(getActivity(), new AssignToGroups(getActivity())).execute(user, groups);
+		public void assignUserToGroups(PictureProfile user,
+				Collection<Group> groups) {
+			new SCAsyncTask<Object, Void, PictureProfile>(getActivity(),
+					new AssignToGroups(getActivity())).execute(user, groups);
 		}
-	} 
-	
-	private class AssignToGroups extends AbstractAsyncTaskProcessor<Object, PictureProfile> {
+	}
+
+	private class AssignToGroups extends
+			AbstractAsyncTaskProcessor<Object, PictureProfile> {
 
 		public AssignToGroups(Activity activity) {
 			super(activity);
@@ -303,17 +339,20 @@ public class MyGroupsFragment extends SherlockFragment {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public PictureProfile performAction(Object... params) throws SecurityException, Exception {
-			CMHelper.assignToGroups((PictureProfile)params[0], (Collection<Group>)params[1]);
-			return (PictureProfile)params[0];
+		public PictureProfile performAction(Object... params)
+				throws SecurityException, Exception {
+			CMHelper.assignToGroups((PictureProfile) params[0],
+					(Collection<Group>) params[1]);
+			return (PictureProfile) params[0];
 		}
 
 		@Override
 		public void handleResult(PictureProfile result) {
-			Group group = CMHelper.getGroups().get(myGroupsSpinner.getSelectedItemPosition());
+			Group group = CMHelper.getGroups().get(
+					myGroupsSpinner.getSelectedItemPosition());
 			updateUserList(group);
 		}
-		
+
 	}
 
 }

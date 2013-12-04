@@ -25,7 +25,6 @@ import android.widget.GridView;
 import com.actionbarsherlock.app.SherlockFragment;
 
 import eu.trentorise.smartcampus.cm.R;
-import eu.trentorise.smartcampus.cm.custom.MainAdapter;
 
 public class MainFragment extends SherlockFragment {
 	private GridView gridview;
@@ -48,17 +47,21 @@ public class MainFragment extends SherlockFragment {
 		super.onResume();
 		// Showing/hiding back button
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(false);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(true);
-		//getSherlockActivity().getSupportActionBar().setTitle(R.string.app_name);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				false);
+		getSherlockActivity().getSupportActionBar().setDisplayShowTitleEnabled(
+				true);
+		// getSherlockActivity().getSupportActionBar().setTitle(R.string.app_name);
 		ActionBarHelper.emptyActionBar(this);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-//		gridview = (GridView) getView().findViewById(R.id.gridview);
-//		gridview.setAdapter(new MainAdapter(getSherlockActivity().getApplicationContext(), fragmentManager));
+		// gridview = (GridView) getView().findViewById(R.id.gridview);
+		// gridview.setAdapter(new
+		// MainAdapter(getSherlockActivity().getApplicationContext(),
+		// fragmentManager));
 	}
 
 }

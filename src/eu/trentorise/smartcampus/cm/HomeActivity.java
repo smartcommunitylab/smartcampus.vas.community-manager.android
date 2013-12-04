@@ -15,25 +15,23 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm;
 
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.BackListener;
-import eu.trentorise.smartcampus.cm.fragments.MainFragment;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class HomeActivity extends BaseCMActivity {
 
 	public static PictureProfile picP;
-	
+
 	@Override
 	protected void loadData() {
-		new SCAsyncTask<Void, Void, PictureProfile>(this, new LoadProfileProcessor()).execute();
+		new SCAsyncTask<Void, Void, PictureProfile>(this,
+				new LoadProfileProcessor()).execute();
 	}
 
 	@Override
@@ -45,9 +43,10 @@ public class HomeActivity extends BaseCMActivity {
 		// Toast toast = Toast.makeText(getApplicationContext(), "...",
 		// Toast.LENGTH_SHORT);
 		// toast.show();
-		Fragment currentFragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+		Fragment currentFragment = getSupportFragmentManager()
+				.findFragmentById(android.R.id.content);
 		// Checking if there is a fragment that it's listening for back button
-		if(currentFragment!=null && currentFragment instanceof BackListener){
+		if (currentFragment != null && currentFragment instanceof BackListener) {
 			((BackListener) currentFragment).onBack();
 		}
 
@@ -56,15 +55,15 @@ public class HomeActivity extends BaseCMActivity {
 
 	private void startApp(PictureProfile profile) {
 		CMHelper.setProfile(profile);
-		//setUpContent();
+		// setUpContent();
 	}
 
 	private class LoadProfileProcessor implements
 			SCAsyncTaskProcessor<Void, PictureProfile> {
 
 		@Override
-		public PictureProfile performAction(Void... params) throws SecurityException,
-				Exception {
+		public PictureProfile performAction(Void... params)
+				throws SecurityException, Exception {
 			return CMHelper.retrieveProfile();
 		}
 
@@ -83,29 +82,27 @@ public class HomeActivity extends BaseCMActivity {
 		public void handleConnectionError() {
 			HandleExceptionHelper.connectivityFailure(HomeActivity.this);
 			finish();
-			
+
 		}
-		
+
 		@Override
 		public void handleSecurityError() {
-			CMHelper.endAppFailure(HomeActivity.this, R.string.app_failure_security);
+			CMHelper.endAppFailure(HomeActivity.this,
+					R.string.app_failure_security);
 		}
 
 	}
 
-	
-	
-//	@Override
-//	public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem item) {
-//		switch (item.getItemId()) {
-//		case android.R.id.home:
-//			onBackPressed();
-//			return true;
-//		default:
-//			return super.onOptionsItemSelected(item);
-//		}
-//	}
-	
-
+	// @Override
+	// public boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem
+	// item) {
+	// switch (item.getItemId()) {
+	// case android.R.id.home:
+	// onBackPressed();
+	// return true;
+	// default:
+	// return super.onOptionsItemSelected(item);
+	// }
+	// }
 
 }

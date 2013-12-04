@@ -26,36 +26,38 @@ import com.actionbarsherlock.app.SherlockFragment;
 
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
 
-public abstract class AbstractTabbedFragment extends SherlockFragment implements BackListener  {
+public abstract class AbstractTabbedFragment extends SherlockFragment implements
+		BackListener {
 
 	protected SharedContentsAdapter adapter = null;
-	
+
 	protected abstract int getLayoutId();
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 		if (getSherlockActivity().getSupportActionBar().getNavigationMode() != ActionBar.NAVIGATION_MODE_TABS) {
-			getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+			getSherlockActivity().getSupportActionBar().setNavigationMode(
+					ActionBar.NAVIGATION_MODE_TABS);
 		}
-		
-	//	getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
+		// getSherlockActivity().getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		return inflater.inflate(getLayoutId(), container, false);
 	}
 
 	@Override
 	public void onStart() {
 		getSherlockActivity().getSupportActionBar().setHomeButtonEnabled(true);
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(
+				true);
 		super.onStart();
 	}
-	
 
 	@Override
 	public void onBack() {
-		FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+		FragmentTransaction ft = getActivity().getSupportFragmentManager()
+				.beginTransaction();
 		ft.remove(this).commit();
 	}
 
-	
-	
 }

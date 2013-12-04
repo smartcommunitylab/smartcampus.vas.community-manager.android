@@ -45,7 +45,8 @@ public class CommunityAdapter extends ArrayAdapter<Community> {
 		this.context = context;
 		this.layoutResourceId = layoutResourceId;
 		this.provider = provider;
-		new SCAsyncTask<Community, Void, List<Community>>(context, new LoadCommunityProcessor(context)).execute();
+		new SCAsyncTask<Community, Void, List<Community>>(context,
+				new LoadCommunityProcessor(context)).execute();
 	}
 
 	@Override
@@ -72,12 +73,12 @@ public class CommunityAdapter extends ArrayAdapter<Community> {
 		Community comm = getItem(position);
 		holder.community_action
 				.setOnClickListener(new CommunityActionClickListener(comm));
-		//holder.community_action.setText(context.getResources().getString(
-			//	provider.getCommunityActionResource()));
-		if(provider.getCommunityActionResource()==R.string.myprofile_community_remove){
-			holder.community_action.setImageResource(R.drawable.ic_remove);	
-		} else if(provider.getCommunityActionResource()==R.string.community_action_add){
-			holder.community_action.setImageResource(R.drawable.ic_add_gray); // gray	
+		// holder.community_action.setText(context.getResources().getString(
+		// provider.getCommunityActionResource()));
+		if (provider.getCommunityActionResource() == R.string.myprofile_community_remove) {
+			holder.community_action.setImageResource(R.drawable.ic_remove);
+		} else if (provider.getCommunityActionResource() == R.string.community_action_add) {
+			holder.community_action.setImageResource(R.drawable.ic_add_gray); // gray
 		}
 
 		holder.community_name.setText(comm.getName()); // name
@@ -113,18 +114,21 @@ public class CommunityAdapter extends ArrayAdapter<Community> {
 
 		@Override
 		public void onClick(View v) {
-			new SCAsyncTask<Community, Void, List<Community>>(context, new LoadCommunityProcessor(context)).execute(comm);
+			new SCAsyncTask<Community, Void, List<Community>>(context,
+					new LoadCommunityProcessor(context)).execute(comm);
 		}
 	}
 
-	public class LoadCommunityProcessor extends AbstractAsyncTaskProcessor<Community, List<Community>> {
+	public class LoadCommunityProcessor extends
+			AbstractAsyncTaskProcessor<Community, List<Community>> {
 
 		public LoadCommunityProcessor(Activity activity) {
 			super(activity);
 		}
 
 		@Override
-		public List<Community> performAction(Community... params) throws SecurityException, Exception {
+		public List<Community> performAction(Community... params)
+				throws SecurityException, Exception {
 			if (params != null && params.length > 0 && params[0] != null) {
 				provider.performCommunityAction(params[0]);
 			}
@@ -139,18 +143,27 @@ public class CommunityAdapter extends ArrayAdapter<Community> {
 					add(c);
 			}
 			notifyDataSetChanged();
-			eu.trentorise.smartcampus.cm.custom.ViewHelper.removeEmptyListView((LinearLayout)provider.getContainerView());
+			eu.trentorise.smartcampus.cm.custom.ViewHelper
+					.removeEmptyListView((LinearLayout) provider
+							.getContainerView());
 			if (result == null || result.isEmpty()) {
-				eu.trentorise.smartcampus.cm.custom.ViewHelper.addEmptyListView((LinearLayout) provider.getContainerView(), R.string.content_empty);
+				eu.trentorise.smartcampus.cm.custom.ViewHelper
+						.addEmptyListView(
+								(LinearLayout) provider.getContainerView(),
+								R.string.content_empty);
 			}
 
 		}
 	}
-	
+
 	public interface CommunityProvider {
 		List<Community> getCommunities() throws SecurityException, Exception;
-		void performCommunityAction(Community community) throws SecurityException, Exception;
+
+		void performCommunityAction(Community community)
+				throws SecurityException, Exception;
+
 		int getCommunityActionResource();
+
 		View getContainerView();
 	}
 

@@ -27,8 +27,9 @@ import eu.trentorise.smartcampus.cm.R;
 public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	private Fragment mFragment;
 	private final SherlockFragmentActivity mActivity;
-//	private final String mTag;
+	// private final String mTag;
 	private final Class<T> mClass;
+
 	/**
 	 * Constructor used each time a new tab is created.
 	 * 
@@ -39,14 +40,17 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	 * @param clz
 	 *            The fragment's Class, used to instantiate the fragment
 	 */
-	public TabListener(SherlockFragmentActivity activity, String tag, Class<T> clz) {
+	public TabListener(SherlockFragmentActivity activity, String tag,
+			Class<T> clz) {
 		mActivity = activity;
-//		mTag = tag;
+		// mTag = tag;
 		mClass = clz;
 	}
-	public TabListener(SherlockFragmentActivity activity, String tag, Class<T> clz, Fragment fragment) {
+
+	public TabListener(SherlockFragmentActivity activity, String tag,
+			Class<T> clz, Fragment fragment) {
 		mActivity = activity;
-//		mTag = tag;
+		// mTag = tag;
 		mClass = clz;
 		mFragment = fragment;
 	}
@@ -54,16 +58,16 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	/* The following are each of the ActionBar.TabListener callbacks */
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		if (mFragment == null) {
-            // If not, instantiate and add it to the activity
-            mFragment = Fragment.instantiate(mActivity, mClass.getName());
-            //ft.replace(R.id.content_frame, mFragment);
-            //ft.add(android.R.id.content, mFragment);
-            ft.add(R.id.content_frame, mFragment);
-        } else {
-            // If it exists, simply attach it in order to show it
-            ft.attach(mFragment);
-            
-        }
+			// If not, instantiate and add it to the activity
+			mFragment = Fragment.instantiate(mActivity, mClass.getName());
+			// ft.replace(R.id.content_frame, mFragment);
+			// ft.add(android.R.id.content, mFragment);
+			ft.add(R.id.content_frame, mFragment);
+		} else {
+			// If it exists, simply attach it in order to show it
+			ft.attach(mFragment);
+
+		}
 
 	}
 

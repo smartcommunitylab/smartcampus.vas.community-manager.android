@@ -34,7 +34,6 @@ import eu.trentorise.smartcampus.cm.fragments.groups.MyGroupsFragment;
 import eu.trentorise.smartcampus.cm.fragments.home.HomeFragmentMe;
 import eu.trentorise.smartcampus.cm.fragments.profile.MyProfileFragment;
 
-
 public class MainAdapter extends BaseAdapter {
 	private Context context;
 	private FragmentManager fragmentManager;
@@ -51,7 +50,7 @@ public class MainAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = new ViewHolder();
+		ViewHolder holder = new ViewHolder();
 		if (convertView == null) {
 			holder.text = new TextView(context);
 			holder.text.setBackgroundColor(context.getResources().getColor(
@@ -63,8 +62,9 @@ public class MainAdapter extends BaseAdapter {
 			holder.text.setTextColor(context.getResources().getColor(
 					R.color.sc_dark_gray));
 			holder.text.setGravity(Gravity.CENTER);
-			holder.text.setOnClickListener(new CategoriesOnClickListener(position));
-		} else{
+			holder.text.setOnClickListener(new CategoriesOnClickListener(
+					position));
+		} else {
 			holder.text = (TextView) convertView;
 			holder.text.setText(((TextView) convertView).getText());
 
@@ -75,30 +75,30 @@ public class MainAdapter extends BaseAdapter {
 					null, null);
 			holder.text.setTextColor(((TextView) convertView).getTextColors());
 			holder.text.setGravity(((TextView) convertView).getGravity());
-			holder.text.setOnClickListener(new CategoriesOnClickListener(position));
+			holder.text.setOnClickListener(new CategoriesOnClickListener(
+					position));
 		}
 		return holder.text;
-		
-		
+
 	}
 
-	static class ViewHolder{
+	static class ViewHolder {
 		TextView text;
 	}
-	
+
 	public class CategoriesOnClickListener implements OnClickListener {
 		int position;
-		
+
 		public CategoriesOnClickListener(int position) {
-			this.position=position;
-	}
+			this.position = position;
+		}
 
 		@Override
 		public void onClick(View v) {
 			// Starting transaction
 			FragmentTransaction ft = fragmentManager.beginTransaction();
-			Fragment fragment = (Fragment) Fragment.instantiate(
-					context, ACTIONS[position].fragmentClass.getName());
+			Fragment fragment = (Fragment) Fragment.instantiate(context,
+					ACTIONS[position].fragmentClass.getName());
 			// Replacing old fragment with new one
 			ft.replace(android.R.id.content, fragment);
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -106,8 +106,9 @@ public class MainAdapter extends BaseAdapter {
 			ft.commit();
 
 		}
-		
+
 	}
+
 	/*
 	 * @Override public View getView(final int position, View convertView,
 	 * ViewGroup parent) { ImageButton tmp; if (convertView == null) { tmp = new

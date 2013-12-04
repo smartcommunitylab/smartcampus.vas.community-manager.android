@@ -33,18 +33,19 @@ public class MyGroupsAddDialog extends Dialog {
 
 	private DialogHandler<String> handler = null;
 	private Group group;
-	
-	public MyGroupsAddDialog(Context context, DialogHandler<String> handler, Group group) {
+
+	public MyGroupsAddDialog(Context context, DialogHandler<String> handler,
+			Group group) {
 		super(context);
 		this.handler = handler;
 		this.group = group;
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mygroups_add_dialog);
-		
+
 		if (group != null) {
 			EditText groupName = (EditText) findViewById(R.id.mygroups_add_groupname);
 			groupName.setText(this.group.getName());
@@ -70,24 +71,32 @@ public class MyGroupsAddDialog extends Dialog {
 				List<Group> groups = CMHelper.getGroups();
 				if (groups != null) {
 					for (Group g : groups) {
-						if (group != null && g.getSocialId() == group.getSocialId()) continue;
+						if (group != null
+								&& g.getSocialId() == group.getSocialId())
+							continue;
 						if (g.getName().equals(groupNameText)) {
-							Toast toast = Toast.makeText(getContext(), getContext().getString(R.string.mygroups_name_duplicate), Toast.LENGTH_SHORT);
+							Toast toast = Toast.makeText(
+									getContext(),
+									getContext().getString(
+											R.string.mygroups_name_duplicate),
+									Toast.LENGTH_SHORT);
 							toast.show();
 							return;
 						}
 					}
 				}
-				
+
 				if (groupNameText.length() > 0) {
 					handler.handleSuccess(groupNameText);
 					dismiss();
 				} else {
-					Toast toast = Toast.makeText(getContext(), getContext().getString(R.string.mygroups_name_empty), Toast.LENGTH_SHORT);
+					Toast toast = Toast.makeText(getContext(), getContext()
+							.getString(R.string.mygroups_name_empty),
+							Toast.LENGTH_SHORT);
 					toast.show();
 				}
 			}
 		});
 	}
-	
+
 }

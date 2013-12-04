@@ -28,8 +28,9 @@ import eu.trentorise.smartcampus.cm.R;
 
 public class CMConstants {
 
-	public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("dd/MMM/yyyy '-' HH:mm", Locale.US);
-	
+	public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat(
+			"dd/MMM/yyyy '-' HH:mm", Locale.US);
+
 	public static final String ENTTIY_TYPE_POI = "POI";
 	public static final String ENTTIY_TYPE_EVENT = "Event";
 	public static final String ENTTIY_TYPE_PORTFOLIO = "Portfolio";
@@ -59,10 +60,10 @@ public class CMConstants {
 		for (String k : new HashSet<String>(entityTypeIdMap.keySet())) {
 			entityTypeIdMap.put(entityTypeIdMap.get(k), k);
 		}
-}
+	}
 
 	public static String getLocalType(String remoteType) {
-		for (Entry<String,String> e : entityTypeMap.entrySet()) {
+		for (Entry<String, String> e : entityTypeMap.entrySet()) {
 			if (e.getValue().equals(remoteType)) {
 				return e.getKey();
 			}
@@ -76,18 +77,21 @@ public class CMConstants {
 
 	public static List<String> getRemoteTypes(List<String> localTypes) {
 		List<String> list = new ArrayList<String>();
-		if (localTypes != null)  for (String s : localTypes) if (entityTypeMap.containsKey(s)) list.add(entityTypeMap.get(s));
+		if (localTypes != null)
+			for (String s : localTypes)
+				if (entityTypeMap.containsKey(s))
+					list.add(entityTypeMap.get(s));
 		return list;
 	}
-	
+
 	public static List<String> getAllRemoteTypes() {
 		return new ArrayList<String>(entityTypeMap.values());
 	}
-	
+
 	public static List<String> getLocalTypes(List<String> remoteTypes) {
 		List<String> list = new ArrayList<String>();
-		if (remoteTypes != null)  {
-			for (Entry<String,String> s : entityTypeMap.entrySet()) {
+		if (remoteTypes != null) {
+			for (Entry<String, String> s : entityTypeMap.entrySet()) {
 				if (remoteTypes.contains(s.getValue())) {
 					list.add(entityTypeMap.get(s));
 				}
@@ -95,18 +99,19 @@ public class CMConstants {
 		}
 		return list;
 	}
-	
+
 	public static final String MY_PEOPLE_GROUP_NAME = "My People";
 	public static final String MY_PEOPLE_GROUP_ID = "-999";
 
 	public static class ObjectFilterDescriptor {
-		
+
 		public int drawable;
 		public int drawable_selected;
 		public int object_drawable;
 		public int contentDescription;
 		public String type;
-		public ObjectFilterDescriptor(int drawable_selected,int drawable, 
+
+		public ObjectFilterDescriptor(int drawable_selected, int drawable,
 				int object_drawable, int contentDescription, String type) {
 			super();
 			this.drawable = drawable;
@@ -115,31 +120,50 @@ public class CMConstants {
 			this.contentDescription = contentDescription;
 			this.type = type;
 		}
-		
+
 	}
-	
-	public static ObjectFilterDescriptor[] FILTER_DESCRIPTORS = new ObjectFilterDescriptor[]{
-		new ObjectFilterDescriptor(R.drawable.ic_f_portfolio, R.drawable.ic_f_portfolio2, R.drawable.ic_a_portfolio, R.string.shared_content_filters_portfolio, getRemoteType(ENTTIY_TYPE_PORTFOLIO)),
-		new ObjectFilterDescriptor(R.drawable.ic_f_buster, R.drawable.ic_f_buster2, R.drawable.ic_a_buster, R.string.shared_content_filters_experience, getRemoteType(ENTTIY_TYPE_EXPERIENCE)),
-		new ObjectFilterDescriptor(R.drawable.ic_f_planner, R.drawable.ic_f_planner2, R.drawable.ic_a_planner, R.string.shared_content_filters_journey, getRemoteType(ENTTIY_TYPE_JOURNEY)),
-		new ObjectFilterDescriptor(R.drawable.ic_f_poi, R.drawable.ic_f_poi2, R.drawable.ic_a_poi, R.string.shared_content_filters_poi, getRemoteType(ENTTIY_TYPE_POI)),
-		new ObjectFilterDescriptor(R.drawable.ic_f_event, R.drawable.ic_f_event2, R.drawable.ic_a_event, R.string.shared_content_filters_event, getRemoteType(ENTTIY_TYPE_EVENT)),
-		new ObjectFilterDescriptor(R.drawable.ic_f_story, R.drawable.ic_f_story2, R.drawable.ic_a_story, R.string.shared_content_filters_story, getRemoteType(ENTTIY_TYPE_STORY)),
-	};
-	
+
+	public static ObjectFilterDescriptor[] FILTER_DESCRIPTORS = new ObjectFilterDescriptor[] {
+			new ObjectFilterDescriptor(R.drawable.ic_f_portfolio,
+					R.drawable.ic_f_portfolio2, R.drawable.ic_a_portfolio,
+					R.string.shared_content_filters_portfolio,
+					getRemoteType(ENTTIY_TYPE_PORTFOLIO)),
+			new ObjectFilterDescriptor(R.drawable.ic_f_buster,
+					R.drawable.ic_f_buster2, R.drawable.ic_a_buster,
+					R.string.shared_content_filters_experience,
+					getRemoteType(ENTTIY_TYPE_EXPERIENCE)),
+			new ObjectFilterDescriptor(R.drawable.ic_f_planner,
+					R.drawable.ic_f_planner2, R.drawable.ic_a_planner,
+					R.string.shared_content_filters_journey,
+					getRemoteType(ENTTIY_TYPE_JOURNEY)),
+			new ObjectFilterDescriptor(R.drawable.ic_f_poi,
+					R.drawable.ic_f_poi2, R.drawable.ic_a_poi,
+					R.string.shared_content_filters_poi,
+					getRemoteType(ENTTIY_TYPE_POI)),
+			new ObjectFilterDescriptor(R.drawable.ic_f_event,
+					R.drawable.ic_f_event2, R.drawable.ic_a_event,
+					R.string.shared_content_filters_event,
+					getRemoteType(ENTTIY_TYPE_EVENT)),
+			new ObjectFilterDescriptor(R.drawable.ic_f_story,
+					R.drawable.ic_f_story2, R.drawable.ic_a_story,
+					R.string.shared_content_filters_story,
+					getRemoteType(ENTTIY_TYPE_STORY)), };
+
 	private static Map<String, ObjectFilterDescriptor> objectFilterDescriptorMap = new HashMap<String, CMConstants.ObjectFilterDescriptor>();
 	static {
-		for (ObjectFilterDescriptor descr: FILTER_DESCRIPTORS) {
+		for (ObjectFilterDescriptor descr : FILTER_DESCRIPTORS) {
 			objectFilterDescriptorMap.put(descr.type, descr);
 		}
 	}
+
 	public static ObjectFilterDescriptor getObjectDescriptor(String type) {
 		return objectFilterDescriptorMap.get(type);
 	}
-	
+
 	public static String getTypeByTypeId(String typeId) {
 		return entityTypeIdMap.get(typeId);
 	}
+
 	public static String getTypeIdByType(String type) {
 		return entityTypeIdMap.get(type);
 	}

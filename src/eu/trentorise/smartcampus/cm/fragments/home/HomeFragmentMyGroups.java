@@ -44,28 +44,34 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 	private ArrayAdapter<String> dataAdapter;
 
 	Group selected = null;
-	
+
 	@Override
 	protected int getLayoutId() {
 		return R.layout.shared_content_groups;
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
-		
-		myGroupsSpinner = (Spinner) getView().findViewById(R.id.shared_content_groups_spinner);
+
+		myGroupsSpinner = (Spinner) getView().findViewById(
+				R.id.shared_content_groups_spinner);
 		if (dataAdapter == null) {
-		//	dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item);
+			// dataAdapter = new ArrayAdapter<String>(getActivity(),
+			// android.R.layout.simple_spinner_item);
 			dataAdapter = new CustomSpinnerAdapter<String>(getActivity());
-			dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			dataAdapter
+					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			update(dataAdapter);
-		}			
+		}
 		myGroupsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				if (selected == null || selected.getSocialId() != CMHelper.getGroups().get(position).getSocialId()) {
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				if (selected == null
+						|| selected.getSocialId() != CMHelper.getGroups()
+								.get(position).getSocialId()) {
 					populateContentRequest();
 					restartContentRequest();
 					load();
@@ -81,7 +87,7 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 	}
 
 	private void update(ArrayAdapter<String> adapter) {
-		adapter.clear(); 
+		adapter.clear();
 		if (CMHelper.getProfile() != null && CMHelper.getGroups() != null) {
 			for (Group temp : CMHelper.getGroups()) {
 				adapter.add(temp.getName());
@@ -90,14 +96,15 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 		adapter.notifyDataSetChanged();
 	}
 
-
 	@Override
 	protected void populateContentRequest() {
 		ShareVisibility vis = new ShareVisibility();
 		vis.setGroupIds(new ArrayList<String>());
 		if (CMHelper.getGroups() != null && !CMHelper.getGroups().isEmpty()) {
-			if (myGroupsSpinner != null && !myGroupsSpinner.getAdapter().isEmpty()) {
-				selected = CMHelper.getGroups().get(myGroupsSpinner.getSelectedItemPosition());
+			if (myGroupsSpinner != null
+					&& !myGroupsSpinner.getAdapter().isEmpty()) {
+				selected = CMHelper.getGroups().get(
+						myGroupsSpinner.getSelectedItemPosition());
 			} else {
 				selected = CMHelper.getGroups().get(0);
 			}
@@ -110,10 +117,14 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 	protected boolean handleMenuItem(Entity content, int itemId) {
 		switch (itemId) {
 		case MENU_ITEM_APP:
-			ViewHelper.viewInApp(getActivity(), CMConstants.getTypeByTypeId(content.getEntityType()), content.getEntityId(), new Bundle());
+			ViewHelper.viewInApp(getActivity(),
+					CMConstants.getTypeByTypeId(content.getEntityType()),
+					content.getEntityId(), new Bundle());
 			return true;
 		case MENU_ITEM_AUTHOR:
-			Toast.makeText(getActivity(), "Showing author: "+content.getOwnerId(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity(),
+					"Showing author: " + content.getOwnerId(),
+					Toast.LENGTH_SHORT).show();
 			return true;
 		default:
 			return super.handleMenuItem(content, itemId);
@@ -121,7 +132,8 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 	}
 
 	@Override
-	protected void populateMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+	protected void populateMenu(ContextMenu menu, View view,
+			ContextMenuInfo menuInfo) {
 		menu.add(0, MENU_ITEM_APP, 0, R.string.shared_content_menu_app);
 	}
 

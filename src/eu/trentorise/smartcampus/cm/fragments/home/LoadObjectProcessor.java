@@ -26,7 +26,8 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.social.model.Entity;
 import eu.trentorise.smartcampus.social.model.ShareVisibility;
 
-public class LoadObjectProcessor extends AbstractAsyncTaskProcessor<ContentRequest, List<Entity>> {
+public class LoadObjectProcessor extends
+		AbstractAsyncTaskProcessor<ContentRequest, List<Entity>> {
 
 	private SharedContentsAdapter adapter;
 
@@ -36,14 +37,16 @@ public class LoadObjectProcessor extends AbstractAsyncTaskProcessor<ContentReque
 	}
 
 	@Override
-	public List<Entity> performAction(ContentRequest... params) throws SecurityException, Exception {
-		return CMHelper.readSharedObjects(params[0].visibility, params[0].position, params[0].size, params[0].type);
+	public List<Entity> performAction(ContentRequest... params)
+			throws SecurityException, Exception {
+		return CMHelper.readSharedObjects(params[0].visibility,
+				params[0].position, params[0].size, params[0].type);
 	}
 
 	@Override
 	public void handleResult(List<Entity> result) {
 		if (result != null) {
-			for (Entity shared: result) {
+			for (Entity shared : result) {
 				adapter.add(shared);
 			}
 		}
@@ -56,6 +59,5 @@ public class LoadObjectProcessor extends AbstractAsyncTaskProcessor<ContentReque
 		public int size = 20;
 		public String type = null;
 	}
-		
 
 }

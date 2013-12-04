@@ -26,11 +26,13 @@ public class ViewHelper {
 		view.setId(R.id.content_empty);
 		view.setText(res);
 		view.setPadding(5, 5, 5, 5);
-		view.setTextColor(parent.getContext().getResources().getColor(R.color.sc_dark_gray));
+		view.setTextColor(parent.getContext().getResources()
+				.getColor(R.color.sc_dark_gray));
 		parent.addView(view);
 	}
+
 	public static void removeEmptyListView(LinearLayout parent) {
 		parent.removeView(parent.findViewById(R.id.content_empty));
 	}
-	
+
 }
