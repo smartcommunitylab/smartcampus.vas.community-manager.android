@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2012-2013 Trento RISE
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+         http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either   express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<resources>
+
+    <string name="empty" />
+    <string name="add">Aggiungi</string>
+    <string name="app_name">MyPeople</string>
+
+    <string-array name="fragment_array">
+        <item>Condivisi</item>
+        <item>Campus</item>
+        <item>Gruppi</item>
+        <item>Profilo</item>
+        <item>Sincronizza</item>
+        <item>Tutorial</item>
+    </string-array>
+
+    <string name="home_tab_me">Io</string>
+    <string name="home_tab_mygroups">I miei gruppi</string>
+    <string name="home_tab_mycommunities">Campus</string>
+    <string name="campus_tab_people">Persone</string>
+    <string name="campus_tab_suggested">Suggeriti</string>
+    <string name="campus_tab_communities">Comunità</string>
+    <string name="mainmenu_home">Home</string>
+    <string name="mainmenu_myprofile">Profilo</string>
+    <string name="mainmenu_mygroups">Gruppi</string>
+    <string name="mainmenu_mytopics">Topics</string>
+    <string name="mainmenu_campus">Campus</string>
+    <string name="user_mp_more">&#8230;</string>
+    <string name="user_mp_more_new">+</string>
+    <string name="mygroups_add">Aggiungi gruppo</string>
+    <string name="mygroups_add_title">Aggiungi nuovo gruppo</string>
+    <string name="mygroups_add_person_title">Aggiungi persone</string>
+    <string name="mygroups_add_hint">Nuovo gruppo</string>
+    <string name="mygroups_delete">Elimina</string>
+    <string name="mygroups_delete_title">Elimina gruppo</string>
+    <string name="mygroups_delete_hint">Elimina gruppo</string>
+    <string name="mygroups_rename">Rinomina</string>
+    <string name="mygroups_rename_title">Rinomina gruppo</string>
+    <string name="mygroups_rename_hint">Rinomina gruppo</string>
+    <string name="mygroups_sub">Opzioni</string>
+    <string name="mygroups_sub_title">Opzioni</string>
+    <string name="person_options_title">Opzioni persone</string>
+    <string name="mygroups_addto_options_title">Aggiungi ai miei gruppi</string>
+    <string name="people_hint_name">Cerca</string>
+    <string name="people_search_desc">Ricerca per nome</string>
+    <string name="community_action_desc">Aggiungi community</string>
+    <string name="community_action_add">+</string>
+    <string name="myprofile_communities_expand">+</string>
+    <string name="myprofile_community_remove">x</string>
+    <string name="menu_item_myprofile_edit_text">Modifica profilo</string>
+    <string name="editprofile">Modifica profilo</string>
+    <string name="editprofile_name">Nome</string>
+    <string name="editprofile_surname">Cognome</string>
+    <string name="app_failure_security">Impossibile ricevere i dati di autenticazione</string>
+    <string name="app_failure_setup">Imossibile inizializzare l\'applicazione</string>
+    <string name="app_failure_profile_missing">E\' necessario salvare il tuo profilo per procedere all\'applicazione</string>
+    <string name="app_failure_operation">OOPS! C\'è stato un errore. Per favore verifica la connessione o prova più tardi.</string>
+    <string name="topic_action_desc">x</string>
+    <string name="mygroups_name_empty">Il nome del gruppo non puo\' essere vuoto</string>
+    <string name="mygroups_name_duplicate">Un gruppo con questo nome è già stato creato</string>
+    <string name="create_topic_name">Titolo:</string>
+    <string name="create_topic_def">Rispeto a?</string>
+    <string name="create_topic_add">Aggiungi</string>
+    <string name="create_topic_sources">Da dove?</string>
+    <string name="create_topic_def_hint">*Aggiungi Tags.</string>
+    <!-- <string name="create_topic_def_hint">*A topic can be defined by text tags, semantic tags and entities.</string> -->
+    <string name="create_topic_sources_hint">*Da dove provengono le informazioni (persone, gruppi, comunità)</string>
+    <!-- <string name="create_topic_sources_hint">*Sources may include people, groups and communities.</string> -->
+    <string name="create_topic_content">Che tipo di contenuto?</string>
+    <string name="create_topic_arg_topic">topic</string>
+    <string name="mytopics_add">Add</string>
+    <string name="mytopics_add_title">Aggiungi topic</string>
+    <string name="mytopics_edit_title">Modifica topic</string>
+    <string name="mytopics_name_empty">Il nome del topic non puo\' essere vuoto</string>
+    <string name="mytopics_sources_required">Scegliere almeno una fonte</string>
+    <string name="mytopics_content_type_required">Scegliere almeno un contenuto</string>
+    <string name="topic_content_dialog_title">Selezionare contenuto</string>
+    <string name="topic_content_dialog_all">Tutti i contenuti</string>
+    <string name="topic_content_dialog_photo_video">Foto/Video</string>
+    <string name="topic_content_dialog_pois">POIs</string>
+    <string name="topic_content_dialog_events">Eventi</string>
+    <string name="topic_content_dialog_exps">Esperienze</string>
+    <string name="topic_content_dialog_portfolios">Portfolios</string>
+    <string name="topic_content_dialog_journeys">Journeys</string>
+    <string name="topic_content_dialog_stories">Storie</string>
+    <string name="topic_content_dialog_type_required">Scegliere almeno un contenuto</string>
+    <string name="content_empty">Nessun elemento.</string>
+    <string name="people_list_empty">Nessun risultato</string>
+    <string name="source_select_title">Selezionare fonte</string>
+    <string name="source_select_public">Publica</string>
+    <string name="shared_content_filters_portfolio">Portfolio</string>
+    <string name="shared_content_filters_journey">Journey</string>
+    <string name="shared_content_filters_poi">POI</string>
+    <string name="shared_content_filters_event">Evento</string>
+    <string name="shared_content_filters_experience">Experience</string>
+    <string name="shared_content_filters_story">Storia</string>
+    <string name="shared_content_menu_header">Contenuto condiviso</string>
+    <string name="shared_content_menu_author">Autore</string>
+    <string name="shared_content_menu_topic">Fare un topic e seguire aggiornamenti</string>
+    <string name="shared_content_menu_sharing">Opzioni di condivisione</string>
+    <string name="shared_content_menu_app">Passa ad un\'altra app</string>
+    <string name="a_shared">Condivisi</string>
+    <string name="a_campus">Campus</string>
+    <string name="a_topics">I miei topics</string>
+    <string name="a_groups">I miei gruppi</string>
+    <string name="a_profile">Profilo</string>
+    <string name="tmp_entity">Tag 1, Entity 2, &#8230;</string>
+    <string name="tmp_sources">Source 1, source2, &#8230;</string>
+    <string name="tmp_content">Type 1, type 2, &#8230;</string>
+    <string name="app_uid_label">SmartCampus</string>
+    <string name="sharing_success">Condivisione riuscita.</string>
+    <string name="topics_title">Topics</string>
+    <string name="shared_title">Dati Condivisi</string>
+    <string name="groups_title">Gruppi</string>
+    <string name="profile_title">Profilo</string>
+    <string name="campus_title">Campus</string>
+    <string name="token_required">Effettua il login prima di procedere con l\'applicazione.</string>
+    <string name="auth_failed">Inizializzazione dell\'applicazione non riuscita. Provare a connettersi di nuovo.</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+</resources>

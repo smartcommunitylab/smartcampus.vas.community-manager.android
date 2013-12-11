@@ -43,8 +43,8 @@ public class ActionBarHelper {
 		SherlockFragmentActivity activity = fragment.getSherlockActivity();
 		if (fragment.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
 			activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
-			fragment.getSherlockActivity().getSupportActionBar()
-					.setTitle(R.string.shared_title);
+//			fragment.getSherlockActivity().getSupportActionBar()
+//					.setTitle(R.string.shared_title);
 		} else {
 			activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 		}

@@ -25,7 +25,8 @@
         <item>Campus</item>
         <item>MyGroups</item>
         <item>MyProfile</item>
-        <item>Settings</item>
+        <item>Synchronize</item>
+        <item>Tutorial</item>
     </string-array>
 
     <string name="home_tab_me">Me</string>

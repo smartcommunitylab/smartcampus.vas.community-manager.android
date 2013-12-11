@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -33,6 +34,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -46,6 +48,7 @@ import eu.trentorise.smartcampus.cm.fragments.profile.MyProfileFragment;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.settings.SettingsActivity;
 import eu.trentorise.smartcampus.network.JsonUtils;
+import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 import eu.trentorise.smartcampus.social.model.Group;
 
 public abstract class BaseCMActivity extends SherlockFragmentActivity {
@@ -179,6 +182,8 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 				.beginTransaction();
 		if (fragmentString.equals(mFragmentTitles[0])) {
 			// HomeFragmentMe fragment = new HomeFragmentMe();
+			getSupportActionBar()
+			.setTitle(R.string.shared_title);
 			fragmentTransaction
 					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			fragmentTransaction.replace(R.id.content_frame, FMe, "Shared");
@@ -220,10 +225,19 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 		} else if (fragmentString.equals(mFragmentTitles[4])) {
 			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
 				getSupportActionBar().setSelectedNavigationItem(0);
-			Intent i = (new Intent(BaseCMActivity.this, SettingsActivity.class));
-			startActivity(i);
+			Sync();
+//			Intent i = (new Intent(BaseCMActivity.this, SettingsActivity.class));
+//			startActivity(i);
+			mDrawerLayout.closeDrawer(mDrawerList);
+		}else if (fragmentString.equals(mFragmentTitles[5])) {
+			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
+				getSupportActionBar().setSelectedNavigationItem(0);
+			Toast.makeText(getApplicationContext(), "Soon!", Toast.LENGTH_SHORT)
+					.show();			
+
 			mDrawerLayout.closeDrawer(mDrawerList);
 		}
+		
 
 	}
 
@@ -329,4 +343,29 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 		mTitle = title;
 		getSupportActionBar().setTitle(mTitle);
 	}
+	
+	public void Sync(){
+		new AsyncTask<Void, Void, Void>() {
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				try {
+					CMHelper.init(getApplicationContext());
+				} catch (ProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				BaseCMActivity.UpdateGroups(getApplicationContext());
+				return null;
+			}
+
+		};
+		Toast.makeText(getApplicationContext(),
+				"Ora i dati sono sincronizzati", Toast.LENGTH_SHORT)
+				.show();
+
+	}
+
+	
 }
