@@ -36,7 +36,6 @@ import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
-import eu.trentorise.smartcampus.cm.BaseCMActivity;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.network.JsonUtils;
@@ -77,7 +76,6 @@ public class CMHelper {
 	private SocialService socialService = null;
 
 	private static PictureProfile profile;
-	private static List<Community> communities = null;
 	private static List<Group> savedGroups;
 
 	private static Map<String, PictureProfile> knownUsers = new HashMap<String, PictureProfile>();
@@ -95,37 +93,24 @@ public class CMHelper {
 	}
 
 	public static String getAuthToken() throws AACException {
-		return accessProvider.readToken(instance.mContext);
-	}
-
-	public static void setProfile(PictureProfile profile) {
-		CMHelper.profile = profile;
-		CMHelper.communities = Collections.singletonList(instance.scCommunity);
-	}
-
-	public static PictureProfile getProfile() {
-		return profile;
-	}
-
-	public static List<Community> getCommunities() {
-		return communities;
+		return getAccessProvider().readToken(mContext);
 	}
 
 	private static CMHelper getInstance() throws DataException {
 		if (instance == null)
-			throw new DataException("DTHelper is not initialized");
+			throw new DataException("CMHelper is not initialized");
 		return instance;
 	}
 
 	public static SCAccessProvider getAccessProvider() {
 		if (accessProvider == null)
-			accessProvider = SCAccessProvider.getInstance(instance.mContext);
+			accessProvider = SCAccessProvider.getInstance(mContext);
 		return accessProvider;
 	}
 
 	protected CMHelper(Context mContext) throws ProtocolException {
 		super();
-		this.mContext = mContext;
+		CMHelper.mContext = mContext;
 		this.mProtocolCarrier = new ProtocolCarrier(mContext,
 				Constants.APP_TOKEN);
 		if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.FROYO) {
@@ -141,59 +126,71 @@ public class CMHelper {
 	public static void destroy() throws DataException {
 	}
 
-	public static PictureProfile retrieveProfile()
-			throws ProtocolException,
-			DataException,
-			ConnectionException,
-			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
-			AACException, SecurityException, SocialServiceException {
-		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE_PROFILE + "/current");
-		request.setMethod(Method.GET);
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		PictureProfile pp = JsonUtils.toObject(response.getBody(),
-				PictureProfile.class);
-		checkSCCommunity();
-		setGroups(readGroups());
-
-		SharedPreferences appSharedPrefs = PreferenceManager
-				.getDefaultSharedPreferences(mContext);
-		String myProfile = appSharedPrefs.getString("profile", "");
-		PictureProfile picP = JsonUtils.toObject(myProfile,
-				PictureProfile.class);
-		if (picP.getId() != null) {
-			return picP;
-		}
-
-		return pp;
+	public static PictureProfile getProfile() {
+		return profile;
+	}
+	
+	public static PictureProfile ensureProfile() throws SecurityException, ProtocolException, DataException, ConnectionException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException, SocialServiceException {
+		return retrieveProfile(false);
 	}
 
-	public static PictureProfile UpdateProfile()
+	@SuppressWarnings("unchecked")
+	private static PictureProfile retrieveProfile(boolean forceLoad)
 			throws ProtocolException,
 			DataException,
 			ConnectionException,
 			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
 			AACException, SecurityException, SocialServiceException {
-		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(getInstance().mContext),
-				Constants.SERVICE_PROFILE + "/current");
-		request.setMethod(Method.GET);
-		MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-				request, Constants.APP_TOKEN, getAuthToken());
-		PictureProfile pp = JsonUtils.toObject(response.getBody(),
-				PictureProfile.class);
-		checkSCCommunity();
-		setGroups(readGroups());
+
+		SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+		String profileJson = null;
+		if (forceLoad || appSharedPrefs == null || (profileJson = appSharedPrefs.getString("profile", null)) == null) {
+			MessageRequest request = new MessageRequest(
+					GlobalConfig.getAppUrl(mContext),
+					Constants.SERVICE_PROFILE + "/current");
+			request.setMethod(Method.GET);
+			MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
+					request, Constants.APP_TOKEN, getAuthToken());
+			CMHelper.profile = JsonUtils.toObject(response.getBody(), PictureProfile.class);
+			checkSCCommunity();
+			saveProfileToCache(CMHelper.profile);
+			setGroups(readGroups());
+		} else if (profileJson != null) {
+			CMHelper.profile = JsonUtils.toObject(profileJson, PictureProfile.class);
+			CMHelper.savedGroups = JsonUtils.toObjectList(appSharedPrefs.getString("savedGroups", "[]"), Group.class);
+			CMHelper.knownUsers = new HashMap<String, PictureProfile>();
+			Map<String,Map<String,Object>> map = JsonUtils.toObject(appSharedPrefs.getString("knownUsers", "{}"), Map.class);
+			for (String key : map.keySet()) {
+				knownUsers.put(key, JsonUtils.convert(map.get(key), PictureProfile.class));
+			}
+		}
+		return CMHelper.profile;
+	}
+
+	public static boolean syncData(Context c) throws SecurityException, ProtocolException, DataException, ConnectionException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException, SocialServiceException {
+		PictureProfile pp = retrieveProfile(true);
+		saveProfileToCache(pp);
+		return true;
+	}
+
+	
+	private static void saveProfileToCache(PictureProfile pp) {
 		SharedPreferences appSharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
 		Editor prefsEditor = appSharedPrefs.edit();
 		String json = JsonUtils.toJSON(pp);
 		prefsEditor.putString("profile", json);
 		prefsEditor.commit();
-		return pp;
-
+	}
+	private static void saveGroupsToCache(List<Group> groups, Map<String,PictureProfile> knownUsers) {
+		SharedPreferences appSharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
+		Editor prefsEditor = appSharedPrefs.edit();
+		String json = JsonUtils.toJSON(groups);
+		prefsEditor.putString("savedGroups", json);
+		json = JsonUtils.toJSON(knownUsers);
+		prefsEditor.putString("knownUsers", json);
+		prefsEditor.commit();
 	}
 
 	public static boolean addToCommunity(String communityId)
@@ -217,7 +214,7 @@ public class CMHelper {
 			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
 			AACException {
 		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(getInstance().mContext),
+				GlobalConfig.getAppUrl(mContext),
 				Constants.SERVICE_PROFILE);
 		try {
 			request.setQuery("filter=" + URLEncoder.encode(search, "UTF-8"));
@@ -293,7 +290,7 @@ public class CMHelper {
 			AACException, SocialServiceException {
 
 		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(getInstance().mContext),
+				GlobalConfig.getAppUrl(mContext),
 				Constants.FILE_SERVICE + "/");
 		request.setMethod(Method.POST);
 		FileRequestParam param = new FileRequestParam();
@@ -307,7 +304,7 @@ public class CMHelper {
 				request, Constants.APP_TOKEN, getAuthToken());
 		CMHelper.profile = JsonUtils.toObject(response.getBody(),
 				PictureProfile.class);
-		UpdateProfile();
+		saveProfileToCache(CMHelper.profile);
 	}
 
 	public static byte[] downloadFile(long fid)
@@ -318,7 +315,7 @@ public class CMHelper {
 			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
 			AACException {
 		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(getInstance().mContext),
+				GlobalConfig.getAppUrl(mContext),
 				Constants.FILE_SERVICE + "/" + fid);
 		request.setMethod(Method.GET);
 		// set requestFile true to get the byte array of file requested
@@ -379,6 +376,7 @@ public class CMHelper {
 				knownUsers.put(pp.getSocialId(), pp);
 			}
 		}
+		saveGroupsToCache(savedGroups, knownUsers);
 	}
 
 	/**
@@ -391,7 +389,7 @@ public class CMHelper {
 			throws AACException, DataException {
 		try {
 			MessageRequest request = new MessageRequest(
-					GlobalConfig.getAppUrl(getInstance().mContext),
+					GlobalConfig.getAppUrl(mContext),
 					Constants.SERVICE_PROFILE);
 			request.setMethod(Method.GET);
 			String query = "";
@@ -498,16 +496,10 @@ public class CMHelper {
 	 * @throws ProtocolException
 	 * @throws SecurityException
 	 */
-	private static void checkSCCommunity() throws DataException,
-			SecurityException, SocialServiceException, AACException {
-		if (getCommunities() != null && getCommunities().size() > 0) {
-			getInstance().scCommunity = getCommunities().get(0);
-		} else {
+	private static void checkSCCommunity() throws DataException, SecurityException, SocialServiceException, AACException {
 			Collection<Community> list = fetchCommunities();
-			if (list != null && !list.isEmpty())
-				getInstance().scCommunity = list.iterator().next();
+			if (list != null && !list.isEmpty()) getInstance().scCommunity = list.iterator().next();
 			addToCommunity(getInstance().scCommunity.getId());
-		}
 	}
 
 	public static Community getSCCommunity() {
@@ -532,8 +524,6 @@ public class CMHelper {
 	public static Set<String> getUserGroups(User mp) {
 		Set<String> res = new HashSet<String>();
 		if (getGroups() != null) {
-
-			BaseCMActivity.UpdateGroups(mContext);
 
 			for (Group g : getGroups()) {
 				if (g.getUsers() != null) {

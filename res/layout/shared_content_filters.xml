@@ -37,6 +37,7 @@
             android:background="@drawable/ic_f_buster"
             android:contentDescription="@string/shared_content_filters_experience" />
 
+        <!-- 
         <ImageButton
             android:id="@+id/shared_content_filters_journey"
             android:layout_width="wrap_content"
@@ -64,5 +65,6 @@
             android:layout_height="wrap_content"
             android:background="@drawable/ic_f_story"
             android:contentDescription="@string/shared_content_filters_story" />
+         -->    
         
 </LinearLayout>

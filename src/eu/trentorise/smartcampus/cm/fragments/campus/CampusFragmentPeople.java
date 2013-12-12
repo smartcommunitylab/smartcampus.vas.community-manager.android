@@ -36,7 +36,6 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import eu.trentorise.smartcampus.cm.HomeActivity;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.UsersPictureProfileAdapter;
@@ -121,7 +120,7 @@ public class CampusFragmentPeople extends SherlockFragment {
 			usersListAdapter.clear();
 			if (result != null) {
 				for (PictureProfile mp : result) {
-					if (mp.getId().equals(HomeActivity.picP.getId())) {
+					if (mp.getId().equals(CMHelper.getProfile().getId())) {
 						usersListAdapter.remove(mp);
 						;
 					} else

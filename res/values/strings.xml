@@ -21,9 +21,9 @@
     <string name="app_name">MyPeople</string>
 
     <string-array name="fragment_array">
+        <item>MyGroups</item>
         <item>Shared</item>
         <item>Campus</item>
-        <item>MyGroups</item>
         <item>MyProfile</item>
         <item>Synchronize</item>
         <item>Tutorial</item>
@@ -123,7 +123,7 @@
     <string name="tmp_sources">Source 1, source2, &#8230;</string>
     <string name="tmp_content">Type 1, type 2, &#8230;</string>
     <string name="app_uid_label">SmartCampus</string>
-    <string name="sharing_success">Object shared succesfully.</string>
+    <string name="sharing_success">Object shared successfully.</string>
     <string name="topics_title">Topics</string>
     <string name="shared_title">Shared data</string>
     <string name="groups_title">Groups</string>
@@ -133,5 +133,8 @@
     <string name="auth_failed">Application initialization failed. Try connecting again.</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    
+    <string name="sync_ok">Your data is synchronized!</string>
+    <string name="sharing_title">Sharing \'%s\'</string>
 
 </resources>

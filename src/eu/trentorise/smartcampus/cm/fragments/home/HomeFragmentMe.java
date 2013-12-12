@@ -95,6 +95,7 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 			intent.putExtra(
 					getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity),
 					content);
+			startActivity(intent);
 			return true;
 		default:
 			return super.handleMenuItem(content, itemId);

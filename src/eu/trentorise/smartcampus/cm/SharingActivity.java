@@ -18,6 +18,8 @@ package eu.trentorise.smartcampus.cm;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.actionbarsherlock.view.MenuItem;
+
 import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
@@ -60,17 +62,27 @@ public class SharingActivity extends BaseCMActivity {
 	}
 
 	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			onBackPressed();
+			return true;
+		};
+		return super.onOptionsItemSelected(item);
+	}
+	@Override
 	protected void setUpContent() {
 		setContentView(R.layout.source_select);
 		getSupportActionBar().setDisplayUseLogoEnabled(true);
+		// enable ActionBar app icon to behave as action to toggle nav drawer
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 
 		if (getShare() == null) {
 			CMHelper.showFailure(this, R.string.app_failure_operation);
 			finish();
 			return;
 		} else {
-			setTitle("Sharing " + share.getEntityType() + "'"
-					+ share.getTitle() + "'");
+			setTitle(getString(R.string.sharing_title, share.getTitle()));
 		}
 
 		Button ok = (Button) findViewById(R.id.source_select_ok);
@@ -114,8 +126,9 @@ public class SharingActivity extends BaseCMActivity {
 			SocialContainer current = new SimpleSocialContainer();
 
 			PictureProfile profile = CMHelper.getProfile();
-			if (profile == null)
-				profile = CMHelper.retrieveProfile();
+			if (profile == null) {
+				profile = CMHelper.ensureProfile();
+			}
 			List<Group> groups = CMHelper.getGroups();
 
 			ShareVisibility visibility = CMHelper.getEntitySharing(getShare()
