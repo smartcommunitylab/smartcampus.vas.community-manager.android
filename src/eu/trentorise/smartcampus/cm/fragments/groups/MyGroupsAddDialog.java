@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import eu.trentorise.smartcampus.android.common.validation.ValidatorHelper;
 import eu.trentorise.smartcampus.cm.R;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
@@ -75,12 +76,8 @@ public class MyGroupsAddDialog extends Dialog {
 								&& g.getSocialId() == group.getSocialId())
 							continue;
 						if (g.getName().equals(groupNameText)) {
-							Toast toast = Toast.makeText(
-									getContext(),
-									getContext().getString(
-											R.string.mygroups_name_duplicate),
-									Toast.LENGTH_SHORT);
-							toast.show();
+							ValidatorHelper.highlight(getContext(), groupName, 
+									getContext().getString(R.string.mygroups_name_duplicate));
 							return;
 						}
 					}
@@ -90,10 +87,8 @@ public class MyGroupsAddDialog extends Dialog {
 					handler.handleSuccess(groupNameText);
 					dismiss();
 				} else {
-					Toast toast = Toast.makeText(getContext(), getContext()
-							.getString(R.string.mygroups_name_empty),
-							Toast.LENGTH_SHORT);
-					toast.show();
+					ValidatorHelper.highlight(getContext(), groupName, 
+							getContext().getString(R.string.mygroups_name_empty));
 				}
 			}
 		});
