@@ -21,9 +21,9 @@
     <string name="app_name">MyPeople</string>
 
     <string-array name="fragment_array">
-        <item>Gruppi</item>
         <item>Condivisi</item>
         <item>Campus</item>
+        <item>Gruppi</item>
         <item>Profilo</item>
         <item>Sincronizza</item>
         <item>Tutorial</item>

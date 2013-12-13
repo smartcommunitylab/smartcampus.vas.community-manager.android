@@ -21,9 +21,9 @@
     <string name="app_name">MyPeople</string>
 
     <string-array name="fragment_array">
-        <item>MyGroups</item>
         <item>Shared</item>
         <item>Campus</item>
+        <item>MyGroups</item>
         <item>MyProfile</item>
         <item>Synchronize</item>
         <item>Tutorial</item>

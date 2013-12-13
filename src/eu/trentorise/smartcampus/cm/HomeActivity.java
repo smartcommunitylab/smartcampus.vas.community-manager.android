@@ -115,10 +115,12 @@ public class HomeActivity extends BaseCMActivity {
 
 	private void startFirstFragment() {
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		Fragment myGroups = new MyGroupsFragment();
+		
+		HomeFragmentMe fragment = new HomeFragmentMe();
+		getSupportActionBar().setTitle(R.string.shared_title);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		ft.replace(R.id.content_frame, myGroups, "MyGroups");
-		// ft.addToBackStack(fragment.getTag());
+		ft.replace(R.id.content_frame, fragment, "Shared");
+		// fragmentTransaction.addToBackStack(FMe.getTag());
 		ft.commit();
 	}
 
@@ -138,7 +140,7 @@ public class HomeActivity extends BaseCMActivity {
 				.beginTransaction();
 
 		/* SHARED */
-		if (fragmentString.equals(mFragmentTitles[1])) {
+		if (fragmentString.equals(mFragmentTitles[0])) {
 			HomeFragmentMe fragment = new HomeFragmentMe();
 			getSupportActionBar().setTitle(R.string.shared_title);
 			fragmentTransaction
@@ -148,7 +150,7 @@ public class HomeActivity extends BaseCMActivity {
 			fragmentTransaction.commit();
 			mDrawerLayout.closeDrawer(mDrawerList);
 			/* CAMPUS */
-		} else if (fragmentString.equals(mFragmentTitles[2])) {
+		} else if (fragmentString.equals(mFragmentTitles[1])) {
 			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
 				getSupportActionBar().setSelectedNavigationItem(0);
 			CampusFragmentPeople fragment = new CampusFragmentPeople();
@@ -159,7 +161,7 @@ public class HomeActivity extends BaseCMActivity {
 			fragmentTransaction.commit();
 			mDrawerLayout.closeDrawer(mDrawerList);
 			/* MY GROUPS */
-		} else if (fragmentString.equals(mFragmentTitles[0])) {
+		} else if (fragmentString.equals(mFragmentTitles[2])) {
 			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
 				getSupportActionBar().setSelectedNavigationItem(0);
 			MyGroupsFragment fragment = new MyGroupsFragment();
