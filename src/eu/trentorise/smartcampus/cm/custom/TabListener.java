@@ -65,15 +65,15 @@ public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 			ft.add(R.id.content_frame, mFragment);
 		} else {
 			// If it exists, simply attach it in order to show it
-			ft.attach(mFragment);
-
+//			ft.attach(mFragment);
+			ft.replace(R.id.content_frame, mFragment);
 		}
 
 	}
 
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 		if (mFragment != null) {
-			ft.detach(mFragment);
+			ft.remove(mFragment);
 		}
 	}
 

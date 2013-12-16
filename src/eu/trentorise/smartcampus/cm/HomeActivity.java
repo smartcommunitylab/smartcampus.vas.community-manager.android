@@ -15,7 +15,10 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm;
 
+import java.util.concurrent.ExecutionException;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -27,11 +30,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.MenuItem;
+import com.github.espiandev.showcaseview.ListViewTutorialHelper;
+import com.github.espiandev.showcaseview.TutorialHelper;
+import com.github.espiandev.showcaseview.TutorialHelper.TutorialProvider;
+import com.github.espiandev.showcaseview.TutorialItem;
 
-import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
+import eu.trentorise.smartcampus.cm.custom.LoadProfileProcessor;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.BackListener;
 import eu.trentorise.smartcampus.cm.fragments.campus.CampusFragmentPeople;
@@ -42,18 +48,19 @@ import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 
 public class HomeActivity extends BaseCMActivity {
 
-	public static DrawerLayout mDrawerLayout;
-	public static ListView mDrawerList;
-	public static ActionBarDrawerToggle mDrawerToggle;
-	public static String drawerState = "on";
+	private DrawerLayout mDrawerLayout;
+	private ListView mDrawerList;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private String drawerState = "on";
 	private CharSequence mTitle;
 	private String[] mFragmentTitles;
 
+	private TutorialHelper mTutorialHelper = null;
 
 	@Override
-	protected void loadData() {
+	protected void loadData() throws InterruptedException, ExecutionException {
 		new SCAsyncTask<Void, Void, Void>(this,
-				new LoadProfileProcessor()).execute();
+				new LoadProfileProcessor(this)).execute().get();
 	}
 
 	@Override
@@ -93,6 +100,8 @@ public class HomeActivity extends BaseCMActivity {
 		};
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mTutorialHelper = new ListViewTutorialHelper(this, mTutorialProvider);
+		startFirstFragment();
 	}
 
 	@Override
@@ -119,7 +128,7 @@ public class HomeActivity extends BaseCMActivity {
 		HomeFragmentMe fragment = new HomeFragmentMe();
 		getSupportActionBar().setTitle(R.string.shared_title);
 		ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		ft.replace(R.id.content_frame, fragment, "Shared");
+		ft.replace(R.id.content_frame, fragment);
 		// fragmentTransaction.addToBackStack(FMe.getTag());
 		ft.commit();
 	}
@@ -139,105 +148,35 @@ public class HomeActivity extends BaseCMActivity {
 		FragmentTransaction fragmentTransaction = getSupportFragmentManager()
 				.beginTransaction();
 
+		Fragment fragment = null;
 		/* SHARED */
 		if (fragmentString.equals(mFragmentTitles[0])) {
-			HomeFragmentMe fragment = new HomeFragmentMe();
+			fragment = new HomeFragmentMe();
 			getSupportActionBar().setTitle(R.string.shared_title);
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(R.id.content_frame, fragment, "Shared");
-			// fragmentTransaction.addToBackStack(FMe.getTag());
-			fragmentTransaction.commit();
-			mDrawerLayout.closeDrawer(mDrawerList);
 			/* CAMPUS */
 		} else if (fragmentString.equals(mFragmentTitles[1])) {
-			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
-				getSupportActionBar().setSelectedNavigationItem(0);
-			CampusFragmentPeople fragment = new CampusFragmentPeople();
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(R.id.content_frame, fragment, "Campus");
-			// fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
-			mDrawerLayout.closeDrawer(mDrawerList);
+			fragment = new CampusFragmentPeople();
+			fragmentTransaction.replace(R.id.content_frame, fragment);
 			/* MY GROUPS */
 		} else if (fragmentString.equals(mFragmentTitles[2])) {
-			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
-				getSupportActionBar().setSelectedNavigationItem(0);
-			MyGroupsFragment fragment = new MyGroupsFragment();
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(R.id.content_frame, fragment,
-					"MyGroups");
-			// fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
-			mDrawerLayout.closeDrawer(mDrawerList);
+			fragment = new MyGroupsFragment();
 			/* MY PROFILE */
 		} else if (fragmentString.equals(mFragmentTitles[3])) {
-			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
-				getSupportActionBar().setSelectedNavigationItem(0);
-			MyProfileFragment fragment = new MyProfileFragment();
-			fragmentTransaction
-					.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.replace(R.id.content_frame, fragment,
-					"MyProfile");
-			// fragmentTransaction.addToBackStack(fragment.getTag());
-			fragmentTransaction.commit();
-			mDrawerLayout.closeDrawer(mDrawerList);
+			fragment = new MyProfileFragment();
 			/* SYNCHRONIZE */
 		} else if (fragmentString.equals(mFragmentTitles[4])) {
-			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
-				getSupportActionBar().setSelectedNavigationItem(0);
 			sync();
-			// Intent i = (new Intent(BaseCMActivity.this,
-			// SettingsActivity.class));
-			// startActivity(i);
 			mDrawerLayout.closeDrawer(mDrawerList);
 			/* TUTORIAL */
 		} else if (fragmentString.equals(mFragmentTitles[5])) {
-			if (getSupportActionBar().getNavigationMode() == getSupportActionBar().NAVIGATION_MODE_TABS)
-				getSupportActionBar().setSelectedNavigationItem(0);
-			Toast.makeText(getApplicationContext(), "Soon!", Toast.LENGTH_SHORT)
-					.show();
-
+			mTutorialHelper.showTutorials();
+		}
+		if (fragment != null) {
+			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+			fragmentTransaction.replace(R.id.content_frame, fragment);
+			fragmentTransaction.commit();
 			mDrawerLayout.closeDrawer(mDrawerList);
 		}
-	}
-
-	private class LoadProfileProcessor implements
-			SCAsyncTaskProcessor<Void, Void> {
-
-		@Override
-		public Void performAction(Void... params)
-				throws SecurityException, Exception {
-			CMHelper.ensureProfile();
-			return null;
-		}
-
-		@Override
-		public void handleResult(Void result) {
-			startFirstFragment();
-		}
-
-		@Override
-		public void handleFailure(Exception e) {
-			CMHelper.endAppFailure(HomeActivity.this,
-					R.string.app_failure_setup);
-		}
-
-		@Override
-		public void handleConnectionError() {
-			HandleExceptionHelper.connectivityFailure(HomeActivity.this);
-			finish();
-
-		}
-
-		@Override
-		public void handleSecurityError() {
-			CMHelper.endAppFailure(HomeActivity.this,
-					R.string.app_failure_security);
-		}
-
 	}
 
 	@Override
@@ -300,6 +239,44 @@ public class HomeActivity extends BaseCMActivity {
 
 		}
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		mTutorialHelper.onTutorialActivityResult(requestCode, resultCode, data);
+	}
 	
+	private TutorialProvider mTutorialProvider = new TutorialProvider() {
+		
+		TutorialItem[] tutorial = new TutorialItem[]{
+				new TutorialItem("shared", null, 0, R.string.t_title_shared, R.string.t_msg_shared),
+				new TutorialItem("campus", null, 0, R.string.t_title_campus, R.string.t_msg_campus),
+				new TutorialItem("groups", null, 0, R.string.t_title_groups, R.string.t_msg_groups),
+				new TutorialItem("profile", null, 0, R.string.t_title_profile, R.string.t_msg_profile),
+				new TutorialItem("sync", null, 0, R.string.t_title_sync, R.string.t_msg_sync),
+			}; 
+
+		
+		@Override
+		public void onTutorialFinished() {
+			mDrawerLayout.closeDrawer(mDrawerList);
+		}
+		
+		@Override
+		public void onTutorialCancelled() {
+			mDrawerLayout.closeDrawer(mDrawerList);
+		}
+		
+		@Override
+		public TutorialItem getItemAt(int i) {
+			ListViewTutorialHelper.fillTutorialItemParams(tutorial[i], i, mDrawerList, R.id.logo);
+			return tutorial[i];
+		}
+		
+		@Override
+		public int size() {
+			return tutorial.length;
+		}
+	};
 
 }

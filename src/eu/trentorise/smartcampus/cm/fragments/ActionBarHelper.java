@@ -75,7 +75,7 @@ public class ActionBarHelper {
 				HomeFragmentMyGroups.class, fragment.getClass().equals(
 						HomeFragmentMyGroups.class) ? fragment : null));
 		activity.getSupportActionBar().addTab(tab);
-
+		
 		// // My Communities
 		// tab = activity.getSupportActionBar().newTab();
 		// tab.setText(R.string.home_tab_mycommunities);

@@ -15,6 +15,7 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm;
 
+
 public class Constants {
 
 	public static final String HOME_FRAGMENT_ME_TAG = "homefragmentme";

@@ -98,7 +98,7 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	protected abstract void loadData();
+	protected abstract void loadData() throws Exception;
 
 	protected abstract void setUpContent();
 
