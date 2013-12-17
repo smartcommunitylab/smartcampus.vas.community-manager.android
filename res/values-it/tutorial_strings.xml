@@ -20,19 +20,19 @@
     <string name="tutorial_start_btn">Start</string>
     
     
-    <string name="t_title_shared">Shared</string>
-    <string name="t_msg_shared">Shared bla bla</string>
+    <string name="t_title_shared">Condivisi</string>
+    <string name="t_msg_shared">I documenti che sono condivisi da te o con te</string>
     
     <string name="t_title_campus">Campus</string>
-    <string name="t_msg_campus">Shared bla bla</string>
+    <string name="t_msg_campus">Trova altre persone nella community</string>
     
-    <string name="t_title_groups">Groups</string>
-    <string name="t_msg_groups">groups bla bla</string>
+    <string name="t_title_groups">Gruppi</string>
+    <string name="t_msg_groups">Gestisci i tuoi gruppi di persone</string>
 
-    <string name="t_title_profile">Profile</string>
-    <string name="t_msg_profile">profile bla bla</string>
+    <string name="t_title_profile">Profilo</string>
+    <string name="t_msg_profile">Modifica il tuo profilo</string>
 
-    <string name="t_title_sync">Syncronize</string>
-    <string name="t_msg_sync">sync bla bla</string>
+    <string name="t_title_sync">Sincronizza</string>
+    <string name="t_msg_sync">Se utilizzi più di un dispositivo, puoi sincronizzare le informazioni</string>
     
 </resources>

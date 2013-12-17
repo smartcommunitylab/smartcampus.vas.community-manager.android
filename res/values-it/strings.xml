@@ -21,7 +21,7 @@
     <string name="app_name">MyPeople</string>
 
     <string-array name="fragment_array">
-        <item>Condivisi</item>
+        <item>Dati condivisi</item>
         <item>Campus</item>
         <item>Gruppi</item>
         <item>Profilo</item>
@@ -38,7 +38,7 @@
     <string name="mainmenu_home">Home</string>
     <string name="mainmenu_myprofile">Profilo</string>
     <string name="mainmenu_mygroups">Gruppi</string>
-    <string name="mainmenu_mytopics">Topics</string>
+    <string name="mainmenu_mytopics">Argomenti</string>
     <string name="mainmenu_campus">Campus</string>
     <string name="user_mp_more">&#8230;</string>
     <string name="user_mp_more_new">+</string>
@@ -67,23 +67,23 @@
     <string name="editprofile_name">Nome</string>
     <string name="editprofile_surname">Cognome</string>
     <string name="app_failure_security">Impossibile ricevere i dati di autenticazione</string>
-    <string name="app_failure_setup">Imossibile inizializzare l\'applicazione</string>
-    <string name="app_failure_profile_missing">E\' necessario salvare il tuo profilo per procedere all\'applicazione</string>
+    <string name="app_failure_setup">Impossibile inizializzare l\'applicazione</string>
+    <string name="app_failure_profile_missing">E\' necessario salvare il tuo profilo per procedere con l\'applicazione</string>
     <string name="app_failure_operation">OOPS! C\'è stato un errore. Per favore verifica la connessione o prova più tardi.</string>
     <string name="topic_action_desc">x</string>
-    <string name="mygroups_name_empty">Il nome del gruppo non puo\' essere vuoto</string>
+    <string name="mygroups_name_empty">Il nome del gruppo non può essere vuoto</string>
     <string name="mygroups_name_duplicate">Un gruppo con questo nome è già stato creato</string>
     <string name="create_topic_name">Titolo:</string>
-    <string name="create_topic_def">Rispeto a?</string>
+    <string name="create_topic_def">Argomento:</string>
     <string name="create_topic_add">Aggiungi</string>
-    <string name="create_topic_sources">Da dove?</string>
+    <string name="create_topic_sources">Dove?</string>
     <string name="create_topic_def_hint">*Aggiungi Tags.</string>
     <!-- <string name="create_topic_def_hint">*A topic can be defined by text tags, semantic tags and entities.</string> -->
-    <string name="create_topic_sources_hint">*Da dove provengono le informazioni (persone, gruppi, comunità)</string>
+    <string name="create_topic_sources_hint">*Da dove provengono le informazioni? (persone, gruppi, comunità)</string>
     <!-- <string name="create_topic_sources_hint">*Sources may include people, groups and communities.</string> -->
     <string name="create_topic_content">Che tipo di contenuto?</string>
-    <string name="create_topic_arg_topic">topic</string>
-    <string name="mytopics_add">Add</string>
+    <string name="create_topic_arg_topic">Argomento</string>
+    <string name="mytopics_add">Aggiungi</string>
     <string name="mytopics_add_title">Aggiungi topic</string>
     <string name="mytopics_edit_title">Modifica topic</string>
     <string name="mytopics_name_empty">Il nome del topic non puo\' essere vuoto</string>
@@ -96,7 +96,7 @@
     <string name="topic_content_dialog_events">Eventi</string>
     <string name="topic_content_dialog_exps">Esperienze</string>
     <string name="topic_content_dialog_portfolios">Portfolios</string>
-    <string name="topic_content_dialog_journeys">Journeys</string>
+    <string name="topic_content_dialog_journeys">Viaggi</string>
     <string name="topic_content_dialog_stories">Storie</string>
     <string name="topic_content_dialog_type_required">Scegliere almeno un contenuto</string>
     <string name="content_empty">Nessun elemento.</string>
@@ -107,14 +107,14 @@
     <string name="shared_content_filters_journey">Journey</string>
     <string name="shared_content_filters_poi">POI</string>
     <string name="shared_content_filters_event">Evento</string>
-    <string name="shared_content_filters_experience">Experience</string>
+    <string name="shared_content_filters_experience">Esperienza</string>
     <string name="shared_content_filters_story">Storia</string>
     <string name="shared_content_menu_header">Contenuto condiviso</string>
     <string name="shared_content_menu_author">Autore</string>
-    <string name="shared_content_menu_topic">Fare un topic e seguire aggiornamenti</string>
+    <string name="shared_content_menu_topic">Creare un topic e seguire aggiornamenti</string>
     <string name="shared_content_menu_sharing">Opzioni di condivisione</string>
     <string name="shared_content_menu_app">Passa ad un\'altra app</string>
-    <string name="a_shared">Condivisi</string>
+    <string name="a_shared">Dati condivisi</string>
     <string name="a_campus">Campus</string>
     <string name="a_topics">I miei topics</string>
     <string name="a_groups">I miei gruppi</string>
@@ -125,16 +125,16 @@
     <string name="app_uid_label">SmartCampus</string>
     <string name="sharing_success">Condivisione riuscita.</string>
     <string name="topics_title">Topics</string>
-    <string name="shared_title">Dati Condivisi</string>
+    <string name="shared_title">Dati condivisi</string>
     <string name="groups_title">Gruppi</string>
     <string name="profile_title">Profilo</string>
     <string name="campus_title">Campus</string>
     <string name="token_required">Effettua il login prima di procedere con l\'applicazione.</string>
     <string name="auth_failed">Inizializzazione dell\'applicazione non riuscita. Provare a connettersi di nuovo.</string>
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
+    <string name="drawer_open">Apri navigation drawer</string>
+    <string name="drawer_close">Chiudi navigation drawer</string>
 
-    <string name="sync_ok">Ora i dati sono sincronizzati</string>
+    <string name="sync_ok">Ora i dati sono sincronizzati.</string>
     <string name="sharing_title">Condividi \'%s\'</string>
     
 </resources>
