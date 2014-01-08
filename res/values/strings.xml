@@ -72,14 +72,14 @@
     <string name="app_failure_operation">OOPS! An error occurred. Please check your connection or try again later</string>
     <string name="topic_action_desc">x</string>
     <string name="mygroups_name_empty">Group name cannot be empty</string>
-    <string name="mygroups_name_duplicate">Group with this name already exists</string>
+    <string name="mygroups_name_duplicate">A group with this name already exists</string>
     <string name="create_topic_name">Title:</string>
     <string name="create_topic_def">About what?</string>
     <string name="create_topic_add">Add</string>
     <string name="create_topic_sources">Where from?</string>
     <string name="create_topic_def_hint">*Define your topic with tags.</string>
     <!-- <string name="create_topic_def_hint">*A topic can be defined by text tags, semantic tags and entities.</string> -->
-    <string name="create_topic_sources_hint">*Where do the info come from? (people, groups, communities)</string>
+    <string name="create_topic_sources_hint">*Where does the information come from? (people, groups, communities)</string>
     <!-- <string name="create_topic_sources_hint">*Sources may include people, groups and communities.</string> -->
     <string name="create_topic_content">What kind of content?</string>
     <string name="create_topic_arg_topic">topic</string>
@@ -92,7 +92,7 @@
     <string name="topic_content_dialog_title">Select content types</string>
     <string name="topic_content_dialog_all">All types of content</string>
     <string name="topic_content_dialog_photo_video">Photo/Video</string>
-    <string name="topic_content_dialog_pois">POIs</string>
+    <string name="topic_content_dialog_pois">Places</string>
     <string name="topic_content_dialog_events">Events</string>
     <string name="topic_content_dialog_exps">Experience</string>
     <string name="topic_content_dialog_portfolios">Portfolios</string>
@@ -105,7 +105,7 @@
     <string name="source_select_public">Public</string>
     <string name="shared_content_filters_portfolio">Portfolio</string>
     <string name="shared_content_filters_journey">Journey</string>
-    <string name="shared_content_filters_poi">POI</string>
+    <string name="shared_content_filters_poi">Place</string>
     <string name="shared_content_filters_event">Event</string>
     <string name="shared_content_filters_experience">Experience</string>
     <string name="shared_content_filters_story">Story</string>
