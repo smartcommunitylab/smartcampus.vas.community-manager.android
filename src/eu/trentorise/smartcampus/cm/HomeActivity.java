@@ -78,7 +78,7 @@ public class HomeActivity extends BaseCMActivity {
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		//
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-				R.drawable.ic_drawer, R.string.drawer_open,
+				R.drawable.ic_navigation_drawer, R.string.drawer_open,
 				R.string.drawer_close) {
 
 			public void onDrawerClosed(View view) {
