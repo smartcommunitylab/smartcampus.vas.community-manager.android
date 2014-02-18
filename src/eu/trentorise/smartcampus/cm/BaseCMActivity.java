@@ -23,13 +23,17 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
+import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
+import eu.trentorise.smartcampus.android.common.LauncherHelper;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
+import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
 
 public abstract class BaseCMActivity extends SherlockFragmentActivity {
 
 	protected boolean initialized = false;
-//	protected final int mainlayout = android.R.id.content;
+
+	// protected final int mainlayout = android.R.id.content;
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
@@ -38,13 +42,15 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 	}
 
 	private void initDataManagement(Bundle savedInstanceState) {
-		try {
-			CMHelper.init(getApplicationContext());
-			if (!CMHelper.getAccessProvider().login(this, null)) {
-				initData();
+		if (LauncherHelper.isLauncherInstalled(this, true)) {
+			try {
+				CMHelper.init(getApplicationContext());
+				if (!CMHelper.getAccessProvider().login(this, null)) {
+					initData();
+				}
+			} catch (Exception e) {
+				CMHelper.endAppFailure(this, R.string.app_failure_setup);
 			}
-		} catch (Exception e) {
-			CMHelper.endAppFailure(this, R.string.app_failure_setup);
 		}
 	}
 
