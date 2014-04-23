@@ -15,23 +15,23 @@
   limitations under the License.
 -->
 <resources>
-	
-    <string name="tutorial_startup_msg">bla bla</string>
+
+    <string name="tutorial_startup_msg">My People Tutorial</string>
     <string name="tutorial_start_btn">Start</string>
          
     <string name="t_title_shared">Shared</string>
-    <string name="t_msg_shared">The documents shared by you or with you</string>
+    <string name="t_msg_shared">See what you have shared and what others have shared with you</string>
     
     <string name="t_title_campus">Campus</string>
-    <string name="t_msg_campus">Find other people in the community</string>
+    <string name="t_msg_campus">Find other Smart Campus users and add them to your groups</string>
     
     <string name="t_title_groups">Groups</string>
-    <string name="t_msg_groups">Manage your groups of people</string>
+    <string name="t_msg_groups">Manage your groups</string>
 
     <string name="t_title_profile">Profile</string>
     <string name="t_msg_profile">Edit your profile</string>
 
     <string name="t_title_sync">Synchronize</string>
-    <string name="t_msg_sync">If you use the app on several devices, sync the information between them</string>
+    <string name="t_msg_sync">Sync your information if you use this app on several devices</string>
     
 </resources>

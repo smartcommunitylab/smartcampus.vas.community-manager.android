@@ -15,24 +15,24 @@
   limitations under the License.
 -->
 <resources>
-	
-    <string name="tutorial_startup_msg">bla bla</string>
+
+    <string name="tutorial_startup_msg">MyPeople Tutorial</string>
     <string name="tutorial_start_btn">Start</string>
     
     
     <string name="t_title_shared">Condivisi</string>
-    <string name="t_msg_shared">I documenti che sono condivisi da te o con te</string>
+    <string name="t_msg_shared">Vedi cosa hai condiviso e cosa gli altri hanno condiviso con te</string>
     
     <string name="t_title_campus">Campus</string>
-    <string name="t_msg_campus">Trova altre persone nella community</string>
+    <string name="t_msg_campus">Cerca altri utenti Smart Campus e aggiungili ai tuoi gruppi</string>
     
     <string name="t_title_groups">Gruppi</string>
-    <string name="t_msg_groups">Gestisci i tuoi gruppi di persone</string>
+    <string name="t_msg_groups">Gestisci i tuoi gruppi</string>
 
     <string name="t_title_profile">Profilo</string>
     <string name="t_msg_profile">Modifica il tuo profilo</string>
 
     <string name="t_title_sync">Sincronizza</string>
-    <string name="t_msg_sync">Se utilizzi più di un dispositivo, puoi sincronizzare le informazioni</string>
+    <string name="t_msg_sync">Sincronizza i tuoi dati se usi la app su più dispositivi</string>
     
 </resources>
