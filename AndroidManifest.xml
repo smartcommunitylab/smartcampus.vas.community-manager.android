@@ -80,7 +80,6 @@
             </intent-filter>
             
         </activity>    
-        <activity android:name="eu.trentorise.smartcampus.cm.HomeActivity" />
        
         <activity
             android:name="com.github.espiandev.showcaseview.TutorialActivity"
