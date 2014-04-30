@@ -17,6 +17,8 @@ package eu.trentorise.smartcampus.cm;
 
 import android.accounts.AccountManager;
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -41,16 +43,63 @@ public abstract class BaseCMActivity extends SherlockFragmentActivity {
 		outState.putBoolean("initialized", initialized);
 	}
 
-	private void initDataManagement(Bundle savedInstanceState) {
+	private void initDataManagement(final Bundle savedInstanceState) {
 		if (LauncherHelper.isLauncherInstalled(this, true)) {
 			try {
-				CMHelper.init(getApplicationContext());
-				if (!CMHelper.getAccessProvider().login(this, null)) {
-					initData();
+				if (CMHelper.isFirstLaunch(this)) {
+					AlertDialog.Builder builder = new AlertDialog.Builder(this);
+					builder.setTitle(R.string.welcome_title)
+							.setMessage(R.string.welcome_msg)
+							.setOnCancelListener(
+									new DialogInterface.OnCancelListener() {
+
+										@Override
+										public void onCancel(DialogInterface arg0) {
+											arg0.dismiss();
+											try {
+												initialize();
+											} catch (ProtocolException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											} catch (AACException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+										}
+									})
+							.setPositiveButton(getString(R.string.ok),
+									new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(DialogInterface dialog,
+												int which) {
+											dialog.dismiss();
+											try {
+												initialize();
+											} catch (ProtocolException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											} catch (AACException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+										}
+									});
+					builder.create().show();
+					CMHelper.disableFirstLanch(this);
+				} else {
+					initialize();
 				}
 			} catch (Exception e) {
 				CMHelper.endAppFailure(this, R.string.app_failure_setup);
 			}
+		}
+	}
+
+	private void initialize() throws ProtocolException, AACException {
+		CMHelper.init(getApplicationContext());
+		if (!CMHelper.getAccessProvider().login(this, null)) {
+			initData();
 		}
 	}
 
