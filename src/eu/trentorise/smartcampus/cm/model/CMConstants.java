@@ -24,7 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 
 public class CMConstants {
 

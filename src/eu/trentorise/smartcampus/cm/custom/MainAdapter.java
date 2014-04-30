@@ -28,7 +28,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.fragments.campus.CampusFragmentPeople;
 import eu.trentorise.smartcampus.cm.fragments.groups.MyGroupsFragment;
 import eu.trentorise.smartcampus.cm.fragments.home.HomeFragmentMe;

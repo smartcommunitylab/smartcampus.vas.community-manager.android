@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="eu.trentorise.smartcampus.cm"
+    package="it.smartcampuslab.cm"
     android:sharedUserId="eu.trentorise.smartcampus.shared"
     android:sharedUserLabel="@string/app_uid_label"
     android:versionCode="17"
@@ -53,7 +53,7 @@
         
          
         <activity
-            android:name=".HomeActivity"
+            android:name="eu.trentorise.smartcampus.cm.HomeActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop" 
             android:configChanges="orientation|screenSize"
@@ -80,7 +80,7 @@
             </intent-filter>
             
         </activity>    
-        <activity android:name=".settings.SettingsActivity" />
+        <activity android:name="eu.trentorise.smartcampus.cm.HomeActivity" />
        
         <activity
             android:name="com.github.espiandev.showcaseview.TutorialActivity"

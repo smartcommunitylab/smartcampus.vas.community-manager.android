@@ -23,7 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;
 import eu.trentorise.smartcampus.cm.model.CMConstants;

@@ -22,7 +22,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 
 public class TabListener<T extends Fragment> implements ActionBar.TabListener {
 	private Fragment mFragment;

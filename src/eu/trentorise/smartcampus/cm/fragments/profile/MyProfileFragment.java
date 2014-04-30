@@ -36,7 +36,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 
 import eu.trentorise.smartcampus.cm.Constants;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.helper.BitmapUtils;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheProvider;

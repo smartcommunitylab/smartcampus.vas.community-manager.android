@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;

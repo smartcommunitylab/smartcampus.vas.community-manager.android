@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.android.common.validation.ValidatorHelper;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.social.model.Group;

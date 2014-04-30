@@ -17,7 +17,7 @@ package eu.trentorise.smartcampus.cm.custom;
 
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 
 public class ViewHelper {
 

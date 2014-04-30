@@ -29,7 +29,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.groups.MyGroupsAddToDialog;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;

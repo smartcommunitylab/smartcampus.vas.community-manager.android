@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 
 public class CheckListAdapter extends
 		ArrayAdapter<CheckListAdapter.CheckListItem> {

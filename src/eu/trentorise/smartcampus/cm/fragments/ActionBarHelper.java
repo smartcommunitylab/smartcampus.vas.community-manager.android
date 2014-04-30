@@ -22,7 +22,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
 import eu.trentorise.smartcampus.cm.Constants;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.TabListener;
 import eu.trentorise.smartcampus.cm.fragments.home.HomeFragmentMe;
 import eu.trentorise.smartcampus.cm.fragments.home.HomeFragmentMyGroups;

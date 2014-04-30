@@ -19,7 +19,7 @@ package eu.trentorise.smartcampus.cm.custom;
 import android.app.Activity;
 import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask.SCAsyncTaskProcessor;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 

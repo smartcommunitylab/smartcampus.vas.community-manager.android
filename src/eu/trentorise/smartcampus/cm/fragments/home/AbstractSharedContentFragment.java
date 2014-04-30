@@ -34,7 +34,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
 import eu.trentorise.smartcampus.cm.fragments.AbstractTabbedFragment;
 import eu.trentorise.smartcampus.cm.fragments.ActionBarHelper;

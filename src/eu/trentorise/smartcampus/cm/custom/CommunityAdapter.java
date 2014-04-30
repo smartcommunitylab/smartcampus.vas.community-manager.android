@@ -28,7 +28,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.social.model.Community;
 import eu.trentorise.smartcampus.social.model.Concept;

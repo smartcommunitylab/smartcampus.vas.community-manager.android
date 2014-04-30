@@ -29,7 +29,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.CheckListAdapter;
 import eu.trentorise.smartcampus.cm.custom.CheckListAdapter.CheckListItem;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;

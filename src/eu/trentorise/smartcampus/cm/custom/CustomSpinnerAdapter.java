@@ -20,7 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 
 public class CustomSpinnerAdapter<T> extends ArrayAdapter<T> {
 	private Context context;

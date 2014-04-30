@@ -31,7 +31,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.model.SocialContainer;
 import eu.trentorise.smartcampus.social.model.Community;

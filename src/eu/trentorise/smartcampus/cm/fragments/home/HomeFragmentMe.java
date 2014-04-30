@@ -26,7 +26,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.SharingActivity;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;

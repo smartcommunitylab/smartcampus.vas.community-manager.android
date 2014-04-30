@@ -24,7 +24,7 @@ import android.widget.GridView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-import eu.trentorise.smartcampus.cm.R;
+import it.smartcampuslab.cm.R;
 
 public class MainFragment extends SherlockFragment {
 	private GridView gridview;
