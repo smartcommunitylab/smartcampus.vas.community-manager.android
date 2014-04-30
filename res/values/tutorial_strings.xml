@@ -15,8 +15,10 @@
   limitations under the License.
 -->
 <resources>
-
     <string name="tutorial_startup_msg">My People Tutorial</string>
+    <string name="welcome_title">Welcome to MyPeople!</string>
+    <string name="welcome_msg"> This app lets you find your Smart Campus friends and colleagues and put them in groups, with whom you can then share the items you have created in other apps (portfolios, multimedia) and see the items your friends share with you.</string>
+	
     <string name="tutorial_start_btn">Start</string>
          
     <string name="t_title_shared">Shared</string>

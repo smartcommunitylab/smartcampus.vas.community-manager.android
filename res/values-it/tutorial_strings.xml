@@ -17,6 +17,9 @@
 <resources>
 
     <string name="tutorial_startup_msg">MyPeople Tutorial</string>
+    <string name="welcome_title">Benvenuto in MyPeople!</string>
+    <string name="welcome_msg">Quest’app ti permetterà di trovare gli amici di Smart Campus ed i suoi colleghi ed inserirli in gruppi con cui sarà possibile condividere gli elementi che hai creato in altre app (portfolii, contenuti multimediali) e vedere gli elementi che i tuoi amici condividono con te.</string>
+	
     <string name="tutorial_start_btn">Start</string>
     
     

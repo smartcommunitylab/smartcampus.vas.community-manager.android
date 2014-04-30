@@ -81,6 +81,9 @@ public class CMHelper {
 	private static Map<String, PictureProfile> knownUsers = new HashMap<String, PictureProfile>();
 
 	private Community scCommunity = null;
+	
+	private static String APP_FIST_LAUNCH="cmfist_launch";
+
 
 	// private static Map<String, String> types = new HashMap<String, String>();
 
@@ -569,5 +572,13 @@ public class CMHelper {
 		if (knownUsers == null || knownUsers.isEmpty())
 			return null;
 		return new ArrayList<PictureProfile>(knownUsers.values());
+	}
+	
+	public static boolean isFirstLaunch(Context ctx){
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(APP_FIST_LAUNCH, true);
+	}
+	
+	public static void disableFirstLanch(Context ctx){
+		PreferenceManager.getDefaultSharedPreferences(ctx).edit().putBoolean(APP_FIST_LAUNCH, false).commit();
 	}
 }
