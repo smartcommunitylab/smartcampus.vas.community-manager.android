@@ -17,10 +17,15 @@ package eu.trentorise.smartcampus.cm;
 
 import it.smartcampuslab.cm.R;
 
+import java.net.ConnectException;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -37,9 +42,10 @@ import com.github.espiandev.showcaseview.TutorialHelper;
 import com.github.espiandev.showcaseview.TutorialHelper.TutorialProvider;
 import com.github.espiandev.showcaseview.TutorialItem;
 
+import eu.trentorise.smartcampus.ac.AACException;
+import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
-import eu.trentorise.smartcampus.cm.custom.LoadProfileProcessor;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.BackListener;
 import eu.trentorise.smartcampus.cm.fragments.campus.CampusFragmentPeople;
@@ -58,15 +64,15 @@ public class HomeActivity extends BaseCMActivity {
 	private String[] mFragmentTitles;
 
 	private TutorialHelper mTutorialHelper = null;
-
+	
 	@Override
 	protected void loadData() throws InterruptedException, ExecutionException {
-		new SCAsyncTask<Void, Void, Void>(this,
-				new LoadProfileProcessor(this)).execute().get();
+//		if (!CMHelper.isFirstLaunch(this)) {
+//			new LoadProfileAndStartFirstFragmentTask().execute();
+//		}
 	}
 
-	@Override
-	protected void setUpContent() {
+	private void initAndSetUp() {
 		setContentView(R.layout.main);
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -103,7 +109,40 @@ public class HomeActivity extends BaseCMActivity {
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mTutorialHelper = new ListViewTutorialHelper(this, mTutorialProvider);
-		startFirstFragment();
+	}
+	
+	@Override
+	protected void setUpContent() {
+		try {
+			if (CMHelper.isFirstLaunch(this)) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle(R.string.welcome_title)
+						.setMessage(R.string.welcome_msg)
+						.setOnCancelListener(
+								new DialogInterface.OnCancelListener() {
+									@Override
+									public void onCancel(DialogInterface dialog) {
+										dialog.dismiss();
+										firstStart();
+									}
+								})
+						.setPositiveButton(getString(R.string.ok),
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										dialog.dismiss();
+										firstStart();
+									}
+								});
+				builder.create().show();
+			} else {
+				startFirstFragment();
+			}
+		} catch (Exception e) {
+			CMHelper.endAppFailure(this, R.string.app_failure_setup);
+		}
+		initAndSetUp();
 	}
 
 	@Override
@@ -207,7 +246,9 @@ public class HomeActivity extends BaseCMActivity {
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		// Sync the toggle state after onRestoreInstanceState has occurred.
-		mDrawerToggle.syncState();
+		if (mDrawerToggle != null) {
+			mDrawerToggle.syncState();
+		}
 	}
 
 	@Override
@@ -219,7 +260,6 @@ public class HomeActivity extends BaseCMActivity {
 	public void sync(){
 		new SCAsyncTask<Void, Void, Boolean>(this, new SyncProcessor(this)).execute();
 	}
-
 
 	public class SyncProcessor extends
 			AbstractAsyncTaskProcessor<Void, Boolean> {
@@ -241,13 +281,23 @@ public class HomeActivity extends BaseCMActivity {
 
 		}
 	}
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		mTutorialHelper.onTutorialActivityResult(requestCode, resultCode, data);
 	}
 	
+	/**
+	 * 
+	 */
+	public void firstStart() {
+		try {
+			CMHelper.disableFirstLaunch(HomeActivity.this);
+		} catch (Exception e) {
+		}
+		startFirstFragment();
+	}
+
 	private TutorialProvider mTutorialProvider = new TutorialProvider() {
 		
 		TutorialItem[] tutorial = new TutorialItem[]{

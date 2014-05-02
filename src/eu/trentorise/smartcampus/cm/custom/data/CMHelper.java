@@ -137,6 +137,15 @@ public class CMHelper {
 		return retrieveProfile(false);
 	}
 
+	public static boolean profileExists() {
+		SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+		if (appSharedPrefs == null || appSharedPrefs.getString("profile", null) == null) {
+			return false;
+		}
+		return true;
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	private static PictureProfile retrieveProfile(boolean forceLoad)
 			throws ProtocolException,
@@ -578,7 +587,7 @@ public class CMHelper {
 		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(APP_FIST_LAUNCH, true);
 	}
 	
-	public static void disableFirstLanch(Context ctx){
+	public static void disableFirstLaunch(Context ctx){
 		PreferenceManager.getDefaultSharedPreferences(ctx).edit().putBoolean(APP_FIST_LAUNCH, false).commit();
 	}
 }

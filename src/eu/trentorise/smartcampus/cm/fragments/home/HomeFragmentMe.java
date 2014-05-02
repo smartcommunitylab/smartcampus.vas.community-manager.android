@@ -76,6 +76,9 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 		@Override
 		public List<Entity> performAction(ContentRequest... params)
 				throws SecurityException, Exception {
+			if (CMHelper.getProfile() == null) {
+				CMHelper.ensureProfile();
+			}
 			return CMHelper.readMyObjects(params[0].position, params[0].size,
 					params[0].type);
 		}
