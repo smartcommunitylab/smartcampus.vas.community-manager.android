@@ -18,8 +18,8 @@
     package="it.smartcampuslab.cm"
     android:sharedUserId="it.smartcampuslab.launcher"
     android:sharedUserLabel="@string/app_uid_label"
-    android:versionCode="18"
-    android:versionName="0.15.0" >
+    android:versionCode="19"
+    android:versionName="0.15.1" >
 
     <uses-sdk
         android:minSdkVersion="9"

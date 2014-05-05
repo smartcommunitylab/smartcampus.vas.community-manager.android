@@ -17,15 +17,12 @@ package eu.trentorise.smartcampus.cm;
 
 import it.smartcampuslab.cm.R;
 
-import java.net.ConnectException;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -42,8 +39,6 @@ import com.github.espiandev.showcaseview.TutorialHelper;
 import com.github.espiandev.showcaseview.TutorialHelper.TutorialProvider;
 import com.github.espiandev.showcaseview.TutorialItem;
 
-import eu.trentorise.smartcampus.ac.AACException;
-import eu.trentorise.smartcampus.android.common.HandleExceptionHelper;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
@@ -64,6 +59,7 @@ public class HomeActivity extends BaseCMActivity {
 	private String[] mFragmentTitles;
 
 	private TutorialHelper mTutorialHelper = null;
+	protected boolean mFirstTutorial = false;
 	
 	@Override
 	protected void loadData() throws InterruptedException, ExecutionException {
@@ -97,6 +93,9 @@ public class HomeActivity extends BaseCMActivity {
 			public void onDrawerOpened(View drawerView) {
 				// getSupportActionBar().setTitle(mDrawerTitle);
 				supportInvalidateOptionsMenu();
+				if (mFirstTutorial) {
+					mTutorialHelper.showTutorials();
+				}
 			}
 
 			public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -109,6 +108,7 @@ public class HomeActivity extends BaseCMActivity {
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 		mTutorialHelper = new ListViewTutorialHelper(this, mTutorialProvider);
+
 	}
 	
 	@Override
@@ -126,7 +126,16 @@ public class HomeActivity extends BaseCMActivity {
 										firstStart();
 									}
 								})
-						.setPositiveButton(getString(R.string.ok),
+						.setPositiveButton(getString(R.string.begin_tut),
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										dialog.dismiss();
+										mFirstTutorial  = true;
+										mDrawerLayout.openDrawer(mDrawerList);
+									}
+								})		
+						.setNeutralButton(getString(android.R.string.cancel),
 								new DialogInterface.OnClickListener() {
 
 									@Override
@@ -311,11 +320,19 @@ public class HomeActivity extends BaseCMActivity {
 		
 		@Override
 		public void onTutorialFinished() {
+			if (mFirstTutorial) {
+				mFirstTutorial = false;
+				firstStart();
+			}
 			mDrawerLayout.closeDrawer(mDrawerList);
 		}
 		
 		@Override
 		public void onTutorialCancelled() {
+			if (mFirstTutorial) {
+				mFirstTutorial = false;
+				firstStart();
+			}
 			mDrawerLayout.closeDrawer(mDrawerList);
 		}
 		
