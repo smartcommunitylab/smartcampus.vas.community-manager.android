@@ -396,7 +396,9 @@ public class CMHelper {
 		List<PictureProfile> list = readPictureProfiles(users);
 		if (list != null) {
 			for (PictureProfile pp : list) {
-				knownUsers.put(pp.getSocialId(), pp);
+				if (!pp.getUserId().equals(profile.getUserId())) {
+					knownUsers.put(pp.getSocialId(), pp);
+				}
 			}
 		}
 		saveGroupsToCache(savedGroups, knownUsers);
