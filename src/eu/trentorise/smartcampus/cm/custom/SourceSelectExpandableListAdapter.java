@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.custom;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,11 +33,10 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.model.SocialContainer;
-import eu.trentorise.smartcampus.social.model.Community;
-import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Community;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
 
 public class SourceSelectExpandableListAdapter extends
 		BaseExpandableListAdapter {
@@ -84,8 +85,8 @@ public class SourceSelectExpandableListAdapter extends
 					&& completeData.getGroups() != null) {
 				for (int i = 0; i < completeData.getGroups().size(); i++) {
 					for (Group g : userData.getGroups()) {
-						if (completeData.getGroups().get(i).getSocialId()
-								.equals(g.getSocialId()))
+						if (completeData.getGroups().get(i).getId()
+								.equals(g.getId()))
 							checked[0].add(i);
 					}
 				}
@@ -93,8 +94,8 @@ public class SourceSelectExpandableListAdapter extends
 			if (userData.getUsers() != null && completeData.getUsers() != null) {
 				for (int i = 0; i < completeData.getUsers().size(); i++) {
 					for (PictureProfile p : userData.getUsers()) {
-						if (completeData.getUsers().get(i).getId()
-								.equals(p.getId()))
+						if (completeData.getUsers().get(i).getUserId()
+								.equals(p.getUserId()))
 							checked[1].add(i);
 					}
 				}

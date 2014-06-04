@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.profile;
 
+import it.smartcampuslab.cm.R;
+
 import java.io.ByteArrayOutputStream;
 
 import android.content.Intent;
@@ -36,7 +38,6 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 
 import eu.trentorise.smartcampus.cm.Constants;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.helper.BitmapUtils;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheProvider;
@@ -147,13 +148,13 @@ public class MyProfileFragment extends SherlockFragment {
 		ImageView imgView = (ImageView) getView().findViewById(
 				R.id.myprofile_pic);
 
-		imgView.setTag("" + CMHelper.getProfile().getSocialId());
+		imgView.setTag("" + CMHelper.getProfile().getUserId());
 		if (userProfile.getPictureUrl() != null
 				&& userProfile.getPictureUrl().length() > 0) {
 			try {
 				new ImageCacheTask(imgView, R.drawable.placeholder).execute(
 						userProfile.getPictureUrl(), ""
-								+ CMHelper.getProfile().getSocialId());
+								+ CMHelper.getProfile().getUserId());
 			} catch (Exception e) {
 				Log.e("MyProfileFragment", "Exception loading profile image");
 			}

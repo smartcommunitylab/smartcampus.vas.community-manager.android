@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.custom;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.Collection;
 import java.util.Set;
 
@@ -29,12 +31,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.groups.MyGroupsAddToDialog;
 import eu.trentorise.smartcampus.cm.helper.ImageCacheTask;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
-import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
 
 public class UsersPictureProfileAdapter extends ArrayAdapter<PictureProfile> {
 
@@ -81,10 +82,10 @@ public class UsersPictureProfileAdapter extends ArrayAdapter<PictureProfile> {
 		}
 
 		holder.user_mp_pic.setImageResource(R.drawable.placeholder);
-		holder.user_mp_pic.setTag("" + user_mp.getId());
+		holder.user_mp_pic.setTag("" + user_mp.getUserId());
 		if (user_mp.getPictureUrl() != null) {
 			new ImageCacheTask(holder.user_mp_pic, R.drawable.placeholder)
-					.execute(user_mp.getPictureUrl(), "" + user_mp.getId());
+					.execute(user_mp.getPictureUrl(), "" + user_mp.getUserId());
 		}
 
 		if (CMHelper.isKnown(user_mp)) {

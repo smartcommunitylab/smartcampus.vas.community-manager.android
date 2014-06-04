@@ -36,11 +36,13 @@ import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
 import eu.trentorise.smartcampus.android.common.GlobalConfig;
+import eu.trentorise.smartcampus.cm.helper.ImageCacheProvider;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.network.JsonUtils;
 import eu.trentorise.smartcampus.network.RemoteConnector;
 import eu.trentorise.smartcampus.network.RemoteConnector.CLIENT_TYPE;
+import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 import eu.trentorise.smartcampus.protocolcarrier.ProtocolCarrier;
 import eu.trentorise.smartcampus.protocolcarrier.common.Constants.Method;
 import eu.trentorise.smartcampus.protocolcarrier.custom.FileRequestParam;
@@ -49,16 +51,13 @@ import eu.trentorise.smartcampus.protocolcarrier.custom.MessageResponse;
 import eu.trentorise.smartcampus.protocolcarrier.custom.RequestParam;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ConnectionException;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.ProtocolException;
-import eu.trentorise.smartcampus.social.model.Communities;
-import eu.trentorise.smartcampus.social.model.Community;
-import eu.trentorise.smartcampus.social.model.Entities;
-import eu.trentorise.smartcampus.social.model.Entity;
-import eu.trentorise.smartcampus.social.model.Group;
-import eu.trentorise.smartcampus.social.model.Groups;
-import eu.trentorise.smartcampus.social.model.ShareVisibility;
-import eu.trentorise.smartcampus.social.model.User;
 import eu.trentorise.smartcampus.socialservice.SocialService;
 import eu.trentorise.smartcampus.socialservice.SocialServiceException;
+import eu.trentorise.smartcampus.socialservice.beans.Community;
+import eu.trentorise.smartcampus.socialservice.beans.Entity;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Limit;
+import eu.trentorise.smartcampus.socialservice.beans.Visibility;
 import eu.trentorise.smartcampus.storage.DataException;
 
 public class CMHelper {
@@ -81,9 +80,8 @@ public class CMHelper {
 	private static Map<String, PictureProfile> knownUsers = new HashMap<String, PictureProfile>();
 
 	private Community scCommunity = null;
-	
-	private static String APP_FIST_LAUNCH="cmfist_launch";
 
+	private static String APP_FIST_LAUNCH = "cmfist_launch";
 
 	// private static Map<String, String> types = new HashMap<String, String>();
 
@@ -123,7 +121,7 @@ public class CMHelper {
 		if (!url.endsWith("/"))
 			url += "/";
 		// basicProfileService = new BasicProfileService(url+"aac");
-		socialService = new SocialService(url + "core.social");
+		socialService = new SocialService(url + "core.social-dev");
 	}
 
 	public static void destroy() throws DataException {
@@ -132,20 +130,28 @@ public class CMHelper {
 	public static PictureProfile getProfile() {
 		return profile;
 	}
-	
-	public static PictureProfile ensureProfile() throws SecurityException, ProtocolException, DataException, ConnectionException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException, SocialServiceException {
+
+	public static PictureProfile ensureProfile()
+			throws SecurityException,
+			ProtocolException,
+			DataException,
+			ConnectionException,
+			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
+			AACException, SocialServiceException {
 		return retrieveProfile(false);
 	}
 
 	public static boolean profileExists() {
-		SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-		if (appSharedPrefs == null || appSharedPrefs.getString("profile", null) == null) {
+		SharedPreferences appSharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
+		if (appSharedPrefs == null
+				|| appSharedPrefs.getString("profile", null) == null) {
 			return false;
 		}
 		return true;
-		
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private static PictureProfile retrieveProfile(boolean forceLoad)
 			throws ProtocolException,
@@ -154,38 +160,51 @@ public class CMHelper {
 			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
 			AACException, SecurityException, SocialServiceException {
 
-		SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(mContext);
+		SharedPreferences appSharedPrefs = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
 		String profileJson = null;
-		if (forceLoad || appSharedPrefs == null || (profileJson = appSharedPrefs.getString("profile", null)) == null) {
+		if (forceLoad
+				|| appSharedPrefs == null
+				|| (profileJson = appSharedPrefs.getString("profile", null)) == null) {
 			MessageRequest request = new MessageRequest(
-					GlobalConfig.getAppUrl(mContext),
-					Constants.SERVICE_PROFILE + "/current");
+					GlobalConfig.getAppUrl(mContext), Constants.SERVICE_PROFILE
+							+ "/current");
 			request.setMethod(Method.GET);
-			MessageResponse response = getInstance().mProtocolCarrier.invokeSync(
-					request, Constants.APP_TOKEN, getAuthToken());
-			CMHelper.profile = JsonUtils.toObject(response.getBody(), PictureProfile.class);
+			MessageResponse response = getInstance().mProtocolCarrier
+					.invokeSync(request, Constants.APP_TOKEN, getAuthToken());
+			CMHelper.profile = JsonUtils.toObject(response.getBody(),
+					PictureProfile.class);
 			checkSCCommunity();
 			saveProfileToCache(CMHelper.profile);
 			setGroups(readGroups());
 		} else if (profileJson != null) {
-			CMHelper.profile = JsonUtils.toObject(profileJson, PictureProfile.class);
-			CMHelper.savedGroups = JsonUtils.toObjectList(appSharedPrefs.getString("savedGroups", "[]"), Group.class);
+			CMHelper.profile = JsonUtils.toObject(profileJson,
+					PictureProfile.class);
+			CMHelper.savedGroups = JsonUtils.toObjectList(
+					appSharedPrefs.getString("savedGroups", "[]"), Group.class);
 			CMHelper.knownUsers = new HashMap<String, PictureProfile>();
-			Map<String,Map<String,Object>> map = JsonUtils.toObject(appSharedPrefs.getString("knownUsers", "{}"), Map.class);
+			Map<String, Map<String, Object>> map = JsonUtils.toObject(
+					appSharedPrefs.getString("knownUsers", "{}"), Map.class);
 			for (String key : map.keySet()) {
-				knownUsers.put(key, JsonUtils.convert(map.get(key), PictureProfile.class));
+				knownUsers.put(key,
+						JsonUtils.convert(map.get(key), PictureProfile.class));
 			}
 		}
 		return CMHelper.profile;
 	}
 
-	public static boolean syncData(Context c) throws SecurityException, ProtocolException, DataException, ConnectionException, eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException, AACException, SocialServiceException {
+	public static boolean syncData(Context c)
+			throws SecurityException,
+			ProtocolException,
+			DataException,
+			ConnectionException,
+			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
+			AACException, SocialServiceException {
 		PictureProfile pp = retrieveProfile(true);
 		saveProfileToCache(pp);
 		return true;
 	}
 
-	
 	private static void saveProfileToCache(PictureProfile pp) {
 		SharedPreferences appSharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
@@ -194,7 +213,9 @@ public class CMHelper {
 		prefsEditor.putString("profile", json);
 		prefsEditor.commit();
 	}
-	private static void saveGroupsToCache(List<Group> groups, Map<String,PictureProfile> knownUsers) {
+
+	private static void saveGroupsToCache(List<Group> groups,
+			Map<String, PictureProfile> knownUsers) {
 		SharedPreferences appSharedPrefs = PreferenceManager
 				.getDefaultSharedPreferences(mContext);
 		Editor prefsEditor = appSharedPrefs.edit();
@@ -226,8 +247,7 @@ public class CMHelper {
 			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
 			AACException {
 		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(mContext),
-				Constants.SERVICE_PROFILE);
+				GlobalConfig.getAppUrl(mContext), Constants.SERVICE_PROFILE);
 		try {
 			request.setQuery("filter=" + URLEncoder.encode(search, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
@@ -241,20 +261,16 @@ public class CMHelper {
 
 	private static List<Group> readGroups() throws SecurityException,
 			SocialServiceException, DataException, AACException {
-		Groups groups = getInstance().socialService
-				.getUserGroups(getAuthToken());
-		if (groups == null || groups.getContent() == null)
-			return new ArrayList<Group>();
-		return groups.getContent();
+		return getInstance().socialService.getUserGroups(getAuthToken());
 	}
 
 	public static Group saveGroup(Group group) throws SecurityException,
 			SocialServiceException, DataException, AACException {
-		if (group.getSocialId() != null) {
+		if (group.getId() != null) {
 			if (getInstance().socialService.updateUserGroup(getAuthToken(),
-					group)) {
-				group = getInstance().socialService.getUserGroup(
-						group.getSocialId(), getAuthToken());
+					group) != null) {
+				group = getInstance().socialService.getUserGroup(group.getId(),
+						getAuthToken());
 			}
 		} else {
 			group = getInstance().socialService.createUserGroup(getAuthToken(),
@@ -267,18 +283,14 @@ public class CMHelper {
 	public static void deleteGroup(Group group) throws SocialServiceException,
 			DataException, AACException {
 		getInstance().socialService.deleteUserGroup(getAuthToken(),
-				group.getSocialId());
+				group.getId());
 		setGroups(readGroups());
 	}
 
 	public static Collection<Community> fetchCommunities()
 			throws SecurityException, SocialServiceException, DataException,
 			AACException {
-		Communities comms = getInstance().socialService
-				.getCommunities(getAuthToken());
-		if (comms == null || comms.getContent() == null)
-			return Collections.emptyList();
-		return comms.getContent();
+		return getInstance().socialService.getCommunities(getAuthToken());
 	}
 
 	public static void endAppFailure(Activity activity, int id) {
@@ -302,8 +314,7 @@ public class CMHelper {
 			AACException, SocialServiceException {
 
 		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(mContext),
-				Constants.FILE_SERVICE + "/");
+				GlobalConfig.getAppUrl(mContext), Constants.FILE_SERVICE + "/");
 		request.setMethod(Method.POST);
 		FileRequestParam param = new FileRequestParam();
 		param.setContent(content);
@@ -317,6 +328,7 @@ public class CMHelper {
 		CMHelper.profile = JsonUtils.toObject(response.getBody(),
 				PictureProfile.class);
 		saveProfileToCache(CMHelper.profile);
+		ImageCacheProvider.store(profile.getUserId(), content);
 	}
 
 	public static byte[] downloadFile(long fid)
@@ -327,8 +339,8 @@ public class CMHelper {
 			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException,
 			AACException {
 		MessageRequest request = new MessageRequest(
-				GlobalConfig.getAppUrl(mContext),
-				Constants.FILE_SERVICE + "/" + fid);
+				GlobalConfig.getAppUrl(mContext), Constants.FILE_SERVICE + "/"
+						+ fid);
 		request.setMethod(Method.GET);
 		// set requestFile true to get the byte array of file requested
 		request.setRequestFile(true);
@@ -337,25 +349,24 @@ public class CMHelper {
 		return response.getFileContent();
 	}
 
-	public static boolean assignToGroups(User user, Collection<Group> groups)
-			throws SecurityException, SocialServiceException, DataException,
-			AACException {
-		List<String> users = Collections.singletonList(user.getSocialId());
-		if (groups == null)
+	public static boolean assignToGroups(PictureProfile user,
+			Collection<Group> groups) throws SecurityException,
+			SocialServiceException, DataException, AACException {
+		List<String> users = Collections.singletonList(user.getUserId());
+		if (groups == null) {
 			groups = Collections.emptyList();
+		}
+
 		for (Group g : savedGroups) {
-			if (g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID))
+			if (g.getId().equals(CMConstants.MY_PEOPLE_GROUP_ID))
 				continue;
 			if (groups.contains(g))
-				getInstance().socialService.addUsersToGroup(g.getSocialId(),
-						users, getAuthToken());
-			else
+				getInstance().socialService.addUsersToGroup(getAuthToken(),
+						g.getId(), users);
+			else {
 				getInstance().socialService.removeUsersFromGroup(
-						g.getSocialId(), users, getAuthToken());
-		}
-		if (groups.isEmpty()) {
-			getInstance().socialService.removeUsersFromGroup(
-					CMConstants.MY_PEOPLE_GROUP_ID, users, getAuthToken());
+						getAuthToken(), g.getId(), users);
+			}
 		}
 
 		setGroups(readGroups());
@@ -372,12 +383,12 @@ public class CMHelper {
 		knownUsers.clear();
 		List<String> users = new ArrayList<String>();
 		for (Group g : groups) {
-			if (g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID)) {
+			if (g.getId().equals(CMConstants.MY_PEOPLE_GROUP_ID)) {
 				continue;
 			}
-			if (g.getUsers() != null) {
-				for (User mp : g.getUsers()) {
-					users.add(mp.getId());
+			if (g.getMembers() != null) {
+				for (String mp : g.getMembers()) {
+					users.add(mp);
 				}
 			}
 			savedGroups.add(g);
@@ -401,8 +412,7 @@ public class CMHelper {
 			throws AACException, DataException {
 		try {
 			MessageRequest request = new MessageRequest(
-					GlobalConfig.getAppUrl(mContext),
-					Constants.SERVICE_PROFILE);
+					GlobalConfig.getAppUrl(mContext), Constants.SERVICE_PROFILE);
 			request.setMethod(Method.GET);
 			String query = "";
 			for (String u : users) {
@@ -421,30 +431,29 @@ public class CMHelper {
 		}
 	}
 
-	public static List<Entity> readSharedObjects(
-			ShareVisibility shareVisibility, int position, int size, String type)
-			throws SecurityException, SocialServiceException, DataException,
-			AACException {
-		Entities entities = getInstance().socialService
-				.getEntitiesSharedWithUser(getAuthToken(), shareVisibility,
-						position, size, CMConstants.getTypeIdByType(type));
-		if (entities == null || entities.getContent() == null)
-			return Collections.emptyList();
-		else {
-			checkTypes(entities);
-			checkUsers(entities);
-		}
-		return entities.getContent();
+	public static List<Entity> readSharedObjects(int position, int size,
+			String type) throws SecurityException, SocialServiceException,
+			DataException, AACException {
+		Limit limit = new Limit();
+		limit.setPage(position);
+		limit.setPageSize(size);
+		List<Entity> entities = getInstance().socialService
+				.getEntitiesSharedWithUser(getAuthToken(), limit);
+
+		checkTypes(entities);
+		checkUsers(entities);
+
+		return entities;
 	}
 
 	/**
 	 * @param entities
 	 */
-	private static void checkUsers(Entities entities) {
-		for (Iterator<Entity> iterator = entities.getContent().iterator(); iterator
+	private static void checkUsers(Iterable<Entity> entities) {
+		for (Iterator<Entity> iterator = entities.iterator(); iterator
 				.hasNext();) {
 			Entity e = iterator.next();
-			if (!knownUsers.containsKey(e.getUser().getSocialId()))
+			if (!knownUsers.containsKey(e.getOwner()))
 				iterator.remove();
 		}
 	}
@@ -452,14 +461,13 @@ public class CMHelper {
 	public static List<Entity> readMyObjects(int position, int size, String type)
 			throws SecurityException, SocialServiceException, DataException,
 			AACException {
-		Entities entities = getInstance().socialService.getUserEntities(
-				getAuthToken(), position, size,
-				CMConstants.getTypeIdByType(type));
-		if (entities == null || entities.getContent() == null)
-			return Collections.emptyList();
-		else
-			checkTypes(entities);
-		return entities.getContent();
+		Limit limit = new Limit();
+		limit.setPage(position);
+		limit.setPageSize(size);
+		List<Entity> entities = getInstance().socialService.getUserEntities(
+				getAuthToken(), limit);
+		checkTypes(entities);
+		return entities;
 	}
 
 	/**
@@ -469,31 +477,35 @@ public class CMHelper {
 	 * @throws SocialServiceException
 	 * @throws SecurityException
 	 */
-	private static void checkTypes(Entities entities) throws SecurityException,
-			SocialServiceException, DataException, AACException {
-		for (Iterator<Entity> iterator = entities.getContent().iterator(); iterator
+	private static void checkTypes(Iterable<Entity> entities)
+			throws SecurityException, SocialServiceException, DataException,
+			AACException {
+		for (Iterator<Entity> iterator = entities.iterator(); iterator
 				.hasNext();) {
 			Entity e = iterator.next();
-			// if (!types.containsKey(e.getEntityType())) {
-			// EntityType et =
-			// getInstance().socialService.getEntityTypeById(getAuthToken(),
-			// e.getEntityType());
-			// if (et != null) {
-			// types.put(et.getId(), et.getName());
-			// types.put(et.getName(), et.getId());
-			// }
-			// }
-			if (CMConstants.getTypeByTypeId(e.getEntityType()) == null) {
+			if (CMConstants.getTypeByTypeId(e.getType()) == null) {
 				iterator.remove();
 			}
 		}
 	}
 
-	public static void share(Entity share, ShareVisibility vis)
-			throws SecurityException, SocialServiceException, DataException,
-			AACException {
-		getInstance().socialService.shareUserEntity(getAuthToken(),
-				share.getEntityId(), vis);
+	public static void share(Entity share, String appId, String userToken)
+			throws SecurityException,
+			SocialServiceException,
+			DataException,
+			AACException,
+			ProtocolException,
+			ConnectionException,
+			eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException {
+		getInstance().socialService.updateUserEntityByUser(userToken, appId,
+				share);
+		// MessageRequest request = new MessageRequest(
+		// GlobalConfig.getAppUrl(mContext), Constants.SERVICE_PROFILE);
+		// request.setMethod(Method.POST);
+		// request.setBody(JsonUtils.toJSON(share));
+		// getInstance().mProtocolCarrier.invokeSync(request,
+		// Constants.APP_TOKEN,
+		// getAuthToken());
 	}
 
 	/**
@@ -508,10 +520,13 @@ public class CMHelper {
 	 * @throws ProtocolException
 	 * @throws SecurityException
 	 */
-	private static void checkSCCommunity() throws DataException, SecurityException, SocialServiceException, AACException {
-			Collection<Community> list = fetchCommunities();
-			if (list != null && !list.isEmpty()) getInstance().scCommunity = list.iterator().next();
+	private static void checkSCCommunity() throws DataException,
+			SecurityException, SocialServiceException, AACException {
+		Collection<Community> list = fetchCommunities();
+		if (list != null && !list.isEmpty()) {
+			getInstance().scCommunity = list.iterator().next();
 			addToCommunity(getInstance().scCommunity.getId());
+		}
 	}
 
 	public static Community getSCCommunity() {
@@ -523,25 +538,26 @@ public class CMHelper {
 		}
 	}
 
-	public static ShareVisibility getEntitySharing(String entityId)
+	public static Visibility getEntitySharing(String entityId)
 			throws SecurityException, SocialServiceException, DataException,
 			AACException {
 		Entity entity = getInstance().socialService.getUserEntity(
 				getAuthToken(), entityId);
-		if (entity == null)
+		if (entity == null) {
 			return null;
+		}
 		return entity.getVisibility();
 	}
 
-	public static Set<String> getUserGroups(User mp) {
+	public static Set<String> getUserGroups(BasicProfile mp) {
 		Set<String> res = new HashSet<String>();
 		if (getGroups() != null) {
 
 			for (Group g : getGroups()) {
-				if (g.getUsers() != null) {
-					for (User u : g.getUsers()) {
-						if (u.getSocialId().equals(mp.getSocialId()))
-							res.add(g.getSocialId());
+				if (g.getMembers() != null) {
+					for (String u : g.getMembers()) {
+						if (u.equals(mp.getUserId()))
+							res.add(g.getId());
 					}
 				}
 			}
@@ -582,12 +598,14 @@ public class CMHelper {
 			return null;
 		return new ArrayList<PictureProfile>(knownUsers.values());
 	}
-	
-	public static boolean isFirstLaunch(Context ctx){
-		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(APP_FIST_LAUNCH, true);
+
+	public static boolean isFirstLaunch(Context ctx) {
+		return PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean(
+				APP_FIST_LAUNCH, true);
 	}
-	
-	public static void disableFirstLaunch(Context ctx){
-		PreferenceManager.getDefaultSharedPreferences(ctx).edit().putBoolean(APP_FIST_LAUNCH, false).commit();
+
+	public static void disableFirstLaunch(Context ctx) {
+		PreferenceManager.getDefaultSharedPreferences(ctx).edit()
+				.putBoolean(APP_FIST_LAUNCH, false).commit();
 	}
 }

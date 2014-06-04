@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.groups;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.List;
 
 import android.app.Dialog;
@@ -23,12 +25,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import eu.trentorise.smartcampus.android.common.validation.ValidatorHelper;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
 
 public class MyGroupsAddDialog extends Dialog {
 
@@ -72,12 +72,14 @@ public class MyGroupsAddDialog extends Dialog {
 				List<Group> groups = CMHelper.getGroups();
 				if (groups != null) {
 					for (Group g : groups) {
-						if (group != null
-								&& g.getSocialId() == group.getSocialId())
+						if (group != null && g.getId().equals(group.getId()))
 							continue;
 						if (g.getName().equals(groupNameText)) {
-							ValidatorHelper.highlight(getContext(), groupName, 
-									getContext().getString(R.string.mygroups_name_duplicate));
+							ValidatorHelper.highlight(
+									getContext(),
+									groupName,
+									getContext().getString(
+											R.string.mygroups_name_duplicate));
 							return;
 						}
 					}
@@ -87,8 +89,9 @@ public class MyGroupsAddDialog extends Dialog {
 					handler.handleSuccess(groupNameText);
 					dismiss();
 				} else {
-					ValidatorHelper.highlight(getContext(), groupName, 
-							getContext().getString(R.string.mygroups_name_empty));
+					ValidatorHelper.highlight(getContext(), groupName,
+							getContext()
+									.getString(R.string.mygroups_name_empty));
 				}
 			}
 		});

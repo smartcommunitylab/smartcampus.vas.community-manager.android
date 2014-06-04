@@ -20,14 +20,15 @@ import it.smartcampuslab.cm.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.actionbarsherlock.view.MenuItem;
-
 import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.view.MenuItem;
+
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.SourceSelectExpandableListAdapter;
@@ -36,15 +37,16 @@ import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.cm.model.SimpleSocialContainer;
 import eu.trentorise.smartcampus.cm.model.SocialContainer;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
-import eu.trentorise.smartcampus.social.model.Community;
-import eu.trentorise.smartcampus.social.model.Entity;
-import eu.trentorise.smartcampus.social.model.Group;
-import eu.trentorise.smartcampus.social.model.ShareVisibility;
+import eu.trentorise.smartcampus.socialservice.beans.Community;
+import eu.trentorise.smartcampus.socialservice.beans.Entity;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Visibility;
 
 public class SharingActivity extends BaseCMActivity {
-	//
 	private SourceSelectExpandableListAdapter adapter = null;
 	private Entity share = null;
+	private String appId = null;
+	private String authToken = null;
 
 	@Override
 	protected void loadData() {
@@ -58,6 +60,12 @@ public class SharingActivity extends BaseCMActivity {
 				share = (Entity) getIntent()
 						.getSerializableExtra(
 								getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_entity));
+				appId = getIntent()
+						.getStringExtra(
+								getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_appid));
+				authToken = getIntent()
+						.getStringExtra(
+								getString(eu.trentorise.smartcampus.android.common.R.string.share_entity_arg_token));
 			}
 		}
 		return share;
@@ -68,9 +76,10 @@ public class SharingActivity extends BaseCMActivity {
 		if (item.getItemId() == android.R.id.home) {
 			onBackPressed();
 			return true;
-		};
+		}
 		return super.onOptionsItemSelected(item);
 	}
+
 	@Override
 	protected void setUpContent() {
 		setContentView(R.layout.source_select);
@@ -84,7 +93,7 @@ public class SharingActivity extends BaseCMActivity {
 			finish();
 			return;
 		} else {
-			setTitle(getString(R.string.sharing_title, share.getTitle()));
+			setTitle(getString(R.string.sharing_title, share.getName()));
 		}
 
 		Button ok = (Button) findViewById(R.id.source_select_ok);
@@ -101,7 +110,7 @@ public class SharingActivity extends BaseCMActivity {
 				userData.setUsers(users);
 
 				CheckBox all = (CheckBox) findViewById(R.id.source_select_public);
-				userData.setAllUsers(all.isChecked());
+				userData.setPublicSharing(all.isChecked());
 				new ShareProcessor().execute(userData);
 			}
 		});
@@ -133,9 +142,9 @@ public class SharingActivity extends BaseCMActivity {
 			}
 			List<Group> groups = CMHelper.getGroups();
 
-			ShareVisibility visibility = CMHelper.getEntitySharing(getShare()
-					.getEntityId());
-			current.setAllUsers(visibility.isAllUsers());
+			Visibility visibility = CMHelper.getEntitySharing(getShare()
+					.getUri());
+			current.setPublicSharing(visibility.isPublicShared());
 
 			List<Group> completeGroups = new ArrayList<Group>();
 			current.setGroups(new ArrayList<Group>());
@@ -146,8 +155,8 @@ public class SharingActivity extends BaseCMActivity {
 				// if (visibility.isAllKnownUsers()) current.getGroups().add(g);
 				// }
 				completeGroups.add(g);
-				if (visibility.getGroupIds() != null
-						&& visibility.getGroupIds().contains(g.getSocialId())) {
+				if (visibility.getGroups() != null
+						&& visibility.getGroups().contains(g.getId())) {
 					current.getGroups().add(g);
 				}
 			}
@@ -169,10 +178,12 @@ public class SharingActivity extends BaseCMActivity {
 			complete.setUsers(users);
 
 			current.setUsers(new ArrayList<PictureProfile>());
-			for (PictureProfile mp : complete.getUsers()) {
-				if (visibility.getUserIds() != null
-						&& visibility.getUserIds().contains(mp.getSocialId())) {
-					current.getUsers().add(mp);
+			if (complete.getUsers() != null) {
+				for (PictureProfile mp : complete.getUsers()) {
+					if (visibility.getUsers() != null
+							&& visibility.getUsers().contains(mp.getUserId())) {
+						current.getUsers().add(mp);
+					}
 				}
 			}
 
@@ -184,7 +195,7 @@ public class SharingActivity extends BaseCMActivity {
 			adapter = new SourceSelectExpandableListAdapter(
 					SharingActivity.this, result[0], result[1]);
 			CheckBox all = (CheckBox) findViewById(R.id.source_select_public);
-			all.setChecked(result[1].isAllUsers());
+			all.setChecked(result[1].isPublicSharing());
 
 			ExpandableListView view = (ExpandableListView) findViewById(R.id.source_select_list);
 			view.setAdapter(adapter);
@@ -203,8 +214,10 @@ public class SharingActivity extends BaseCMActivity {
 						@Override
 						public Void performAction(SocialContainer... params)
 								throws SecurityException, Exception {
-							CMHelper.share(getShare(),
-									params[0].toShareVisibility());
+							Entity entity = getShare();
+
+							entity.setVisibility(params[0].toVisibility());
+							CMHelper.share(entity, appId, authToken);
 							return null;
 						}
 

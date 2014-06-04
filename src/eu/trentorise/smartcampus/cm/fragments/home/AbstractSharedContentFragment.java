@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.home;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.List;
 
 import android.database.DataSetObserver;
@@ -34,14 +36,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
 import eu.trentorise.smartcampus.cm.fragments.AbstractTabbedFragment;
 import eu.trentorise.smartcampus.cm.fragments.ActionBarHelper;
 import eu.trentorise.smartcampus.cm.fragments.home.LoadObjectProcessor.ContentRequest;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.CMConstants.ObjectFilterDescriptor;
-import eu.trentorise.smartcampus.social.model.Entity;
+import eu.trentorise.smartcampus.socialservice.beans.Entity;
 
 public abstract class AbstractSharedContentFragment extends
 		AbstractTabbedFragment implements OnScrollListener {
@@ -93,9 +94,9 @@ public abstract class AbstractSharedContentFragment extends
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						Entity content = adapter.getItem(position);
-						ViewHelper.viewInApp(getActivity(), CMConstants
-								.getTypeByTypeId(content.getEntityType()),
-								content.getEntityId(), new Bundle());
+						ViewHelper.viewInApp(getActivity(),
+								CMConstants.getTypeByTypeId(content.getType()),
+								content.getUri(), new Bundle());
 					}
 				});
 		super.onStart();

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.campus;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,14 +38,13 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.UsersPictureProfileAdapter;
 import eu.trentorise.smartcampus.cm.custom.UsersPictureProfileAdapter.UserOptionsHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
-import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
 
 public class CampusFragmentPeople extends SherlockFragment {
 
@@ -120,7 +121,8 @@ public class CampusFragmentPeople extends SherlockFragment {
 			usersListAdapter.clear();
 			if (result != null) {
 				for (PictureProfile mp : result) {
-					if (mp.getId().equals(CMHelper.getProfile().getId())) {
+					if (mp.getUserId()
+							.equals(CMHelper.getProfile().getUserId())) {
 						usersListAdapter.remove(mp);
 						;
 					} else

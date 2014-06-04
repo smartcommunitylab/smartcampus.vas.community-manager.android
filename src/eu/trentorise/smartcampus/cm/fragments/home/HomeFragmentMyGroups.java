@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.home;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.ArrayList;
 
 import android.os.Bundle;
@@ -27,13 +29,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.CustomSpinnerAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
-import eu.trentorise.smartcampus.social.model.Entity;
-import eu.trentorise.smartcampus.social.model.Group;
-import eu.trentorise.smartcampus.social.model.ShareVisibility;
+import eu.trentorise.smartcampus.socialservice.beans.Entity;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Visibility;
 
 public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 
@@ -70,8 +71,8 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 				if (selected == null
-						|| selected.getSocialId() != CMHelper.getGroups()
-								.get(position).getSocialId()) {
+						|| selected.getId() != CMHelper.getGroups()
+								.get(position).getId()) {
 					populateContentRequest();
 					restartContentRequest();
 					load();
@@ -98,8 +99,8 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 
 	@Override
 	protected void populateContentRequest() {
-		ShareVisibility vis = new ShareVisibility();
-		vis.setGroupIds(new ArrayList<String>());
+		Visibility vis = new Visibility();
+		vis.setGroups(new ArrayList<String>());
 		if (CMHelper.getGroups() != null && !CMHelper.getGroups().isEmpty()) {
 			if (myGroupsSpinner != null
 					&& !myGroupsSpinner.getAdapter().isEmpty()) {
@@ -108,7 +109,7 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 			} else {
 				selected = CMHelper.getGroups().get(0);
 			}
-			vis.getGroupIds().add(selected.getSocialId());
+			vis.getGroups().add(selected.getId());
 		}
 		contentRequest.visibility = vis;
 	}
@@ -118,13 +119,13 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 		switch (itemId) {
 		case MENU_ITEM_APP:
 			ViewHelper.viewInApp(getActivity(),
-					CMConstants.getTypeByTypeId(content.getEntityType()),
-					content.getEntityId(), new Bundle());
+					CMConstants.getTypeByTypeId(content.getType()),
+					content.getUri(), new Bundle());
 			return true;
 		case MENU_ITEM_AUTHOR:
 			Toast.makeText(getActivity(),
-					"Showing author: " + content.getOwnerId(),
-					Toast.LENGTH_SHORT).show();
+					"Showing author: " + content.getOwner(), Toast.LENGTH_SHORT)
+					.show();
 			return true;
 		default:
 			return super.handleMenuItem(content, itemId);

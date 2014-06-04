@@ -17,15 +17,15 @@ package eu.trentorise.smartcampus.cm.model;
 
 import java.util.List;
 
-import eu.trentorise.smartcampus.social.model.Community;
-import eu.trentorise.smartcampus.social.model.Group;
-import eu.trentorise.smartcampus.social.model.ShareVisibility;
+import eu.trentorise.smartcampus.socialservice.beans.Community;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Visibility;
 
 public interface SocialContainer {
 
-	public boolean isAllUsers();
-
-	public void setAllUsers(boolean allUsers);
+	// public boolean isAllUsers();
+	//
+	// public void setAllUsers(boolean allUsers);
 
 	public List<PictureProfile> getUsers();
 
@@ -39,17 +39,21 @@ public interface SocialContainer {
 
 	public void setCommunities(List<Community> communities);
 
-	public boolean isAllKnownUsers();
+	public boolean isPublicSharing();
 
-	public void setAllKnownUsers(boolean allKnownUsers);
+	public void setPublicSharing(boolean publicSharing);
 
-	public boolean isAllKnownCommunities();
+	// public boolean isAllKnownUsers();
+	//
+	// public void setAllKnownUsers(boolean allKnownUsers);
+	//
+	// public boolean isAllKnownCommunities();
+	//
+	// public void setAllKnownCommunities(boolean allKnownCommunities);
+	//
+	// public boolean isAllCommunities();
+	//
+	// public void setAllCommunities(boolean allCommunities);
 
-	public void setAllKnownCommunities(boolean allKnownCommunities);
-
-	public boolean isAllCommunities();
-
-	public void setAllCommunities(boolean allCommunities);
-
-	public ShareVisibility toShareVisibility();
+	public Visibility toVisibility();
 }

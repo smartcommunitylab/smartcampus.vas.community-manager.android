@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.home;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,14 +28,13 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.SharingActivity;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
-import eu.trentorise.smartcampus.social.model.Entity;
-import eu.trentorise.smartcampus.social.model.ShareVisibility;
+import eu.trentorise.smartcampus.socialservice.beans.Entity;
+import eu.trentorise.smartcampus.socialservice.beans.Visibility;
 
 public class HomeFragmentMe extends AbstractSharedContentFragment {
 
@@ -51,10 +52,9 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 
 			@Override
 			protected Void doInBackground(Void... params) {
-				// TODO Auto-generated method stub
-				ShareVisibility vis = new ShareVisibility();
-				vis.setUserIds(new ArrayList<String>());
-				vis.getUserIds().add(CMHelper.getProfile().getSocialId());
+				Visibility vis = new Visibility();
+				vis.setUsers(new ArrayList<String>());
+				vis.getUsers().add(CMHelper.getProfile().getSocialId());
 				contentRequest.visibility = vis;
 				return null;
 			}
@@ -90,8 +90,8 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 		switch (itemId) {
 		case MENU_ITEM_APP:
 			ViewHelper.viewInApp(getActivity(),
-					CMConstants.getTypeByTypeId(content.getEntityType()),
-					content.getEntityId(), new Bundle());
+					CMConstants.getTypeByTypeId(content.getType()),
+					content.getUri(), new Bundle());
 			return true;
 		case MENU_ITEM_SHARING:
 			Intent intent = new Intent(getActivity(), SharingActivity.class);

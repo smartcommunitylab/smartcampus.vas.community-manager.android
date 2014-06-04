@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.custom;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +30,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import it.smartcampuslab.cm.R;
+import eu.trentorise.smartcampus.android.common.follow.model.Concept;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
-import eu.trentorise.smartcampus.social.model.Community;
-import eu.trentorise.smartcampus.social.model.Concept;
+import eu.trentorise.smartcampus.socialservice.beans.Community;
 
 public class CommunityAdapter extends ArrayAdapter<Community> {
 
@@ -82,7 +83,7 @@ public class CommunityAdapter extends ArrayAdapter<Community> {
 		}
 
 		holder.community_name.setText(comm.getName()); // name
-		holder.community_tags.setText(createTagsString(comm.getTags()));
+		// holder.community_tags.setText(createTagsString(comm.getTags()));
 
 		return row;
 	}

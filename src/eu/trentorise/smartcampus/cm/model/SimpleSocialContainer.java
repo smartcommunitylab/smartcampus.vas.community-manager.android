@@ -18,20 +18,21 @@ package eu.trentorise.smartcampus.cm.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.trentorise.smartcampus.social.model.Community;
-import eu.trentorise.smartcampus.social.model.Group;
-import eu.trentorise.smartcampus.social.model.ShareVisibility;
-import eu.trentorise.smartcampus.social.model.User;
+import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
+import eu.trentorise.smartcampus.socialservice.beans.Community;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Visibility;
 
 public class SimpleSocialContainer implements SocialContainer {
 
 	List<Community> communities;
 	List<PictureProfile> users;
 	List<Group> groups;
-	private boolean allKnownUsers;
-	private boolean allKnownCommunities;
-	private boolean allUsers;
-	private boolean allCommunities;
+	// private boolean allKnownUsers;
+	// private boolean allKnownCommunities;
+	// private boolean allUsers;
+	// private boolean allCommunities;
+	private boolean publicSharing;
 
 	public List<Community> getCommunities() {
 		return communities;
@@ -57,59 +58,63 @@ public class SimpleSocialContainer implements SocialContainer {
 		this.groups = groups;
 	}
 
-	public boolean isAllUsers() {
-		return allUsers;
-	}
-
-	public void setAllUsers(boolean allUsers) {
-		this.allUsers = allUsers;
-	}
-
-	public boolean isAllKnownUsers() {
-		return allKnownUsers;
-	}
-
-	public void setAllKnownUsers(boolean allKnownUsers) {
-		this.allKnownUsers = allKnownUsers;
-	}
-
-	public boolean isAllKnownCommunities() {
-		return allKnownCommunities;
-	}
-
-	public void setAllKnownCommunities(boolean allKnownCommunities) {
-		this.allKnownCommunities = allKnownCommunities;
-	}
-
-	public boolean isAllCommunities() {
-		return allCommunities;
-	}
-
-	public void setAllCommunities(boolean allCommunities) {
-		this.allCommunities = allCommunities;
-	}
+	// public boolean isAllUsers() {
+	// return allUsers;
+	// }
+	//
+	// public void setAllUsers(boolean allUsers) {
+	// this.allUsers = allUsers;
+	// }
+	//
+	// public boolean isAllKnownUsers() {
+	// return allKnownUsers;
+	// }
+	//
+	// public void setAllKnownUsers(boolean allKnownUsers) {
+	// this.allKnownUsers = allKnownUsers;
+	// }
+	//
+	// public boolean isAllKnownCommunities() {
+	// return allKnownCommunities;
+	// }
+	//
+	// public void setAllKnownCommunities(boolean allKnownCommunities) {
+	// this.allKnownCommunities = allKnownCommunities;
+	// }
+	//
+	// public boolean isAllCommunities() {
+	// return allCommunities;
+	// }
+	//
+	// public void setAllCommunities(boolean allCommunities) {
+	// this.allCommunities = allCommunities;
+	// }
 
 	@Override
-	public ShareVisibility toShareVisibility() {
-		ShareVisibility sv = new ShareVisibility();
-		sv.setAllCommunities(allCommunities);
-		sv.setAllKnownCommunities(allKnownCommunities);
-		sv.setAllKnownUsers(allKnownUsers);
-		sv.setAllUsers(allUsers);
-		sv.setCommunityIds(new ArrayList<String>());
+	public Visibility toVisibility() {
+		Visibility sv = new Visibility();
+		sv.setCommunities(new ArrayList<String>());
 		if (communities != null)
 			for (Community c : communities)
-				sv.getCommunityIds().add(c.getSocialId());
-		sv.setUserIds(new ArrayList<String>());
+				sv.getCommunities().add(c.getId());
+		sv.setUsers(new ArrayList<String>());
 		if (users != null)
-			for (User c : users)
-				sv.getUserIds().add(c.getSocialId());
-		sv.setGroupIds(new ArrayList<String>());
+			for (BasicProfile c : users)
+				sv.getUsers().add(c.getUserId());
+		sv.setGroups(new ArrayList<String>());
 		if (groups != null)
 			for (Group c : groups)
-				sv.getGroupIds().add(c.getSocialId());
-
+				sv.getGroups().add(c.getId());
+		sv.setPublicShared(publicSharing);
 		return sv;
+	}
+
+	public boolean isPublicSharing() {
+		return publicSharing;
+	}
+
+	public void setPublicSharing(boolean publicSharing) {
+		this.publicSharing = publicSharing;
 	}
 
 }

@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.groups;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,12 +31,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.CheckListAdapter;
 import eu.trentorise.smartcampus.cm.custom.CheckListAdapter.CheckListItem;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.social.model.Group;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
 
 public class MyGroupsAddToDialog extends Dialog {
 
@@ -105,11 +106,7 @@ public class MyGroupsAddToDialog extends Dialog {
 			CheckListItem item = new CheckListItem();
 			item.text = g.getName();
 			item.enabled = true;
-			// item.checked =
-			// g.getSocialId().equals(CMConstants.MY_PEOPLE_GROUP_ID);
-			// if (g.getSocialId() == CMConstants.MY_PEOPLE_GROUP_ID) continue;
-			if (selectedGroups != null
-					&& selectedGroups.contains(g.getSocialId())) {
+			if (selectedGroups != null && selectedGroups.contains(g.getId())) {
 				item.checked = true;
 			}
 			listAdatpter.add(item);

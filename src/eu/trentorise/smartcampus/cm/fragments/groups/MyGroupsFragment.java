@@ -15,8 +15,11 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.groups;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.Collection;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -39,7 +42,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.SubMenu;
 
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.AbstractAsyncTaskProcessor;
 import eu.trentorise.smartcampus.cm.custom.CustomSpinnerAdapter;
 import eu.trentorise.smartcampus.cm.custom.DialogHandler;
@@ -50,8 +52,7 @@ import eu.trentorise.smartcampus.cm.fragments.campus.CampusFragmentPeople;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.cm.model.PictureProfile;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
-import eu.trentorise.smartcampus.social.model.Group;
-import eu.trentorise.smartcampus.social.model.User;
+import eu.trentorise.smartcampus.socialservice.beans.Group;
 
 public class MyGroupsFragment extends SherlockFragment {
 
@@ -130,29 +131,6 @@ public class MyGroupsFragment extends SherlockFragment {
 
 	}
 
-	/*
-	 * @Override public void onPrepareOptionsMenu(Menu menu) { menu.clear(); //
-	 * MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
-	 * // inflater.inflate(R.menu.gripmenu, menu);
-	 * 
-	 * MenuItem item = menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_add, 1,
-	 * R.string.mygroups_add); item.setIcon(R.drawable.ic_action_bar_add);
-	 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-	 * 
-	 * if (selected == null && CMHelper.getGroups() != null &&
-	 * CMHelper.getGroups().size() > 0) selected = CMHelper.getGroups().get(0);
-	 * if (selected != null &&
-	 * !selected.getName().equals(CMConstants.MY_PEOPLE_GROUP_NAME)) { item =
-	 * menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_delete, 2,
-	 * R.string.mygroups_delete_title);
-	 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); item =
-	 * menu.add(Menu.CATEGORY_SYSTEM, R.id.mygroups_rename, 3,
-	 * R.string.mygroups_rename_title);
-	 * item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER); }
-	 * 
-	 * super.onPrepareOptionsMenu(menu); }
-	 */
-
 	// fixed menu for consistency with other apps
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -205,7 +183,7 @@ public class MyGroupsFragment extends SherlockFragment {
 			// Replacing old fragment with new one
 			ft.replace(R.id.content_frame, fragment);
 			fragment.setArguments(CampusFragmentPeople.prepareArgs(selected
-					.getSocialId()));
+					.getId()));
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 			ft.addToBackStack(null);
 			ft.commit();
@@ -253,9 +231,9 @@ public class MyGroupsFragment extends SherlockFragment {
 		public Collection<Group> performAction(String... params)
 				throws SecurityException, Exception {
 			Group newGroup = new Group();
-			newGroup.setSocialId(group.getSocialId());
+			newGroup.setId(group.getId());
 			newGroup.setName(params[0]);
-			newGroup.setUsers(group.getUsers());
+			newGroup.setMembers(group.getMembers());
 
 			CMHelper.saveGroup(newGroup);
 			group.setName(newGroup.getName());
@@ -290,9 +268,6 @@ public class MyGroupsFragment extends SherlockFragment {
 	}
 
 	private void update(Collection<Group> result) {
-		// Group selected = result == null || result.isEmpty() ? null :
-		// result.iterator().next();
-
 		dataAdapter.clear();
 
 		for (Group temp : CMHelper.getGroups()) {
@@ -303,6 +278,7 @@ public class MyGroupsFragment extends SherlockFragment {
 		updateUserList(selected);
 	}
 
+	@SuppressLint("NewApi")
 	private void updateUserList(Group selected) {
 		if (selected == null) {
 			myGroupsSpinner.setSelection(0);
@@ -311,10 +287,9 @@ public class MyGroupsFragment extends SherlockFragment {
 			}
 		}
 		usersListAdapter.clear();
-		if (selected != null && selected.getUsers() != null) {
-			for (User user : selected.getUsers()) {
-				usersListAdapter.add(CMHelper.getPictureProfile(user
-						.getSocialId()));
+		if (selected != null && selected.getMembers() != null) {
+			for (String user : selected.getMembers()) {
+				usersListAdapter.add(CMHelper.getPictureProfile(user));
 			}
 			usersListAdapter.notifyDataSetChanged();
 		}

@@ -17,7 +17,7 @@ package eu.trentorise.smartcampus.cm.model;
 
 import java.io.Serializable;
 
-import eu.trentorise.smartcampus.social.model.User;
+import eu.trentorise.smartcampus.profileservice.model.BasicProfile;
 
 /**
  * 
@@ -26,7 +26,7 @@ import eu.trentorise.smartcampus.social.model.User;
  * @author Mirko Perillo
  * 
  */
-public class PictureProfile extends User implements Serializable {
+public class PictureProfile extends BasicProfile implements Serializable {
 	private static final long serialVersionUID = 2720812823469859081L;
 
 	private String pictureUrl;
@@ -38,8 +38,8 @@ public class PictureProfile extends User implements Serializable {
 	/**
 	 * @param user
 	 */
-	public PictureProfile(User user) {
-		setId(user.getId());
+	public PictureProfile(BasicProfile user) {
+		setUserId(user.getUserId());
 		setName(user.getName());
 		setSocialId(user.getSocialId());
 		setSurname(user.getSurname());
@@ -61,7 +61,8 @@ public class PictureProfile extends User implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+		result = prime * result
+				+ ((getUserId() == null) ? 0 : getUserId().hashCode());
 		result = prime * result
 				+ ((getSocialId() == null) ? 0 : getSocialId().hashCode());
 		return result;
@@ -76,10 +77,10 @@ public class PictureProfile extends User implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		PictureProfile other = (PictureProfile) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
+		if (getUserId() == null) {
+			if (other.getUserId() != null)
 				return false;
-		} else if (!getId().equals(other.getId()))
+		} else if (!getUserId().equals(other.getUserId()))
 			return false;
 		if (getSocialId() == null) {
 			if (other.getSocialId() != null)

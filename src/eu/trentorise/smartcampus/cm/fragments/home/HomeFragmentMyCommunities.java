@@ -15,6 +15,8 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.fragments.home;
 
+import it.smartcampuslab.cm.R;
+
 import java.util.ArrayList;
 
 import android.os.Bundle;
@@ -22,12 +24,11 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
-import it.smartcampuslab.cm.R;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.model.CMConstants;
-import eu.trentorise.smartcampus.social.model.Community;
-import eu.trentorise.smartcampus.social.model.Entity;
-import eu.trentorise.smartcampus.social.model.ShareVisibility;
+import eu.trentorise.smartcampus.socialservice.beans.Community;
+import eu.trentorise.smartcampus.socialservice.beans.Entity;
+import eu.trentorise.smartcampus.socialservice.beans.Visibility;
 
 public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 
@@ -42,10 +43,10 @@ public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 
 	@Override
 	protected void populateContentRequest() {
-		ShareVisibility vis = new ShareVisibility();
-		vis.setCommunityIds(new ArrayList<String>());
+		Visibility vis = new Visibility();
+		vis.setCommunities(new ArrayList<String>());
 		selected = CMHelper.getSCCommunity();
-		vis.getCommunityIds().add(selected.getSocialId());
+		vis.getCommunities().add(selected.getId());
 		contentRequest.visibility = vis;
 	}
 
@@ -54,8 +55,8 @@ public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 		switch (itemId) {
 		case MENU_ITEM_APP:
 			ViewHelper.viewInApp(getActivity(),
-					CMConstants.getTypeByTypeId(content.getEntityType()),
-					content.getEntityId(), new Bundle());
+					CMConstants.getTypeByTypeId(content.getType()),
+					content.getUri(), new Bundle());
 			return true;
 		default:
 			return super.handleMenuItem(content, itemId);
