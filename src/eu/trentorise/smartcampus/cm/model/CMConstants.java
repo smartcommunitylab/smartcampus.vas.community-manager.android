@@ -15,16 +15,16 @@
  ******************************************************************************/
 package eu.trentorise.smartcampus.cm.model;
 
+import it.smartcampuslab.cm.R;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import it.smartcampuslab.cm.R;
 
 public class CMConstants {
 
@@ -39,6 +39,8 @@ public class CMConstants {
 	public static final String ENTTIY_TYPE_JOURNEY = "Journey";
 	public static final String ENTTIY_TYPE_STORY = "Story";
 
+	public static final List<String> types = new ArrayList<String>();
+
 	private static Map<String, String> entityTypeMap = new HashMap<String, String>();
 	private static Map<String, String> entityTypeIdMap = new HashMap<String, String>();
 	static {
@@ -50,16 +52,19 @@ public class CMConstants {
 		entityTypeMap.put(ENTTIY_TYPE_JOURNEY, "journey");
 		entityTypeMap.put(ENTTIY_TYPE_STORY, "narrative");
 
-		entityTypeIdMap.put("44", "location");
-		entityTypeIdMap.put("39", "event");
-		entityTypeIdMap.put("45", "portfolio");
-		entityTypeIdMap.put("40", "experience");
-		entityTypeIdMap.put("41", "computer file");
-		entityTypeIdMap.put("42", "journey");
-		entityTypeIdMap.put("46", "narrative");
-		for (String k : new HashSet<String>(entityTypeIdMap.keySet())) {
-			entityTypeIdMap.put(entityTypeIdMap.get(k), k);
-		}
+		// entityTypeIdMap.put("44", "location");
+		// entityTypeIdMap.put("39", "event");
+		// entityTypeIdMap.put("45", "portfolio");
+		// entityTypeIdMap.put("40", "experience");
+		// entityTypeIdMap.put("41", "computer file");
+		// entityTypeIdMap.put("42", "journey");
+		// entityTypeIdMap.put("46", "narrative");
+		// for (String k : new HashSet<String>(entityTypeIdMap.keySet())) {
+		// entityTypeIdMap.put(entityTypeIdMap.get(k), k);
+		// }
+
+		types.addAll(Arrays.asList("location", "event", "portfolio",
+				"experience", "computer file", "journey", "narrative"));
 	}
 
 	public static String getLocalType(String remoteType) {
@@ -132,23 +137,23 @@ public class CMConstants {
 					R.drawable.ic_f_buster2, R.drawable.ic_a_buster,
 					R.string.shared_content_filters_experience,
 					getRemoteType(ENTTIY_TYPE_EXPERIENCE)),
-//			new ObjectFilterDescriptor(R.drawable.ic_f_planner,
-//					R.drawable.ic_f_planner2, R.drawable.ic_a_planner,
-//					R.string.shared_content_filters_journey,
-//					getRemoteType(ENTTIY_TYPE_JOURNEY)),
-//			new ObjectFilterDescriptor(R.drawable.ic_f_poi,
-//					R.drawable.ic_f_poi2, R.drawable.ic_a_poi,
-//					R.string.shared_content_filters_poi,
-//					getRemoteType(ENTTIY_TYPE_POI)),
-//			new ObjectFilterDescriptor(R.drawable.ic_f_event,
-//					R.drawable.ic_f_event2, R.drawable.ic_a_event,
-//					R.string.shared_content_filters_event,
-//					getRemoteType(ENTTIY_TYPE_EVENT)),
-//			new ObjectFilterDescriptor(R.drawable.ic_f_story,
-//					R.drawable.ic_f_story2, R.drawable.ic_a_story,
-//					R.string.shared_content_filters_story,
-//					getRemoteType(ENTTIY_TYPE_STORY)), 
-			};
+	// new ObjectFilterDescriptor(R.drawable.ic_f_planner,
+	// R.drawable.ic_f_planner2, R.drawable.ic_a_planner,
+	// R.string.shared_content_filters_journey,
+	// getRemoteType(ENTTIY_TYPE_JOURNEY)),
+	// new ObjectFilterDescriptor(R.drawable.ic_f_poi,
+	// R.drawable.ic_f_poi2, R.drawable.ic_a_poi,
+	// R.string.shared_content_filters_poi,
+	// getRemoteType(ENTTIY_TYPE_POI)),
+	// new ObjectFilterDescriptor(R.drawable.ic_f_event,
+	// R.drawable.ic_f_event2, R.drawable.ic_a_event,
+	// R.string.shared_content_filters_event,
+	// getRemoteType(ENTTIY_TYPE_EVENT)),
+	// new ObjectFilterDescriptor(R.drawable.ic_f_story,
+	// R.drawable.ic_f_story2, R.drawable.ic_a_story,
+	// R.string.shared_content_filters_story,
+	// getRemoteType(ENTTIY_TYPE_STORY)),
+	};
 
 	private static Map<String, ObjectFilterDescriptor> objectFilterDescriptorMap = new HashMap<String, CMConstants.ObjectFilterDescriptor>();
 	static {

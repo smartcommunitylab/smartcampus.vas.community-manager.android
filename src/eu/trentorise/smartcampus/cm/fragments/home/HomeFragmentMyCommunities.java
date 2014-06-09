@@ -25,7 +25,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.socialservice.beans.Community;
 import eu.trentorise.smartcampus.socialservice.beans.Entity;
 import eu.trentorise.smartcampus.socialservice.beans.Visibility;
@@ -55,7 +54,7 @@ public class HomeFragmentMyCommunities extends AbstractSharedContentFragment {
 		switch (itemId) {
 		case MENU_ITEM_APP:
 			ViewHelper.viewInApp(getActivity(),
-					CMConstants.getTypeByTypeId(content.getType()),
+					CMHelper.getTypeByTypeId(content.getType()),
 					content.getUri(), new Bundle());
 			return true;
 		default:

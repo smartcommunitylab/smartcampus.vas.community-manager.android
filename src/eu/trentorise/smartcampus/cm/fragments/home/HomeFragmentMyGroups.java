@@ -31,7 +31,6 @@ import android.widget.Toast;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.custom.CustomSpinnerAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.socialservice.beans.Entity;
 import eu.trentorise.smartcampus.socialservice.beans.Group;
 import eu.trentorise.smartcampus.socialservice.beans.Visibility;
@@ -119,7 +118,7 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 		switch (itemId) {
 		case MENU_ITEM_APP:
 			ViewHelper.viewInApp(getActivity(),
-					CMConstants.getTypeByTypeId(content.getType()),
+					CMHelper.getTypeByTypeId(content.getType()),
 					content.getUri(), new Bundle());
 			return true;
 		case MENU_ITEM_AUTHOR:

@@ -31,7 +31,6 @@ import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.SharingActivity;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
 import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
-import eu.trentorise.smartcampus.cm.model.CMConstants;
 import eu.trentorise.smartcampus.protocolcarrier.exceptions.SecurityException;
 import eu.trentorise.smartcampus.socialservice.beans.Entity;
 import eu.trentorise.smartcampus.socialservice.beans.Visibility;
@@ -79,6 +78,10 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 			if (CMHelper.getProfile() == null) {
 				CMHelper.ensureProfile();
 			}
+			if (CMHelper.getEntityTypes().isEmpty()) {
+				CMHelper.initTypes();
+			}
+			CMHelper.init(getActivity().getApplicationContext());
 			return CMHelper.readMyObjects(params[0].position, params[0].size,
 					params[0].type);
 		}
@@ -90,7 +93,7 @@ public class HomeFragmentMe extends AbstractSharedContentFragment {
 		switch (itemId) {
 		case MENU_ITEM_APP:
 			ViewHelper.viewInApp(getActivity(),
-					CMConstants.getTypeByTypeId(content.getType()),
+					CMHelper.getTypeByTypeId(content.getType()),
 					content.getUri(), new Bundle());
 			return true;
 		case MENU_ITEM_SHARING:

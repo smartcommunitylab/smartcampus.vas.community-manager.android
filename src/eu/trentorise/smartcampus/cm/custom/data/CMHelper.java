@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 import eu.trentorise.smartcampus.ac.AACException;
 import eu.trentorise.smartcampus.ac.SCAccessProvider;
@@ -55,6 +56,7 @@ import eu.trentorise.smartcampus.socialservice.SocialService;
 import eu.trentorise.smartcampus.socialservice.SocialServiceException;
 import eu.trentorise.smartcampus.socialservice.beans.Community;
 import eu.trentorise.smartcampus.socialservice.beans.Entity;
+import eu.trentorise.smartcampus.socialservice.beans.EntityType;
 import eu.trentorise.smartcampus.socialservice.beans.Group;
 import eu.trentorise.smartcampus.socialservice.beans.Limit;
 import eu.trentorise.smartcampus.socialservice.beans.Visibility;
@@ -79,6 +81,8 @@ public class CMHelper {
 
 	private static Map<String, PictureProfile> knownUsers = new HashMap<String, PictureProfile>();
 
+	private static Map<String, String> scEntityType = new HashMap<String, String>();
+
 	private Community scCommunity = null;
 
 	private static String APP_FIST_LAUNCH = "cmfist_launch";
@@ -87,6 +91,10 @@ public class CMHelper {
 
 	public static void init(Context mContext) throws ProtocolException {
 		instance = new CMHelper(mContext);
+	}
+
+	public static String getTypeByTypeId(String id) {
+		return scEntityType.get(id);
 	}
 
 	public static boolean isInitialized() {
@@ -122,6 +130,54 @@ public class CMHelper {
 			url += "/";
 		// basicProfileService = new BasicProfileService(url+"aac");
 		socialService = new SocialService(url + "core.social-dev");
+
+		// init entity types
+		// initTypes();
+
+	}
+
+	public static Map<String, String> getEntityTypes() {
+		return scEntityType;
+	}
+
+	public static void initTypes() {
+		try {
+			String url = GlobalConfig.getAppUrl(mContext);
+			if (!url.endsWith("/"))
+				url += "/";
+			// basicProfileService = new BasicProfileService(url+"aac");
+			SocialService socialService = new SocialService(url
+					+ "core.social-dev");
+			if (socialService != null) {
+				for (String typeLabel : CMConstants.types) {
+					EntityType type = new EntityType(typeLabel, null);
+					try {
+						type = socialService.createEntityType(getAuthToken(),
+								type);
+						scEntityType.put(type.getId(), type.getName());
+						Log.i("CmHelper",
+								"Loaded entity type " + type.getName());
+					} catch (SecurityException e) {
+						Log.e("CmHelper",
+								"Security exception getting entity type "
+										+ typeLabel);
+					} catch (SocialServiceException e) {
+						Log.e("CmHelper",
+								"General exception getting entity type "
+										+ typeLabel);
+					} catch (AACException e) {
+						Log.e("CmHelper",
+								"Authentication exception getting entity type "
+										+ typeLabel);
+					}
+
+				}
+			} else {
+				Log.w("CMHelper", "socialService null retrieving entity types");
+			}
+		} catch (ProtocolException e1) {
+			Log.e("CMHelper", "exception getting url app");
+		}
 	}
 
 	public static void destroy() throws DataException {
@@ -397,7 +453,7 @@ public class CMHelper {
 		if (list != null) {
 			for (PictureProfile pp : list) {
 				if (!pp.getUserId().equals(profile.getUserId())) {
-					knownUsers.put(pp.getSocialId(), pp);
+					knownUsers.put(pp.getUserId(), pp);
 				}
 			}
 		}
@@ -485,7 +541,7 @@ public class CMHelper {
 		for (Iterator<Entity> iterator = entities.iterator(); iterator
 				.hasNext();) {
 			Entity e = iterator.next();
-			if (CMConstants.getTypeByTypeId(e.getType()) == null) {
+			if (getTypeByTypeId(e.getType()) == null) {
 				iterator.remove();
 			}
 		}
@@ -589,7 +645,7 @@ public class CMHelper {
 	 */
 	public static String getEntityTypeName(String entityType) {
 		// return types.get(entityType);
-		return CMConstants.getTypeByTypeId(entityType);
+		return getTypeByTypeId(entityType);
 	}
 
 	/**

@@ -37,6 +37,7 @@ import android.widget.TextView;
 import eu.trentorise.smartcampus.android.common.SCAsyncTask;
 import eu.trentorise.smartcampus.android.common.view.ViewHelper;
 import eu.trentorise.smartcampus.cm.custom.SharedContentsAdapter;
+import eu.trentorise.smartcampus.cm.custom.data.CMHelper;
 import eu.trentorise.smartcampus.cm.fragments.AbstractTabbedFragment;
 import eu.trentorise.smartcampus.cm.fragments.ActionBarHelper;
 import eu.trentorise.smartcampus.cm.fragments.home.LoadObjectProcessor.ContentRequest;
@@ -95,7 +96,7 @@ public abstract class AbstractSharedContentFragment extends
 							int position, long id) {
 						Entity content = adapter.getItem(position);
 						ViewHelper.viewInApp(getActivity(),
-								CMConstants.getTypeByTypeId(content.getType()),
+								CMHelper.getTypeByTypeId(content.getType()),
 								content.getUri(), new Bundle());
 					}
 				});
