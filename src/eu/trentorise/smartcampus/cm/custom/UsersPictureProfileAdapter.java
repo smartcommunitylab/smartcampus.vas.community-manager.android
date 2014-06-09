@@ -82,13 +82,14 @@ public class UsersPictureProfileAdapter extends ArrayAdapter<PictureProfile> {
 		}
 
 		holder.user_mp_pic.setImageResource(R.drawable.placeholder);
-		holder.user_mp_pic.setTag("" + user_mp.getUserId());
-		if (user_mp.getPictureUrl() != null) {
+		holder.user_mp_pic.setTag(""
+				+ (user_mp != null ? user_mp.getUserId() : ""));
+		if (user_mp != null && user_mp.getPictureUrl() != null) {
 			new ImageCacheTask(holder.user_mp_pic, R.drawable.placeholder)
 					.execute(user_mp.getPictureUrl(), "" + user_mp.getUserId());
 		}
 
-		if (CMHelper.isKnown(user_mp)) {
+		if (user_mp != null && CMHelper.isKnown(user_mp)) {
 			holder.user_mp_more
 					.setOnClickListener(new KnownUserClickListener());
 			holder.user_mp_more.setText(R.string.user_mp_more);
@@ -103,13 +104,10 @@ public class UsersPictureProfileAdapter extends ArrayAdapter<PictureProfile> {
 		}
 
 		holder.user_mp_more.setTag(user_mp);
-
-		holder.user_mp_name.setText(user_mp.getName()); // name
-		holder.user_mp_surname.setText(user_mp.getSurname()); // surname
-		// holder.user_mp_faculty.setText(user_mp.faculty); // faculty
-		// holder.user_mp_position.setText(user_mp.position); // position
-
-		// Log.e(this.getClass().getSimpleName(), "ROW DONE");
+		if (user_mp != null) {
+			holder.user_mp_name.setText(user_mp.getName()); // name
+			holder.user_mp_surname.setText(user_mp.getSurname()); // surname
+		}
 		return row;
 	}
 

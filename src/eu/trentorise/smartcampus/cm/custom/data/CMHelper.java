@@ -636,7 +636,7 @@ public class CMHelper {
 	 * @return
 	 */
 	public static boolean isKnown(PictureProfile user_mp) {
-		return knownUsers.containsKey(user_mp.getSocialId());
+		return knownUsers.containsKey(user_mp.getUserId());
 	}
 
 	/**

@@ -82,16 +82,6 @@ public class SharedContentsAdapter extends ArrayAdapter<Entity> {
 					.getString(descr.contentDescription));
 		}
 		holder.content_title.setText(content.getName());
-		String tags = "";
-		// TODO NO TAGS IN ENTITY
-		// if (content.getTags() != null) {
-		// for (Concept s : content.getTags()) {
-		// tags += s.getName() + " ";
-		// }
-		// holder.content_tags.setText(tags);
-		// } else {
-		// holder.content_tags.setText(null);
-		// }
 
 		if (content.getCreationTime() > 0) {
 			holder.content_date.setText(CMConstants.DATE_TIME_FORMAT
@@ -106,6 +96,9 @@ public class SharedContentsAdapter extends ArrayAdapter<Entity> {
 			}
 
 			PictureProfile pp = CMHelper.getPictureProfile(content.getOwner());
+			if (pp == null) {
+				pp = CMHelper.getProfile();
+			}
 			holder.content_user_name.setText(pp.fullName());
 
 			if (pp.getPictureUrl() != null) {
