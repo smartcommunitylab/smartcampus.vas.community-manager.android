@@ -45,6 +45,7 @@ public class LoadObjectProcessor extends
 
 	@Override
 	public void handleResult(List<Entity> result) {
+		adapter.clear();
 		if (result != null) {
 			for (Entity shared : result) {
 				adapter.add(shared);

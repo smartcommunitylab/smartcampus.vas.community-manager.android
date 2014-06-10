@@ -82,6 +82,8 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 			public void onNothingSelected(AdapterView<?> parent) {
 			}
 		});
+
+		load();
 		myGroupsSpinner.setAdapter(dataAdapter);
 
 	}
