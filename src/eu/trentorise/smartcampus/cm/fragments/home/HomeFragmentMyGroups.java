@@ -62,8 +62,9 @@ public class HomeFragmentMyGroups extends AbstractSharedContentFragment {
 			dataAdapter = new CustomSpinnerAdapter<String>(getActivity());
 			dataAdapter
 					.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			update(dataAdapter);
 		}
+
+		update(dataAdapter);
 		myGroupsSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 			@Override

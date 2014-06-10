@@ -325,8 +325,8 @@ public class CMHelper {
 		if (group.getId() != null) {
 			if (getInstance().socialService.updateUserGroup(getAuthToken(),
 					group) != null) {
-				group = getInstance().socialService.getUserGroup(group.getId(),
-						getAuthToken());
+				group = getInstance().socialService.getUserGroup(
+						getAuthToken(), group.getId());
 			}
 		} else {
 			group = getInstance().socialService.createUserGroup(getAuthToken(),
