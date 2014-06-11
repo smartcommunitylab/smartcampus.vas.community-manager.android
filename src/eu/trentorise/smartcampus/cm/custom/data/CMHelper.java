@@ -498,7 +498,7 @@ public class CMHelper {
 		List<Entity> entities = getInstance().socialService
 				.getEntitiesSharedWithUser(getAuthToken(), limit);
 
-		checkTypes(entities);
+		checkTypes(entities, type);
 		checkUsers(entities);
 
 		return entities;
@@ -524,7 +524,7 @@ public class CMHelper {
 		limit.setPageSize(size);
 		List<Entity> entities = getInstance().socialService.getUserEntities(
 				getAuthToken(), limit);
-		checkTypes(entities);
+		checkTypes(entities, type);
 		return entities;
 	}
 
@@ -535,13 +535,14 @@ public class CMHelper {
 	 * @throws SocialServiceException
 	 * @throws SecurityException
 	 */
-	private static void checkTypes(Iterable<Entity> entities)
+	private static void checkTypes(Iterable<Entity> entities, String filterType)
 			throws SecurityException, SocialServiceException, DataException,
 			AACException {
 		for (Iterator<Entity> iterator = entities.iterator(); iterator
 				.hasNext();) {
 			Entity e = iterator.next();
-			if (getTypeByTypeId(e.getType()) == null) {
+			if (getTypeByTypeId(e.getType()) == null || filterType != null
+					&& !getEntityTypeName(e.getType()).equals(filterType)) {
 				iterator.remove();
 			}
 		}
